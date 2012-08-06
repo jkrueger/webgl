@@ -1,18 +1,15 @@
 (ns webgl.buffers
-  (:require [webgl.constants :as const]))
+  (:require [webgl.api       :as api]
+            [webgl.constants :as const]))
 
-(deftype Buffer [id type])
+(deftype Buffer [type id])
 
-(defn bind [gl buffer]
-  (.bindBuffer gl (.-type buffer) (.-id buffer)))
+(defn bind [buffer]
+  (api/bind-buffer (.-type buffer) (.-id buffer)))
 
-(defn make [gl buffer-type content]
-  (let [type-flag (const/get buffer-type)
-        id        (.createBuffer gl)
-        buffer    (Buffer. id type-flag)]
-    (doto gl
-      (bind buffer)
-      (.bufferData type-flag
-                   (js/Float32Array. content)
-                   (const/get :static)))
+(defn make [buffer-type content]
+  (let [id        (api/make-buffer)
+        buffer    (Buffer. buffer-type id)]
+    (bind buffer)
+    (api/buffer-data buffer-type content)
     buffer))

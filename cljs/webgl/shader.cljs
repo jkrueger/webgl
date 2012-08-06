@@ -1,6 +1,7 @@
 (ns webgl.shader
   (:refer-clojure :exclude [*])
-  (:require [webgl.buffers     :as buffer]
+  (:require [webgl.api         :as api]
+            [webgl.buffers     :as buffer]
             [webgl.constants   :as const]
             [webgl.shader.code :as code]))
 
@@ -14,13 +15,13 @@
   (compile [_]))
 
 (defprotocol Bind
-  (bind [_ gl program val]))
+  (bind [_ program val]))
 
 (defprotocol ToAttribute
-  (to-attribute [_ gl location val]))
+  (to-attribute [_ location val]))
 
 (defprotocol ToUniform
-  (to-uniform [_ gl location val]))
+  (to-uniform [_ location val]))
 
 (defprotocol AttributeBinder
   (attribute-binder [_]))
@@ -28,29 +29,28 @@
 (extend-protocol AttributeBinder
   buffer/Buffer
   (attribute-binder [this]
-    (fn [gl location size val]
-      (doto gl
-        (buffer/bind this)
-        (.vertexAttribPointer location size (const/get :float) false 0 0)
-        (.enableVertexAttribArray location)))))
+    (fn [location size val]
+      (buffer/bind this)
+      (api/vertex-attribute-pointer location
+        size :float false 0 0)
+      (api/enable-vertex-attribute-array location))))
 
 (deftype Vec4 []
   GLSLType
   (type-name [_]
     "vec4")
   ToAttribute
-  (to-attribute [_ gl location val]
+  (to-attribute [_ location val]
     (let [binder (attribute-binder val)]
-      (binder gl location 3 val))))
+      (binder location 3 val))))
 
 (deftype Mat4 []
   GLSLType
   (type-name [_]
     "mat4")
   ToUniform
-  (to-uniform [_ gl location val]
-    (.uniformMatrix4fv gl
-      location false (js/Float32Array. val))))
+  (to-uniform [_ location value]
+    (api/uniform-matrix location value)))
 
 (def vec4 (Vec4.))
 (def mat4 (Mat4.))
@@ -65,9 +65,9 @@
   (compile [_]
     name)
   Bind
-  (bind [_ gl prog val]
-    (let [location (.getAttribLocation gl prog name)]
-      (to-attribute type gl location val))))
+  (bind [_ prog val]
+    (let [location (api/attribute-location prog name)]
+      (to-attribute type location val))))
 
 (deftype Uniform [type name printer]
   Declare
@@ -79,9 +79,9 @@
   (compile [_]
     name)
   Bind
-  (bind [_ gl prog val]
-    (let [location (.getUniformLocation gl prog name)]
-      (to-uniform type gl location val))))
+  (bind [_ prog val]
+    (let [location (api/uniform-location prog name)]
+      (to-uniform type location val))))
 
 (defn attribute [type]
   (Attribute.

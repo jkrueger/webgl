@@ -2,7 +2,6 @@
   (:refer-clojure :exclude [*])
   (:require [webgl.api         :as api]
             [webgl.buffers     :as buffer]
-            [webgl.constants   :as const]
             [webgl.shader.code :as code]))
 
 (defprotocol GLSLType

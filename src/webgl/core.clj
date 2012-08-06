@@ -19,5 +19,5 @@
     [:canvas#gl {:width 500 :height 500}]
     (util/javascript-tag "webgl.core.init()")]))
 
-(defn start []
-  (server/start 8080 {:mode :prod :ns 'core}))
+(defn start [& {:keys [port] :or {:port 8080}}]
+  (server/start port {:mode :prod :ns 'core}))

@@ -13,3 +13,5 @@
     (bind buffer)
     (api/buffer-data buffer-type content)
     buffer))
+
+(def as-bindable constantly)

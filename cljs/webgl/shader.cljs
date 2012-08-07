@@ -14,7 +14,7 @@
   (compile [_]))
 
 (defprotocol Bind
-  (bind [_ program val]))
+  (bind [_ program frame]))
 
 (defprotocol ToAttribute
   (to-attribute [_ location val]))
@@ -54,7 +54,7 @@
 (def vec4 (Vec4.))
 (def mat4 (Mat4.))
 
-(deftype Attribute [type name printer]
+(deftype Attribute [type name printer value-fn]
   Declare
   (declare [_]
     (printer "attribute"
@@ -64,11 +64,12 @@
   (compile [_]
     name)
   Bind
-  (bind [_ prog val]
-    (let [location (api/attribute-location prog name)]
-      (to-attribute type location val))))
+  (bind [_ prog frame]
+    (let [location (api/attribute-location prog name)
+          value    (value-fn frame)]
+      (to-attribute type location value))))
 
-(deftype Uniform [type name printer]
+(deftype Uniform [type name printer value-fn]
   Declare
   (declare [_]
     (printer "uniform"
@@ -78,21 +79,24 @@
   (compile [_]
     name)
   Bind
-  (bind [_ prog val]
-    (let [location (api/uniform-location prog name)]
-      (to-uniform type location val))))
+  (bind [_ prog frame]
+    (let [location (api/uniform-location prog name)
+          value    (value-fn frame)]
+      (to-uniform type location value))))
 
-(defn attribute [type]
+(defn attribute [type value-fn]
   (Attribute.
     type
     (code/identifier :attribute)
-    code/attribute-printer))
+    code/attribute-printer
+    value-fn))
 
-(defn uniform [type]
+(defn uniform [type value-fn]
   (Uniform.
     type
     (code/identifier :uniform)
-    code/attribute-printer))
+    code/attribute-printer
+    value-fn))
 
 (deftype Multiply [args]
   Compile
@@ -107,7 +111,11 @@
   (compile [_]
     (code/shader
       (map declare attributes)
-      (compile out))))
+      (compile out)))
+  Bind
+  (bind [_ prog frame]
+    (doseq [attribute attributes]
+      (bind attribute prog frame))))
 
 (defn shader [attributes out]
   (Shader. attributes out))

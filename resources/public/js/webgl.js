@@ -12205,26 +12205,124 @@ cljs.core.get_method = function get_method(multifn, dispatch_val) {
 cljs.core.prefers = function prefers(multifn) {
   return cljs.core._prefers.call(null, multifn)
 };
+goog.provide("webgl.constants");
+goog.require("cljs.core");
+webgl.constants.flags = cljs.core.ObjMap.fromObject(["\ufdd0'float", "\ufdd0'array", "\ufdd0'index", "\ufdd0'static", "\ufdd0'color-buffer", "\ufdd0'triangles", "\ufdd0'vertex", "\ufdd0'fragment"], {"\ufdd0'float":WebGLRenderingContext.FLOAT, "\ufdd0'array":WebGLRenderingContext.ARRAY_BUFFER, "\ufdd0'index":WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, "\ufdd0'static":WebGLRenderingContext.STATIC_DRAW, "\ufdd0'color-buffer":WebGLRenderingContext.COLOR_BUFFER_BIT, "\ufdd0'triangles":WebGLRenderingContext.TRIANGLES, 
+"\ufdd0'vertex":WebGLRenderingContext.VERTEX_SHADER, "\ufdd0'fragment":WebGLRenderingContext.FRAGMENT_SHADER});
+webgl.constants.get = webgl.constants.flags;
+goog.provide("webgl.api");
+goog.require("cljs.core");
+goog.require("webgl.constants");
+webgl.api._STAR_context_STAR_ = null;
+webgl.api.make_context = function make_context(canvas) {
+  return canvas.getContext("experimental-webgl")
+};
+webgl.api.context = function context() {
+  return webgl.api._STAR_context_STAR_
+};
+webgl.api.canvas = function canvas() {
+  return webgl.api._STAR_context_STAR_.canvas
+};
+webgl.api.with_context = function() {
+  var with_context__delegate = function(context, f, args) {
+    var _STAR_context_STAR_6230__6231 = webgl.api._STAR_context_STAR_;
+    try {
+      webgl.api._STAR_context_STAR_ = context;
+      return cljs.core.apply.call(null, f, args)
+    }finally {
+      webgl.api._STAR_context_STAR_ = _STAR_context_STAR_6230__6231
+    }
+  };
+  var with_context = function(context, f, var_args) {
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+    }
+    return with_context__delegate.call(this, context, f, args)
+  };
+  with_context.cljs$lang$maxFixedArity = 2;
+  with_context.cljs$lang$applyTo = function(arglist__6233) {
+    var context = cljs.core.first(arglist__6233);
+    var f = cljs.core.first(cljs.core.next(arglist__6233));
+    var args = cljs.core.rest(cljs.core.next(arglist__6233));
+    return with_context__delegate(context, f, args)
+  };
+  with_context.cljs$lang$arity$variadic = with_context__delegate;
+  return with_context
+}();
+webgl.api.make_program = function make_program() {
+  return webgl.api._STAR_context_STAR_.createProgram()
+};
+webgl.api.make_shader = function make_shader(type) {
+  return webgl.api._STAR_context_STAR_.createShader(webgl.constants.get.call(null, type))
+};
+webgl.api.set_source = function set_source(shader, code) {
+  return webgl.api._STAR_context_STAR_.shaderSource(shader, code)
+};
+webgl.api.compile_shader = function compile_shader(shader) {
+  return webgl.api._STAR_context_STAR_.compileShader(shader)
+};
+webgl.api.attach_shader = function attach_shader(program, shader) {
+  return webgl.api._STAR_context_STAR_.attachShader(program, shader)
+};
+webgl.api.link_program = function link_program(program) {
+  return webgl.api._STAR_context_STAR_.linkProgram(program)
+};
+webgl.api.use_program = function use_program(program) {
+  return webgl.api._STAR_context_STAR_.useProgram(program)
+};
+webgl.api.make_buffer = function make_buffer() {
+  return webgl.api._STAR_context_STAR_.createBuffer()
+};
+webgl.api.bind_buffer = function bind_buffer(buffer_type, id) {
+  return webgl.api._STAR_context_STAR_.bindBuffer(webgl.constants.get.call(null, buffer_type), id)
+};
+webgl.api.buffer_data = function buffer_data(buffer_type, data) {
+  return webgl.api._STAR_context_STAR_.bufferData(webgl.constants.get.call(null, buffer_type), new Float32Array(data), webgl.constants.get.call(null, "\ufdd0'static"))
+};
+webgl.api.attribute_location = function attribute_location(program, name) {
+  return webgl.api._STAR_context_STAR_.getAttribLocation(program, name)
+};
+webgl.api.vertex_attribute_pointer = function vertex_attribute_pointer(location, size, data_type, normalized_QMARK_, stride, offset) {
+  return webgl.api._STAR_context_STAR_.vertexAttribPointer(location, size, webgl.constants.get.call(null, data_type), normalized_QMARK_, stride, offset)
+};
+webgl.api.enable_vertex_attribute_array = function enable_vertex_attribute_array(location) {
+  return webgl.api._STAR_context_STAR_.enableVertexAttribArray(location)
+};
+webgl.api.uniform_location = function uniform_location(program, name) {
+  return webgl.api._STAR_context_STAR_.getUniformLocation(program, name)
+};
+webgl.api.uniform_matrix = function uniform_matrix(location, value) {
+  return webgl.api._STAR_context_STAR_.uniformMatrix4fv(location, false, new Float32Array(value))
+};
+webgl.api.clear_color = function clear_color(r, g, b, a) {
+  return webgl.api._STAR_context_STAR_.clearColor(r, g, b, a)
+};
+webgl.api.clear = function clear(buffer_type) {
+  return webgl.api._STAR_context_STAR_.clear(webgl.constants.get.call(null, buffer_type))
+};
+webgl.api.draw_arrays = function draw_arrays(primitive_type, offset, n) {
+  return webgl.api._STAR_context_STAR_.drawArrays(webgl.constants.get.call(null, primitive_type), offset, n)
+};
 goog.provide("webgl.program");
 goog.require("cljs.core");
-webgl.program.shader_types = cljs.core.ObjMap.fromObject(["\ufdd0'vertex", "\ufdd0'fragment"], {"\ufdd0'vertex":WebGLRenderingContext.VERTEX_SHADER, "\ufdd0'fragment":WebGLRenderingContext.FRAGMENT_SHADER});
-webgl.program.make = function make(gl) {
-  return gl.createProgram()
+goog.require("webgl.constants");
+goog.require("webgl.api");
+webgl.program.make = webgl.api.make_program;
+webgl.program.attach_BANG_ = function attach_BANG_(program, shader_type, code) {
+  var shader__6259 = webgl.api.make_shader.call(null, shader_type);
+  webgl.api.set_source.call(null, shader__6259, code);
+  webgl.api.compile_shader.call(null, shader__6259);
+  return webgl.api.attach_shader.call(null, program, shader__6259)
 };
-webgl.program.attach_BANG_ = function attach_BANG_(gl, prog, shader_type, code) {
-  var type_flag__13415 = cljs.core._lookup.call(null, webgl.program.shader_types, shader_type, null);
-  var shader__13416 = gl.createShader(type_flag__13415);
-  var G__13417__13418 = gl;
-  G__13417__13418.shaderSource(shader__13416, code);
-  G__13417__13418.compileShader(shader__13416);
-  G__13417__13418;
-  return gl.attachShader(prog, shader__13416)
+webgl.program.link_BANG_ = webgl.api.link_program;
+webgl.program.use_BANG_ = webgl.api.use_program;
+goog.provide("goog.events.EventWrapper");
+goog.events.EventWrapper = function() {
 };
-webgl.program.link_BANG_ = function link_BANG_(gl, prog) {
-  return gl.linkProgram(prog)
+goog.events.EventWrapper.prototype.listen = function(src, listener, opt_capt, opt_scope, opt_eventHandler) {
 };
-webgl.program.use_BANG_ = function use_BANG_(gl, prog) {
-  return gl.useProgram(prog)
+goog.events.EventWrapper.prototype.unlisten = function(src, listener, opt_capt, opt_scope, opt_eventHandler) {
 };
 goog.provide("webgl.scalar");
 goog.require("cljs.core");
@@ -12645,6 +12743,818 @@ goog.userAgent.isDocumentModeCache_ = {};
 goog.userAgent.isDocumentMode = function(documentMode) {
   return goog.userAgent.isDocumentModeCache_[documentMode] || (goog.userAgent.isDocumentModeCache_[documentMode] = goog.userAgent.IE && document.documentMode && document.documentMode >= documentMode)
 };
+goog.provide("goog.events.BrowserFeature");
+goog.require("goog.userAgent");
+goog.events.BrowserFeature = {HAS_W3C_BUTTON:!goog.userAgent.IE || goog.userAgent.isDocumentMode(9), HAS_W3C_EVENT_SUPPORT:!goog.userAgent.IE || goog.userAgent.isDocumentMode(9), SET_KEY_CODE_TO_PREVENT_DEFAULT:goog.userAgent.IE && !goog.userAgent.isVersion("8")};
+goog.provide("goog.disposable.IDisposable");
+goog.disposable.IDisposable = function() {
+};
+goog.disposable.IDisposable.prototype.dispose;
+goog.disposable.IDisposable.prototype.isDisposed;
+goog.provide("goog.Disposable");
+goog.provide("goog.dispose");
+goog.require("goog.disposable.IDisposable");
+goog.Disposable = function() {
+  if(goog.Disposable.ENABLE_MONITORING) {
+    goog.Disposable.instances_[goog.getUid(this)] = this
+  }
+};
+goog.Disposable.ENABLE_MONITORING = false;
+goog.Disposable.instances_ = {};
+goog.Disposable.getUndisposedObjects = function() {
+  var ret = [];
+  for(var id in goog.Disposable.instances_) {
+    if(goog.Disposable.instances_.hasOwnProperty(id)) {
+      ret.push(goog.Disposable.instances_[Number(id)])
+    }
+  }
+  return ret
+};
+goog.Disposable.clearUndisposedObjects = function() {
+  goog.Disposable.instances_ = {}
+};
+goog.Disposable.prototype.disposed_ = false;
+goog.Disposable.prototype.dependentDisposables_;
+goog.Disposable.prototype.isDisposed = function() {
+  return this.disposed_
+};
+goog.Disposable.prototype.getDisposed = goog.Disposable.prototype.isDisposed;
+goog.Disposable.prototype.dispose = function() {
+  if(!this.disposed_) {
+    this.disposed_ = true;
+    this.disposeInternal();
+    if(goog.Disposable.ENABLE_MONITORING) {
+      var uid = goog.getUid(this);
+      if(!goog.Disposable.instances_.hasOwnProperty(uid)) {
+        throw Error(this + " did not call the goog.Disposable base " + "constructor or was disposed of after a clearUndisposedObjects " + "call");
+      }
+      delete goog.Disposable.instances_[uid]
+    }
+  }
+};
+goog.Disposable.prototype.registerDisposable = function(disposable) {
+  if(!this.dependentDisposables_) {
+    this.dependentDisposables_ = []
+  }
+  this.dependentDisposables_.push(disposable)
+};
+goog.Disposable.prototype.disposeInternal = function() {
+  if(this.dependentDisposables_) {
+    goog.disposeAll.apply(null, this.dependentDisposables_)
+  }
+};
+goog.dispose = function(obj) {
+  if(obj && typeof obj.dispose == "function") {
+    obj.dispose()
+  }
+};
+goog.disposeAll = function(var_args) {
+  for(var i = 0, len = arguments.length;i < len;++i) {
+    var disposable = arguments[i];
+    if(goog.isArrayLike(disposable)) {
+      goog.disposeAll.apply(null, disposable)
+    }else {
+      goog.dispose(disposable)
+    }
+  }
+};
+goog.provide("goog.events.Event");
+goog.require("goog.Disposable");
+goog.events.Event = function(type, opt_target) {
+  goog.Disposable.call(this);
+  this.type = type;
+  this.target = opt_target;
+  this.currentTarget = this.target
+};
+goog.inherits(goog.events.Event, goog.Disposable);
+goog.events.Event.prototype.disposeInternal = function() {
+  delete this.type;
+  delete this.target;
+  delete this.currentTarget
+};
+goog.events.Event.prototype.propagationStopped_ = false;
+goog.events.Event.prototype.returnValue_ = true;
+goog.events.Event.prototype.stopPropagation = function() {
+  this.propagationStopped_ = true
+};
+goog.events.Event.prototype.preventDefault = function() {
+  this.returnValue_ = false
+};
+goog.events.Event.stopPropagation = function(e) {
+  e.stopPropagation()
+};
+goog.events.Event.preventDefault = function(e) {
+  e.preventDefault()
+};
+goog.provide("goog.events.EventType");
+goog.require("goog.userAgent");
+goog.events.EventType = {CLICK:"click", DBLCLICK:"dblclick", MOUSEDOWN:"mousedown", MOUSEUP:"mouseup", MOUSEOVER:"mouseover", MOUSEOUT:"mouseout", MOUSEMOVE:"mousemove", SELECTSTART:"selectstart", KEYPRESS:"keypress", KEYDOWN:"keydown", KEYUP:"keyup", BLUR:"blur", FOCUS:"focus", DEACTIVATE:"deactivate", FOCUSIN:goog.userAgent.IE ? "focusin" : "DOMFocusIn", FOCUSOUT:goog.userAgent.IE ? "focusout" : "DOMFocusOut", CHANGE:"change", SELECT:"select", SUBMIT:"submit", INPUT:"input", PROPERTYCHANGE:"propertychange", 
+DRAGSTART:"dragstart", DRAGENTER:"dragenter", DRAGOVER:"dragover", DRAGLEAVE:"dragleave", DROP:"drop", TOUCHSTART:"touchstart", TOUCHMOVE:"touchmove", TOUCHEND:"touchend", TOUCHCANCEL:"touchcancel", CONTEXTMENU:"contextmenu", ERROR:"error", HELP:"help", LOAD:"load", LOSECAPTURE:"losecapture", READYSTATECHANGE:"readystatechange", RESIZE:"resize", SCROLL:"scroll", UNLOAD:"unload", HASHCHANGE:"hashchange", PAGEHIDE:"pagehide", PAGESHOW:"pageshow", POPSTATE:"popstate", COPY:"copy", PASTE:"paste", CUT:"cut", 
+BEFORECOPY:"beforecopy", BEFORECUT:"beforecut", BEFOREPASTE:"beforepaste", MESSAGE:"message", CONNECT:"connect", TRANSITIONEND:goog.userAgent.WEBKIT ? "webkitTransitionEnd" : goog.userAgent.OPERA ? "oTransitionEnd" : "transitionend"};
+goog.provide("goog.reflect");
+goog.reflect.object = function(type, object) {
+  return object
+};
+goog.reflect.sinkValue = function(x) {
+  goog.reflect.sinkValue[" "](x);
+  return x
+};
+goog.reflect.sinkValue[" "] = goog.nullFunction;
+goog.reflect.canAccessProperty = function(obj, prop) {
+  try {
+    goog.reflect.sinkValue(obj[prop]);
+    return true
+  }catch(e) {
+  }
+  return false
+};
+goog.provide("goog.events.BrowserEvent");
+goog.provide("goog.events.BrowserEvent.MouseButton");
+goog.require("goog.events.BrowserFeature");
+goog.require("goog.events.Event");
+goog.require("goog.events.EventType");
+goog.require("goog.reflect");
+goog.require("goog.userAgent");
+goog.events.BrowserEvent = function(opt_e, opt_currentTarget) {
+  if(opt_e) {
+    this.init(opt_e, opt_currentTarget)
+  }
+};
+goog.inherits(goog.events.BrowserEvent, goog.events.Event);
+goog.events.BrowserEvent.MouseButton = {LEFT:0, MIDDLE:1, RIGHT:2};
+goog.events.BrowserEvent.IEButtonMap = [1, 4, 2];
+goog.events.BrowserEvent.prototype.target = null;
+goog.events.BrowserEvent.prototype.currentTarget;
+goog.events.BrowserEvent.prototype.relatedTarget = null;
+goog.events.BrowserEvent.prototype.offsetX = 0;
+goog.events.BrowserEvent.prototype.offsetY = 0;
+goog.events.BrowserEvent.prototype.clientX = 0;
+goog.events.BrowserEvent.prototype.clientY = 0;
+goog.events.BrowserEvent.prototype.screenX = 0;
+goog.events.BrowserEvent.prototype.screenY = 0;
+goog.events.BrowserEvent.prototype.button = 0;
+goog.events.BrowserEvent.prototype.keyCode = 0;
+goog.events.BrowserEvent.prototype.charCode = 0;
+goog.events.BrowserEvent.prototype.ctrlKey = false;
+goog.events.BrowserEvent.prototype.altKey = false;
+goog.events.BrowserEvent.prototype.shiftKey = false;
+goog.events.BrowserEvent.prototype.metaKey = false;
+goog.events.BrowserEvent.prototype.state;
+goog.events.BrowserEvent.prototype.platformModifierKey = false;
+goog.events.BrowserEvent.prototype.event_ = null;
+goog.events.BrowserEvent.prototype.init = function(e, opt_currentTarget) {
+  var type = this.type = e.type;
+  goog.events.Event.call(this, type);
+  this.target = e.target || e.srcElement;
+  this.currentTarget = opt_currentTarget;
+  var relatedTarget = e.relatedTarget;
+  if(relatedTarget) {
+    if(goog.userAgent.GECKO) {
+      if(!goog.reflect.canAccessProperty(relatedTarget, "nodeName")) {
+        relatedTarget = null
+      }
+    }
+  }else {
+    if(type == goog.events.EventType.MOUSEOVER) {
+      relatedTarget = e.fromElement
+    }else {
+      if(type == goog.events.EventType.MOUSEOUT) {
+        relatedTarget = e.toElement
+      }
+    }
+  }
+  this.relatedTarget = relatedTarget;
+  this.offsetX = e.offsetX !== undefined ? e.offsetX : e.layerX;
+  this.offsetY = e.offsetY !== undefined ? e.offsetY : e.layerY;
+  this.clientX = e.clientX !== undefined ? e.clientX : e.pageX;
+  this.clientY = e.clientY !== undefined ? e.clientY : e.pageY;
+  this.screenX = e.screenX || 0;
+  this.screenY = e.screenY || 0;
+  this.button = e.button;
+  this.keyCode = e.keyCode || 0;
+  this.charCode = e.charCode || (type == "keypress" ? e.keyCode : 0);
+  this.ctrlKey = e.ctrlKey;
+  this.altKey = e.altKey;
+  this.shiftKey = e.shiftKey;
+  this.metaKey = e.metaKey;
+  this.platformModifierKey = goog.userAgent.MAC ? e.metaKey : e.ctrlKey;
+  this.state = e.state;
+  this.event_ = e;
+  delete this.returnValue_;
+  delete this.propagationStopped_
+};
+goog.events.BrowserEvent.prototype.isButton = function(button) {
+  if(!goog.events.BrowserFeature.HAS_W3C_BUTTON) {
+    if(this.type == "click") {
+      return button == goog.events.BrowserEvent.MouseButton.LEFT
+    }else {
+      return!!(this.event_.button & goog.events.BrowserEvent.IEButtonMap[button])
+    }
+  }else {
+    return this.event_.button == button
+  }
+};
+goog.events.BrowserEvent.prototype.isMouseActionButton = function() {
+  return this.isButton(goog.events.BrowserEvent.MouseButton.LEFT) && !(goog.userAgent.WEBKIT && goog.userAgent.MAC && this.ctrlKey)
+};
+goog.events.BrowserEvent.prototype.stopPropagation = function() {
+  goog.events.BrowserEvent.superClass_.stopPropagation.call(this);
+  if(this.event_.stopPropagation) {
+    this.event_.stopPropagation()
+  }else {
+    this.event_.cancelBubble = true
+  }
+};
+goog.events.BrowserEvent.prototype.preventDefault = function() {
+  goog.events.BrowserEvent.superClass_.preventDefault.call(this);
+  var be = this.event_;
+  if(!be.preventDefault) {
+    be.returnValue = false;
+    if(goog.events.BrowserFeature.SET_KEY_CODE_TO_PREVENT_DEFAULT) {
+      try {
+        var VK_F1 = 112;
+        var VK_F12 = 123;
+        if(be.ctrlKey || be.keyCode >= VK_F1 && be.keyCode <= VK_F12) {
+          be.keyCode = -1
+        }
+      }catch(ex) {
+      }
+    }
+  }else {
+    be.preventDefault()
+  }
+};
+goog.events.BrowserEvent.prototype.getBrowserEvent = function() {
+  return this.event_
+};
+goog.events.BrowserEvent.prototype.disposeInternal = function() {
+  goog.events.BrowserEvent.superClass_.disposeInternal.call(this);
+  this.event_ = null;
+  this.target = null;
+  this.currentTarget = null;
+  this.relatedTarget = null
+};
+goog.provide("goog.debug.EntryPointMonitor");
+goog.provide("goog.debug.entryPointRegistry");
+goog.require("goog.asserts");
+goog.debug.EntryPointMonitor = function() {
+};
+goog.debug.EntryPointMonitor.prototype.wrap;
+goog.debug.EntryPointMonitor.prototype.unwrap;
+goog.debug.entryPointRegistry.refList_ = [];
+goog.debug.entryPointRegistry.monitors_ = [];
+goog.debug.entryPointRegistry.monitorsMayExist_ = false;
+goog.debug.entryPointRegistry.register = function(callback) {
+  goog.debug.entryPointRegistry.refList_[goog.debug.entryPointRegistry.refList_.length] = callback;
+  if(goog.debug.entryPointRegistry.monitorsMayExist_) {
+    var monitors = goog.debug.entryPointRegistry.monitors_;
+    for(var i = 0;i < monitors.length;i++) {
+      callback(goog.bind(monitors[i].wrap, monitors[i]))
+    }
+  }
+};
+goog.debug.entryPointRegistry.monitorAll = function(monitor) {
+  goog.debug.entryPointRegistry.monitorsMayExist_ = true;
+  var transformer = goog.bind(monitor.wrap, monitor);
+  for(var i = 0;i < goog.debug.entryPointRegistry.refList_.length;i++) {
+    goog.debug.entryPointRegistry.refList_[i](transformer)
+  }
+  goog.debug.entryPointRegistry.monitors_.push(monitor)
+};
+goog.debug.entryPointRegistry.unmonitorAllIfPossible = function(monitor) {
+  var monitors = goog.debug.entryPointRegistry.monitors_;
+  goog.asserts.assert(monitor == monitors[monitors.length - 1], "Only the most recent monitor can be unwrapped.");
+  var transformer = goog.bind(monitor.unwrap, monitor);
+  for(var i = 0;i < goog.debug.entryPointRegistry.refList_.length;i++) {
+    goog.debug.entryPointRegistry.refList_[i](transformer)
+  }
+  monitors.length--
+};
+goog.provide("goog.debug.errorHandlerWeakDep");
+goog.debug.errorHandlerWeakDep = {protectEntryPoint:function(fn, opt_tracers) {
+  return fn
+}};
+goog.provide("goog.events.Listener");
+goog.events.Listener = function() {
+};
+goog.events.Listener.counter_ = 0;
+goog.events.Listener.prototype.isFunctionListener_;
+goog.events.Listener.prototype.listener;
+goog.events.Listener.prototype.proxy;
+goog.events.Listener.prototype.src;
+goog.events.Listener.prototype.type;
+goog.events.Listener.prototype.capture;
+goog.events.Listener.prototype.handler;
+goog.events.Listener.prototype.key = 0;
+goog.events.Listener.prototype.removed = false;
+goog.events.Listener.prototype.callOnce = false;
+goog.events.Listener.prototype.init = function(listener, proxy, src, type, capture, opt_handler) {
+  if(goog.isFunction(listener)) {
+    this.isFunctionListener_ = true
+  }else {
+    if(listener && listener.handleEvent && goog.isFunction(listener.handleEvent)) {
+      this.isFunctionListener_ = false
+    }else {
+      throw Error("Invalid listener argument");
+    }
+  }
+  this.listener = listener;
+  this.proxy = proxy;
+  this.src = src;
+  this.type = type;
+  this.capture = !!capture;
+  this.handler = opt_handler;
+  this.callOnce = false;
+  this.key = ++goog.events.Listener.counter_;
+  this.removed = false
+};
+goog.events.Listener.prototype.handleEvent = function(eventObject) {
+  if(this.isFunctionListener_) {
+    return this.listener.call(this.handler || this.src, eventObject)
+  }
+  return this.listener.handleEvent.call(this.listener, eventObject)
+};
+goog.provide("goog.events");
+goog.require("goog.array");
+goog.require("goog.debug.entryPointRegistry");
+goog.require("goog.debug.errorHandlerWeakDep");
+goog.require("goog.events.BrowserEvent");
+goog.require("goog.events.BrowserFeature");
+goog.require("goog.events.Event");
+goog.require("goog.events.EventWrapper");
+goog.require("goog.events.Listener");
+goog.require("goog.object");
+goog.require("goog.userAgent");
+goog.events.ASSUME_GOOD_GC = false;
+goog.events.listeners_ = {};
+goog.events.listenerTree_ = {};
+goog.events.sources_ = {};
+goog.events.onString_ = "on";
+goog.events.onStringMap_ = {};
+goog.events.keySeparator_ = "_";
+goog.events.listen = function(src, type, listener, opt_capt, opt_handler) {
+  if(!type) {
+    throw Error("Invalid event type");
+  }else {
+    if(goog.isArray(type)) {
+      for(var i = 0;i < type.length;i++) {
+        goog.events.listen(src, type[i], listener, opt_capt, opt_handler)
+      }
+      return null
+    }else {
+      var capture = !!opt_capt;
+      var map = goog.events.listenerTree_;
+      if(!(type in map)) {
+        map[type] = {count_:0, remaining_:0}
+      }
+      map = map[type];
+      if(!(capture in map)) {
+        map[capture] = {count_:0, remaining_:0};
+        map.count_++
+      }
+      map = map[capture];
+      var srcUid = goog.getUid(src);
+      var listenerArray, listenerObj;
+      map.remaining_++;
+      if(!map[srcUid]) {
+        listenerArray = map[srcUid] = [];
+        map.count_++
+      }else {
+        listenerArray = map[srcUid];
+        for(var i = 0;i < listenerArray.length;i++) {
+          listenerObj = listenerArray[i];
+          if(listenerObj.listener == listener && listenerObj.handler == opt_handler) {
+            if(listenerObj.removed) {
+              break
+            }
+            return listenerArray[i].key
+          }
+        }
+      }
+      var proxy = goog.events.getProxy();
+      proxy.src = src;
+      listenerObj = new goog.events.Listener;
+      listenerObj.init(listener, proxy, src, type, capture, opt_handler);
+      var key = listenerObj.key;
+      proxy.key = key;
+      listenerArray.push(listenerObj);
+      goog.events.listeners_[key] = listenerObj;
+      if(!goog.events.sources_[srcUid]) {
+        goog.events.sources_[srcUid] = []
+      }
+      goog.events.sources_[srcUid].push(listenerObj);
+      if(src.addEventListener) {
+        if(src == goog.global || !src.customEvent_) {
+          src.addEventListener(type, proxy, capture)
+        }
+      }else {
+        src.attachEvent(goog.events.getOnString_(type), proxy)
+      }
+      return key
+    }
+  }
+};
+goog.events.getProxy = function() {
+  var proxyCallbackFunction = goog.events.handleBrowserEvent_;
+  var f = goog.events.BrowserFeature.HAS_W3C_EVENT_SUPPORT ? function(eventObject) {
+    return proxyCallbackFunction.call(f.src, f.key, eventObject)
+  } : function(eventObject) {
+    var v = proxyCallbackFunction.call(f.src, f.key, eventObject);
+    if(!v) {
+      return v
+    }
+  };
+  return f
+};
+goog.events.listenOnce = function(src, type, listener, opt_capt, opt_handler) {
+  if(goog.isArray(type)) {
+    for(var i = 0;i < type.length;i++) {
+      goog.events.listenOnce(src, type[i], listener, opt_capt, opt_handler)
+    }
+    return null
+  }
+  var key = goog.events.listen(src, type, listener, opt_capt, opt_handler);
+  var listenerObj = goog.events.listeners_[key];
+  listenerObj.callOnce = true;
+  return key
+};
+goog.events.listenWithWrapper = function(src, wrapper, listener, opt_capt, opt_handler) {
+  wrapper.listen(src, listener, opt_capt, opt_handler)
+};
+goog.events.unlisten = function(src, type, listener, opt_capt, opt_handler) {
+  if(goog.isArray(type)) {
+    for(var i = 0;i < type.length;i++) {
+      goog.events.unlisten(src, type[i], listener, opt_capt, opt_handler)
+    }
+    return null
+  }
+  var capture = !!opt_capt;
+  var listenerArray = goog.events.getListeners_(src, type, capture);
+  if(!listenerArray) {
+    return false
+  }
+  for(var i = 0;i < listenerArray.length;i++) {
+    if(listenerArray[i].listener == listener && listenerArray[i].capture == capture && listenerArray[i].handler == opt_handler) {
+      return goog.events.unlistenByKey(listenerArray[i].key)
+    }
+  }
+  return false
+};
+goog.events.unlistenByKey = function(key) {
+  if(!goog.events.listeners_[key]) {
+    return false
+  }
+  var listener = goog.events.listeners_[key];
+  if(listener.removed) {
+    return false
+  }
+  var src = listener.src;
+  var type = listener.type;
+  var proxy = listener.proxy;
+  var capture = listener.capture;
+  if(src.removeEventListener) {
+    if(src == goog.global || !src.customEvent_) {
+      src.removeEventListener(type, proxy, capture)
+    }
+  }else {
+    if(src.detachEvent) {
+      src.detachEvent(goog.events.getOnString_(type), proxy)
+    }
+  }
+  var srcUid = goog.getUid(src);
+  var listenerArray = goog.events.listenerTree_[type][capture][srcUid];
+  if(goog.events.sources_[srcUid]) {
+    var sourcesArray = goog.events.sources_[srcUid];
+    goog.array.remove(sourcesArray, listener);
+    if(sourcesArray.length == 0) {
+      delete goog.events.sources_[srcUid]
+    }
+  }
+  listener.removed = true;
+  listenerArray.needsCleanup_ = true;
+  goog.events.cleanUp_(type, capture, srcUid, listenerArray);
+  delete goog.events.listeners_[key];
+  return true
+};
+goog.events.unlistenWithWrapper = function(src, wrapper, listener, opt_capt, opt_handler) {
+  wrapper.unlisten(src, listener, opt_capt, opt_handler)
+};
+goog.events.cleanUp_ = function(type, capture, srcUid, listenerArray) {
+  if(!listenerArray.locked_) {
+    if(listenerArray.needsCleanup_) {
+      for(var oldIndex = 0, newIndex = 0;oldIndex < listenerArray.length;oldIndex++) {
+        if(listenerArray[oldIndex].removed) {
+          var proxy = listenerArray[oldIndex].proxy;
+          proxy.src = null;
+          continue
+        }
+        if(oldIndex != newIndex) {
+          listenerArray[newIndex] = listenerArray[oldIndex]
+        }
+        newIndex++
+      }
+      listenerArray.length = newIndex;
+      listenerArray.needsCleanup_ = false;
+      if(newIndex == 0) {
+        delete goog.events.listenerTree_[type][capture][srcUid];
+        goog.events.listenerTree_[type][capture].count_--;
+        if(goog.events.listenerTree_[type][capture].count_ == 0) {
+          delete goog.events.listenerTree_[type][capture];
+          goog.events.listenerTree_[type].count_--
+        }
+        if(goog.events.listenerTree_[type].count_ == 0) {
+          delete goog.events.listenerTree_[type]
+        }
+      }
+    }
+  }
+};
+goog.events.removeAll = function(opt_obj, opt_type, opt_capt) {
+  var count = 0;
+  var noObj = opt_obj == null;
+  var noType = opt_type == null;
+  var noCapt = opt_capt == null;
+  opt_capt = !!opt_capt;
+  if(!noObj) {
+    var srcUid = goog.getUid(opt_obj);
+    if(goog.events.sources_[srcUid]) {
+      var sourcesArray = goog.events.sources_[srcUid];
+      for(var i = sourcesArray.length - 1;i >= 0;i--) {
+        var listener = sourcesArray[i];
+        if((noType || opt_type == listener.type) && (noCapt || opt_capt == listener.capture)) {
+          goog.events.unlistenByKey(listener.key);
+          count++
+        }
+      }
+    }
+  }else {
+    goog.object.forEach(goog.events.sources_, function(listeners) {
+      for(var i = listeners.length - 1;i >= 0;i--) {
+        var listener = listeners[i];
+        if((noType || opt_type == listener.type) && (noCapt || opt_capt == listener.capture)) {
+          goog.events.unlistenByKey(listener.key);
+          count++
+        }
+      }
+    })
+  }
+  return count
+};
+goog.events.getListeners = function(obj, type, capture) {
+  return goog.events.getListeners_(obj, type, capture) || []
+};
+goog.events.getListeners_ = function(obj, type, capture) {
+  var map = goog.events.listenerTree_;
+  if(type in map) {
+    map = map[type];
+    if(capture in map) {
+      map = map[capture];
+      var objUid = goog.getUid(obj);
+      if(map[objUid]) {
+        return map[objUid]
+      }
+    }
+  }
+  return null
+};
+goog.events.getListener = function(src, type, listener, opt_capt, opt_handler) {
+  var capture = !!opt_capt;
+  var listenerArray = goog.events.getListeners_(src, type, capture);
+  if(listenerArray) {
+    for(var i = 0;i < listenerArray.length;i++) {
+      if(!listenerArray[i].removed && listenerArray[i].listener == listener && listenerArray[i].capture == capture && listenerArray[i].handler == opt_handler) {
+        return listenerArray[i]
+      }
+    }
+  }
+  return null
+};
+goog.events.hasListener = function(obj, opt_type, opt_capture) {
+  var objUid = goog.getUid(obj);
+  var listeners = goog.events.sources_[objUid];
+  if(listeners) {
+    var hasType = goog.isDef(opt_type);
+    var hasCapture = goog.isDef(opt_capture);
+    if(hasType && hasCapture) {
+      var map = goog.events.listenerTree_[opt_type];
+      return!!map && !!map[opt_capture] && objUid in map[opt_capture]
+    }else {
+      if(!(hasType || hasCapture)) {
+        return true
+      }else {
+        return goog.array.some(listeners, function(listener) {
+          return hasType && listener.type == opt_type || hasCapture && listener.capture == opt_capture
+        })
+      }
+    }
+  }
+  return false
+};
+goog.events.expose = function(e) {
+  var str = [];
+  for(var key in e) {
+    if(e[key] && e[key].id) {
+      str.push(key + " = " + e[key] + " (" + e[key].id + ")")
+    }else {
+      str.push(key + " = " + e[key])
+    }
+  }
+  return str.join("\n")
+};
+goog.events.getOnString_ = function(type) {
+  if(type in goog.events.onStringMap_) {
+    return goog.events.onStringMap_[type]
+  }
+  return goog.events.onStringMap_[type] = goog.events.onString_ + type
+};
+goog.events.fireListeners = function(obj, type, capture, eventObject) {
+  var map = goog.events.listenerTree_;
+  if(type in map) {
+    map = map[type];
+    if(capture in map) {
+      return goog.events.fireListeners_(map[capture], obj, type, capture, eventObject)
+    }
+  }
+  return true
+};
+goog.events.fireListeners_ = function(map, obj, type, capture, eventObject) {
+  var retval = 1;
+  var objUid = goog.getUid(obj);
+  if(map[objUid]) {
+    map.remaining_--;
+    var listenerArray = map[objUid];
+    if(!listenerArray.locked_) {
+      listenerArray.locked_ = 1
+    }else {
+      listenerArray.locked_++
+    }
+    try {
+      var length = listenerArray.length;
+      for(var i = 0;i < length;i++) {
+        var listener = listenerArray[i];
+        if(listener && !listener.removed) {
+          retval &= goog.events.fireListener(listener, eventObject) !== false
+        }
+      }
+    }finally {
+      listenerArray.locked_--;
+      goog.events.cleanUp_(type, capture, objUid, listenerArray)
+    }
+  }
+  return Boolean(retval)
+};
+goog.events.fireListener = function(listener, eventObject) {
+  var rv = listener.handleEvent(eventObject);
+  if(listener.callOnce) {
+    goog.events.unlistenByKey(listener.key)
+  }
+  return rv
+};
+goog.events.getTotalListenerCount = function() {
+  return goog.object.getCount(goog.events.listeners_)
+};
+goog.events.dispatchEvent = function(src, e) {
+  var type = e.type || e;
+  var map = goog.events.listenerTree_;
+  if(!(type in map)) {
+    return true
+  }
+  if(goog.isString(e)) {
+    e = new goog.events.Event(e, src)
+  }else {
+    if(!(e instanceof goog.events.Event)) {
+      var oldEvent = e;
+      e = new goog.events.Event(type, src);
+      goog.object.extend(e, oldEvent)
+    }else {
+      e.target = e.target || src
+    }
+  }
+  var rv = 1, ancestors;
+  map = map[type];
+  var hasCapture = true in map;
+  var targetsMap;
+  if(hasCapture) {
+    ancestors = [];
+    for(var parent = src;parent;parent = parent.getParentEventTarget()) {
+      ancestors.push(parent)
+    }
+    targetsMap = map[true];
+    targetsMap.remaining_ = targetsMap.count_;
+    for(var i = ancestors.length - 1;!e.propagationStopped_ && i >= 0 && targetsMap.remaining_;i--) {
+      e.currentTarget = ancestors[i];
+      rv &= goog.events.fireListeners_(targetsMap, ancestors[i], e.type, true, e) && e.returnValue_ != false
+    }
+  }
+  var hasBubble = false in map;
+  if(hasBubble) {
+    targetsMap = map[false];
+    targetsMap.remaining_ = targetsMap.count_;
+    if(hasCapture) {
+      for(var i = 0;!e.propagationStopped_ && i < ancestors.length && targetsMap.remaining_;i++) {
+        e.currentTarget = ancestors[i];
+        rv &= goog.events.fireListeners_(targetsMap, ancestors[i], e.type, false, e) && e.returnValue_ != false
+      }
+    }else {
+      for(var current = src;!e.propagationStopped_ && current && targetsMap.remaining_;current = current.getParentEventTarget()) {
+        e.currentTarget = current;
+        rv &= goog.events.fireListeners_(targetsMap, current, e.type, false, e) && e.returnValue_ != false
+      }
+    }
+  }
+  return Boolean(rv)
+};
+goog.events.protectBrowserEventEntryPoint = function(errorHandler) {
+  goog.events.handleBrowserEvent_ = errorHandler.protectEntryPoint(goog.events.handleBrowserEvent_)
+};
+goog.events.handleBrowserEvent_ = function(key, opt_evt) {
+  if(!goog.events.listeners_[key]) {
+    return true
+  }
+  var listener = goog.events.listeners_[key];
+  var type = listener.type;
+  var map = goog.events.listenerTree_;
+  if(!(type in map)) {
+    return true
+  }
+  map = map[type];
+  var retval, targetsMap;
+  if(!goog.events.BrowserFeature.HAS_W3C_EVENT_SUPPORT) {
+    var ieEvent = opt_evt || goog.getObjectByName("window.event");
+    var hasCapture = true in map;
+    var hasBubble = false in map;
+    if(hasCapture) {
+      if(goog.events.isMarkedIeEvent_(ieEvent)) {
+        return true
+      }
+      goog.events.markIeEvent_(ieEvent)
+    }
+    var evt = new goog.events.BrowserEvent;
+    evt.init(ieEvent, this);
+    retval = true;
+    try {
+      if(hasCapture) {
+        var ancestors = [];
+        for(var parent = evt.currentTarget;parent;parent = parent.parentNode) {
+          ancestors.push(parent)
+        }
+        targetsMap = map[true];
+        targetsMap.remaining_ = targetsMap.count_;
+        for(var i = ancestors.length - 1;!evt.propagationStopped_ && i >= 0 && targetsMap.remaining_;i--) {
+          evt.currentTarget = ancestors[i];
+          retval &= goog.events.fireListeners_(targetsMap, ancestors[i], type, true, evt)
+        }
+        if(hasBubble) {
+          targetsMap = map[false];
+          targetsMap.remaining_ = targetsMap.count_;
+          for(var i = 0;!evt.propagationStopped_ && i < ancestors.length && targetsMap.remaining_;i++) {
+            evt.currentTarget = ancestors[i];
+            retval &= goog.events.fireListeners_(targetsMap, ancestors[i], type, false, evt)
+          }
+        }
+      }else {
+        retval = goog.events.fireListener(listener, evt)
+      }
+    }finally {
+      if(ancestors) {
+        ancestors.length = 0
+      }
+      evt.dispose()
+    }
+    return retval
+  }
+  var be = new goog.events.BrowserEvent(opt_evt, this);
+  try {
+    retval = goog.events.fireListener(listener, be)
+  }finally {
+    be.dispose()
+  }
+  return retval
+};
+goog.events.markIeEvent_ = function(e) {
+  var useReturnValue = false;
+  if(e.keyCode == 0) {
+    try {
+      e.keyCode = -1;
+      return
+    }catch(ex) {
+      useReturnValue = true
+    }
+  }
+  if(useReturnValue || e.returnValue == undefined) {
+    e.returnValue = true
+  }
+};
+goog.events.isMarkedIeEvent_ = function(e) {
+  return e.keyCode < 0 || e.returnValue != undefined
+};
+goog.events.uniqueIdCounter_ = 0;
+goog.events.getUniqueId = function(identifier) {
+  return identifier + "_" + goog.events.uniqueIdCounter_++
+};
+goog.debug.entryPointRegistry.register(function(transformer) {
+  goog.events.handleBrowserEvent_ = transformer(goog.events.handleBrowserEvent_)
+});
 goog.provide("goog.dom.BrowserFeature");
 goog.require("goog.userAgent");
 goog.dom.BrowserFeature = {CAN_ADD_NAME_OR_TYPE_ATTRIBUTES:!goog.userAgent.IE || goog.userAgent.isDocumentMode(9), CAN_USE_CHILDREN_ATTRIBUTE:!goog.userAgent.GECKO && !goog.userAgent.IE || goog.userAgent.IE && goog.userAgent.isDocumentMode(9) || goog.userAgent.GECKO && goog.userAgent.isVersion("1.9.1"), CAN_USE_INNER_TEXT:goog.userAgent.IE && !goog.userAgent.isVersion("9"), INNER_HTML_NEEDS_SCOPED_ELEMENT:goog.userAgent.IE};
@@ -12781,41 +13691,48 @@ goog.math.Coordinate.difference = function(a, b) {
 goog.math.Coordinate.sum = function(a, b) {
   return new goog.math.Coordinate(a.x + b.x, a.y + b.y)
 };
-goog.provide("webgl.constants");
-goog.require("cljs.core");
-webgl.constants.flags = cljs.core.ObjMap.fromObject(["\ufdd0'float", "\ufdd0'array", "\ufdd0'index", "\ufdd0'static", "\ufdd0'color-buffer", "\ufdd0'triangles"], {"\ufdd0'float":WebGLRenderingContext.FLOAT, "\ufdd0'array":WebGLRenderingContext.ARRAY_BUFFER, "\ufdd0'index":WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, "\ufdd0'static":WebGLRenderingContext.STATIC_DRAW, "\ufdd0'color-buffer":WebGLRenderingContext.COLOR_BUFFER_BIT, "\ufdd0'triangles":WebGLRenderingContext.TRIANGLES});
-webgl.constants.get = webgl.constants.flags;
 goog.provide("webgl.buffers");
 goog.require("cljs.core");
 goog.require("webgl.constants");
-webgl.buffers.Buffer = function(id, type) {
-  this.id = id;
-  this.type = type
+goog.require("webgl.api");
+webgl.buffers.Buffer = function(type, id) {
+  this.type = type;
+  this.id = id
 };
 webgl.buffers.Buffer.cljs$lang$type = true;
 webgl.buffers.Buffer.cljs$lang$ctorPrSeq = function(this__2310__auto__) {
   return cljs.core.list.call(null, "webgl.buffers/Buffer")
 };
 webgl.buffers.Buffer;
-webgl.buffers.bind = function bind(gl, buffer) {
-  return gl.bindBuffer(buffer.type, buffer.id)
+webgl.buffers.bind = function bind(buffer) {
+  return webgl.api.bind_buffer.call(null, buffer.type, buffer.id)
 };
-webgl.buffers.make = function make(gl, buffer_type, content) {
-  var type_flag__6106 = webgl.constants.get.call(null, buffer_type);
-  var id__6107 = gl.createBuffer();
-  var buffer__6108 = new webgl.buffers.Buffer(id__6107, type_flag__6106);
-  var G__6109__6110 = gl;
-  webgl.buffers.bind.call(null, G__6109__6110, buffer__6108);
-  G__6109__6110.bufferData(type_flag__6106, new Float32Array(content), webgl.constants.get.call(null, "\ufdd0'static"));
-  G__6109__6110;
-  return buffer__6108
+webgl.buffers.make = function make(buffer_type, content) {
+  var id__211133 = webgl.api.make_buffer.call(null);
+  var buffer__211134 = new webgl.buffers.Buffer(buffer_type, id__211133);
+  webgl.buffers.bind.call(null, buffer__211134);
+  webgl.api.buffer_data.call(null, buffer_type, content);
+  return buffer__211134
 };
+webgl.buffers.as_bindable = cljs.core.constantly;
 goog.provide("webgl.matrix");
 goog.require("cljs.core");
-webgl.matrix.rotation = function rotation(z) {
+webgl.matrix.x_rotation = function x_rotation(angle) {
   return function(frame) {
-    var z__6102 = z.call(null, frame);
-    return[Math.cos(z__6102), -Math.sin(z__6102), 0, 0, Math.sin(z__6102), Math.cos(z__6102), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+    var angle__229357 = angle.call(null, frame);
+    return[1, 0, 0, 0, 0, Math.cos(angle__229357), -Math.sin(angle__229357), 0, 0, Math.sin(angle__229357), Math.cos(angle__229357), 0, 0, 0, 0, 1]
+  }
+};
+webgl.matrix.y_rotation = function y_rotation(angle) {
+  return function(frame) {
+    var angle__229359 = angle.call(null, frame);
+    return[Math.cos(angle__229359), 0, Math.sin(angle__229359), 0, 0, 1, 0, 0, -Math.sin(angle__229359), 0, Math.cos(angle__229359), 0, 0, 0, 0, 1]
+  }
+};
+webgl.matrix.z_rotation = function z_rotation(angle) {
+  return function(frame) {
+    var angle__229361 = angle.call(null, frame);
+    return[Math.cos(angle__229361), -Math.sin(angle__229361), 0, 0, Math.sin(angle__229361), Math.cos(angle__229361), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
   }
 };
 goog.provide("goog.math.Size");
@@ -13769,29 +14686,29 @@ goog.dom.DomHelper.prototype.getAncestor = goog.dom.getAncestor;
 goog.provide("webgl.shader");
 goog.require("cljs.core");
 goog.require("webgl.shader.code");
-goog.require("webgl.constants");
 goog.require("webgl.buffers");
+goog.require("webgl.api");
 webgl.shader.GLSLType = {};
 webgl.shader.type_name = function type_name(_) {
   if(function() {
-    var and__3822__auto____113970 = _;
-    if(and__3822__auto____113970) {
+    var and__3822__auto____225753 = _;
+    if(and__3822__auto____225753) {
       return _.webgl$shader$GLSLType$type_name$arity$1
     }else {
-      return and__3822__auto____113970
+      return and__3822__auto____225753
     }
   }()) {
     return _.webgl$shader$GLSLType$type_name$arity$1(_)
   }else {
-    var x__2363__auto____113971 = _ == null ? null : _;
+    var x__2363__auto____225754 = _ == null ? null : _;
     return function() {
-      var or__3824__auto____113972 = webgl.shader.type_name[goog.typeOf(x__2363__auto____113971)];
-      if(or__3824__auto____113972) {
-        return or__3824__auto____113972
+      var or__3824__auto____225755 = webgl.shader.type_name[goog.typeOf(x__2363__auto____225754)];
+      if(or__3824__auto____225755) {
+        return or__3824__auto____225755
       }else {
-        var or__3824__auto____113973 = webgl.shader.type_name["_"];
-        if(or__3824__auto____113973) {
-          return or__3824__auto____113973
+        var or__3824__auto____225756 = webgl.shader.type_name["_"];
+        if(or__3824__auto____225756) {
+          return or__3824__auto____225756
         }else {
           throw cljs.core.missing_protocol.call(null, "GLSLType.type-name", _);
         }
@@ -13802,24 +14719,24 @@ webgl.shader.type_name = function type_name(_) {
 webgl.shader.Declare = {};
 webgl.shader.declare = function declare(_) {
   if(function() {
-    var and__3822__auto____113978 = _;
-    if(and__3822__auto____113978) {
+    var and__3822__auto____225761 = _;
+    if(and__3822__auto____225761) {
       return _.webgl$shader$Declare$declare$arity$1
     }else {
-      return and__3822__auto____113978
+      return and__3822__auto____225761
     }
   }()) {
     return _.webgl$shader$Declare$declare$arity$1(_)
   }else {
-    var x__2363__auto____113979 = _ == null ? null : _;
+    var x__2363__auto____225762 = _ == null ? null : _;
     return function() {
-      var or__3824__auto____113980 = webgl.shader.declare[goog.typeOf(x__2363__auto____113979)];
-      if(or__3824__auto____113980) {
-        return or__3824__auto____113980
+      var or__3824__auto____225763 = webgl.shader.declare[goog.typeOf(x__2363__auto____225762)];
+      if(or__3824__auto____225763) {
+        return or__3824__auto____225763
       }else {
-        var or__3824__auto____113981 = webgl.shader.declare["_"];
-        if(or__3824__auto____113981) {
-          return or__3824__auto____113981
+        var or__3824__auto____225764 = webgl.shader.declare["_"];
+        if(or__3824__auto____225764) {
+          return or__3824__auto____225764
         }else {
           throw cljs.core.missing_protocol.call(null, "Declare.declare", _);
         }
@@ -13830,24 +14747,24 @@ webgl.shader.declare = function declare(_) {
 webgl.shader.Compile = {};
 webgl.shader.compile = function compile(_) {
   if(function() {
-    var and__3822__auto____113986 = _;
-    if(and__3822__auto____113986) {
+    var and__3822__auto____225769 = _;
+    if(and__3822__auto____225769) {
       return _.webgl$shader$Compile$compile$arity$1
     }else {
-      return and__3822__auto____113986
+      return and__3822__auto____225769
     }
   }()) {
     return _.webgl$shader$Compile$compile$arity$1(_)
   }else {
-    var x__2363__auto____113987 = _ == null ? null : _;
+    var x__2363__auto____225770 = _ == null ? null : _;
     return function() {
-      var or__3824__auto____113988 = webgl.shader.compile[goog.typeOf(x__2363__auto____113987)];
-      if(or__3824__auto____113988) {
-        return or__3824__auto____113988
+      var or__3824__auto____225771 = webgl.shader.compile[goog.typeOf(x__2363__auto____225770)];
+      if(or__3824__auto____225771) {
+        return or__3824__auto____225771
       }else {
-        var or__3824__auto____113989 = webgl.shader.compile["_"];
-        if(or__3824__auto____113989) {
-          return or__3824__auto____113989
+        var or__3824__auto____225772 = webgl.shader.compile["_"];
+        if(or__3824__auto____225772) {
+          return or__3824__auto____225772
         }else {
           throw cljs.core.missing_protocol.call(null, "Compile.compile", _);
         }
@@ -13856,110 +14773,110 @@ webgl.shader.compile = function compile(_) {
   }
 };
 webgl.shader.Bind = {};
-webgl.shader.bind = function bind(_, gl, program, val) {
+webgl.shader.bind = function bind(_, program, frame) {
   if(function() {
-    var and__3822__auto____113994 = _;
-    if(and__3822__auto____113994) {
-      return _.webgl$shader$Bind$bind$arity$4
+    var and__3822__auto____225777 = _;
+    if(and__3822__auto____225777) {
+      return _.webgl$shader$Bind$bind$arity$3
     }else {
-      return and__3822__auto____113994
+      return and__3822__auto____225777
     }
   }()) {
-    return _.webgl$shader$Bind$bind$arity$4(_, gl, program, val)
+    return _.webgl$shader$Bind$bind$arity$3(_, program, frame)
   }else {
-    var x__2363__auto____113995 = _ == null ? null : _;
+    var x__2363__auto____225778 = _ == null ? null : _;
     return function() {
-      var or__3824__auto____113996 = webgl.shader.bind[goog.typeOf(x__2363__auto____113995)];
-      if(or__3824__auto____113996) {
-        return or__3824__auto____113996
+      var or__3824__auto____225779 = webgl.shader.bind[goog.typeOf(x__2363__auto____225778)];
+      if(or__3824__auto____225779) {
+        return or__3824__auto____225779
       }else {
-        var or__3824__auto____113997 = webgl.shader.bind["_"];
-        if(or__3824__auto____113997) {
-          return or__3824__auto____113997
+        var or__3824__auto____225780 = webgl.shader.bind["_"];
+        if(or__3824__auto____225780) {
+          return or__3824__auto____225780
         }else {
           throw cljs.core.missing_protocol.call(null, "Bind.bind", _);
         }
       }
-    }().call(null, _, gl, program, val)
+    }().call(null, _, program, frame)
   }
 };
 webgl.shader.ToAttribute = {};
-webgl.shader.to_attribute = function to_attribute(_, gl, location, val) {
+webgl.shader.to_attribute = function to_attribute(_, location, val) {
   if(function() {
-    var and__3822__auto____114002 = _;
-    if(and__3822__auto____114002) {
-      return _.webgl$shader$ToAttribute$to_attribute$arity$4
+    var and__3822__auto____225785 = _;
+    if(and__3822__auto____225785) {
+      return _.webgl$shader$ToAttribute$to_attribute$arity$3
     }else {
-      return and__3822__auto____114002
+      return and__3822__auto____225785
     }
   }()) {
-    return _.webgl$shader$ToAttribute$to_attribute$arity$4(_, gl, location, val)
+    return _.webgl$shader$ToAttribute$to_attribute$arity$3(_, location, val)
   }else {
-    var x__2363__auto____114003 = _ == null ? null : _;
+    var x__2363__auto____225786 = _ == null ? null : _;
     return function() {
-      var or__3824__auto____114004 = webgl.shader.to_attribute[goog.typeOf(x__2363__auto____114003)];
-      if(or__3824__auto____114004) {
-        return or__3824__auto____114004
+      var or__3824__auto____225787 = webgl.shader.to_attribute[goog.typeOf(x__2363__auto____225786)];
+      if(or__3824__auto____225787) {
+        return or__3824__auto____225787
       }else {
-        var or__3824__auto____114005 = webgl.shader.to_attribute["_"];
-        if(or__3824__auto____114005) {
-          return or__3824__auto____114005
+        var or__3824__auto____225788 = webgl.shader.to_attribute["_"];
+        if(or__3824__auto____225788) {
+          return or__3824__auto____225788
         }else {
           throw cljs.core.missing_protocol.call(null, "ToAttribute.to-attribute", _);
         }
       }
-    }().call(null, _, gl, location, val)
+    }().call(null, _, location, val)
   }
 };
 webgl.shader.ToUniform = {};
-webgl.shader.to_uniform = function to_uniform(_, gl, location, val) {
+webgl.shader.to_uniform = function to_uniform(_, location, val) {
   if(function() {
-    var and__3822__auto____114010 = _;
-    if(and__3822__auto____114010) {
-      return _.webgl$shader$ToUniform$to_uniform$arity$4
+    var and__3822__auto____225793 = _;
+    if(and__3822__auto____225793) {
+      return _.webgl$shader$ToUniform$to_uniform$arity$3
     }else {
-      return and__3822__auto____114010
+      return and__3822__auto____225793
     }
   }()) {
-    return _.webgl$shader$ToUniform$to_uniform$arity$4(_, gl, location, val)
+    return _.webgl$shader$ToUniform$to_uniform$arity$3(_, location, val)
   }else {
-    var x__2363__auto____114011 = _ == null ? null : _;
+    var x__2363__auto____225794 = _ == null ? null : _;
     return function() {
-      var or__3824__auto____114012 = webgl.shader.to_uniform[goog.typeOf(x__2363__auto____114011)];
-      if(or__3824__auto____114012) {
-        return or__3824__auto____114012
+      var or__3824__auto____225795 = webgl.shader.to_uniform[goog.typeOf(x__2363__auto____225794)];
+      if(or__3824__auto____225795) {
+        return or__3824__auto____225795
       }else {
-        var or__3824__auto____114013 = webgl.shader.to_uniform["_"];
-        if(or__3824__auto____114013) {
-          return or__3824__auto____114013
+        var or__3824__auto____225796 = webgl.shader.to_uniform["_"];
+        if(or__3824__auto____225796) {
+          return or__3824__auto____225796
         }else {
           throw cljs.core.missing_protocol.call(null, "ToUniform.to-uniform", _);
         }
       }
-    }().call(null, _, gl, location, val)
+    }().call(null, _, location, val)
   }
 };
 webgl.shader.AttributeBinder = {};
 webgl.shader.attribute_binder = function attribute_binder(_) {
   if(function() {
-    var and__3822__auto____114018 = _;
-    if(and__3822__auto____114018) {
+    var and__3822__auto____225801 = _;
+    if(and__3822__auto____225801) {
       return _.webgl$shader$AttributeBinder$attribute_binder$arity$1
     }else {
-      return and__3822__auto____114018
+      return and__3822__auto____225801
     }
   }()) {
     return _.webgl$shader$AttributeBinder$attribute_binder$arity$1(_)
   }else {
-    var x__2363__auto____114019 = _ == null ? null : _;
+    var x__2363__auto____225802 = _ == null ? null : _;
     return function() {
-      var or__3824__auto____114020 = webgl.shader.attribute_binder[goog.typeOf(x__2363__auto____114019)];
-      if(or__3824__auto____114020) {
-        return or__3824__auto____114020
+      var or__3824__auto____225803 = webgl.shader.attribute_binder[goog.typeOf(x__2363__auto____225802)];
+      if(or__3824__auto____225803) {
+        return or__3824__auto____225803
       }else {
-        var or__3824__auto____114021 = webgl.shader.attribute_binder["_"];
-        if(or__3824__auto____114021) {
-          return or__3824__auto____114021
+        var or__3824__auto____225804 = webgl.shader.attribute_binder["_"];
+        if(or__3824__auto____225804) {
+          return or__3824__auto____225804
         }else {
           throw cljs.core.missing_protocol.call(null, "AttributeBinder.attribute-binder", _);
         }
@@ -13969,12 +14886,10 @@ webgl.shader.attribute_binder = function attribute_binder(_) {
 };
 webgl.buffers.Buffer.prototype.webgl$shader$AttributeBinder$ = true;
 webgl.buffers.Buffer.prototype.webgl$shader$AttributeBinder$attribute_binder$arity$1 = function(this$) {
-  return function(gl, location, size, val) {
-    var G__114022__114023 = gl;
-    webgl.buffers.bind.call(null, G__114022__114023, this$);
-    G__114022__114023.vertexAttribPointer(location, size, webgl.constants.get.call(null, "\ufdd0'float"), false, 0, 0);
-    G__114022__114023.enableVertexAttribArray(location);
-    return G__114022__114023
+  return function(location, size, val) {
+    webgl.buffers.bind.call(null, this$);
+    webgl.api.vertex_attribute_pointer.call(null, location, size, "\ufdd0'float", false, 0, 0);
+    return webgl.api.enable_vertex_attribute_array.call(null, location)
   }
 };
 webgl.shader.Vec4 = function() {
@@ -13984,14 +14899,14 @@ webgl.shader.Vec4.cljs$lang$ctorPrSeq = function(this__2309__auto__) {
   return cljs.core.list.call(null, "webgl.shader/Vec4")
 };
 webgl.shader.Vec4.prototype.webgl$shader$ToAttribute$ = true;
-webgl.shader.Vec4.prototype.webgl$shader$ToAttribute$to_attribute$arity$4 = function(_, gl, location, val) {
-  var this__114024 = this;
-  var binder__114025 = webgl.shader.attribute_binder.call(null, val);
-  return binder__114025.call(null, gl, location, 3, val)
+webgl.shader.Vec4.prototype.webgl$shader$ToAttribute$to_attribute$arity$3 = function(_, location, val) {
+  var this__225805 = this;
+  var binder__225806 = webgl.shader.attribute_binder.call(null, val);
+  return binder__225806.call(null, location, 3, val)
 };
 webgl.shader.Vec4.prototype.webgl$shader$GLSLType$ = true;
 webgl.shader.Vec4.prototype.webgl$shader$GLSLType$type_name$arity$1 = function(_) {
-  var this__114026 = this;
+  var this__225807 = this;
   return"vec4"
 };
 webgl.shader.Vec4;
@@ -14002,75 +14917,79 @@ webgl.shader.Mat4.cljs$lang$ctorPrSeq = function(this__2309__auto__) {
   return cljs.core.list.call(null, "webgl.shader/Mat4")
 };
 webgl.shader.Mat4.prototype.webgl$shader$ToUniform$ = true;
-webgl.shader.Mat4.prototype.webgl$shader$ToUniform$to_uniform$arity$4 = function(_, gl, location, val) {
-  var this__114027 = this;
-  return gl.uniformMatrix4fv(location, false, new Float32Array(val))
+webgl.shader.Mat4.prototype.webgl$shader$ToUniform$to_uniform$arity$3 = function(_, location, value) {
+  var this__225808 = this;
+  return webgl.api.uniform_matrix.call(null, location, value)
 };
 webgl.shader.Mat4.prototype.webgl$shader$GLSLType$ = true;
 webgl.shader.Mat4.prototype.webgl$shader$GLSLType$type_name$arity$1 = function(_) {
-  var this__114028 = this;
+  var this__225809 = this;
   return"mat4"
 };
 webgl.shader.Mat4;
 webgl.shader.vec4 = new webgl.shader.Vec4;
 webgl.shader.mat4 = new webgl.shader.Mat4;
-webgl.shader.Attribute = function(type, name, printer) {
+webgl.shader.Attribute = function(type, name, printer, value_fn) {
   this.type = type;
   this.name = name;
-  this.printer = printer
+  this.printer = printer;
+  this.value_fn = value_fn
 };
 webgl.shader.Attribute.cljs$lang$type = true;
 webgl.shader.Attribute.cljs$lang$ctorPrSeq = function(this__2309__auto__) {
   return cljs.core.list.call(null, "webgl.shader/Attribute")
 };
 webgl.shader.Attribute.prototype.webgl$shader$Bind$ = true;
-webgl.shader.Attribute.prototype.webgl$shader$Bind$bind$arity$4 = function(_, gl, prog, val) {
-  var this__114029 = this;
-  var location__114030 = gl.getAttribLocation(prog, this__114029.name);
-  return webgl.shader.to_attribute.call(null, this__114029.type, gl, location__114030, val)
+webgl.shader.Attribute.prototype.webgl$shader$Bind$bind$arity$3 = function(_, prog, frame) {
+  var this__225810 = this;
+  var location__225811 = webgl.api.attribute_location.call(null, prog, this__225810.name);
+  var value__225812 = this__225810.value_fn.call(null, frame);
+  return webgl.shader.to_attribute.call(null, this__225810.type, location__225811, value__225812)
 };
 webgl.shader.Attribute.prototype.webgl$shader$Compile$ = true;
 webgl.shader.Attribute.prototype.webgl$shader$Compile$compile$arity$1 = function(_) {
-  var this__114031 = this;
-  return this__114031.name
+  var this__225813 = this;
+  return this__225813.name
 };
 webgl.shader.Attribute.prototype.webgl$shader$Declare$ = true;
 webgl.shader.Attribute.prototype.webgl$shader$Declare$declare$arity$1 = function(_) {
-  var this__114032 = this;
-  return this__114032.printer.call(null, "attribute", webgl.shader.type_name.call(null, this__114032.type), this__114032.name)
+  var this__225814 = this;
+  return this__225814.printer.call(null, "attribute", webgl.shader.type_name.call(null, this__225814.type), this__225814.name)
 };
 webgl.shader.Attribute;
-webgl.shader.Uniform = function(type, name, printer) {
+webgl.shader.Uniform = function(type, name, printer, value_fn) {
   this.type = type;
   this.name = name;
-  this.printer = printer
+  this.printer = printer;
+  this.value_fn = value_fn
 };
 webgl.shader.Uniform.cljs$lang$type = true;
 webgl.shader.Uniform.cljs$lang$ctorPrSeq = function(this__2309__auto__) {
   return cljs.core.list.call(null, "webgl.shader/Uniform")
 };
 webgl.shader.Uniform.prototype.webgl$shader$Bind$ = true;
-webgl.shader.Uniform.prototype.webgl$shader$Bind$bind$arity$4 = function(_, gl, prog, val) {
-  var this__114033 = this;
-  var location__114034 = gl.getUniformLocation(prog, this__114033.name);
-  return webgl.shader.to_uniform.call(null, this__114033.type, gl, location__114034, val)
+webgl.shader.Uniform.prototype.webgl$shader$Bind$bind$arity$3 = function(_, prog, frame) {
+  var this__225815 = this;
+  var location__225816 = webgl.api.uniform_location.call(null, prog, this__225815.name);
+  var value__225817 = this__225815.value_fn.call(null, frame);
+  return webgl.shader.to_uniform.call(null, this__225815.type, location__225816, value__225817)
 };
 webgl.shader.Uniform.prototype.webgl$shader$Compile$ = true;
 webgl.shader.Uniform.prototype.webgl$shader$Compile$compile$arity$1 = function(_) {
-  var this__114035 = this;
-  return this__114035.name
+  var this__225818 = this;
+  return this__225818.name
 };
 webgl.shader.Uniform.prototype.webgl$shader$Declare$ = true;
 webgl.shader.Uniform.prototype.webgl$shader$Declare$declare$arity$1 = function(_) {
-  var this__114036 = this;
-  return this__114036.printer.call(null, "uniform", webgl.shader.type_name.call(null, this__114036.type), this__114036.name)
+  var this__225819 = this;
+  return this__225819.printer.call(null, "uniform", webgl.shader.type_name.call(null, this__225819.type), this__225819.name)
 };
 webgl.shader.Uniform;
-webgl.shader.attribute = function attribute(type) {
-  return new webgl.shader.Attribute(type, webgl.shader.code.identifier.call(null, "\ufdd0'attribute"), webgl.shader.code.attribute_printer)
+webgl.shader.attribute = function attribute(type, value_fn) {
+  return new webgl.shader.Attribute(type, webgl.shader.code.identifier.call(null, "\ufdd0'attribute"), webgl.shader.code.attribute_printer, value_fn)
 };
-webgl.shader.uniform = function uniform(type) {
-  return new webgl.shader.Uniform(type, webgl.shader.code.identifier.call(null, "\ufdd0'uniform"), webgl.shader.code.attribute_printer)
+webgl.shader.uniform = function uniform(type, value_fn) {
+  return new webgl.shader.Uniform(type, webgl.shader.code.identifier.call(null, "\ufdd0'uniform"), webgl.shader.code.attribute_printer, value_fn)
 };
 webgl.shader.Multiply = function(args) {
   this.args = args
@@ -14081,8 +15000,8 @@ webgl.shader.Multiply.cljs$lang$ctorPrSeq = function(this__2309__auto__) {
 };
 webgl.shader.Multiply.prototype.webgl$shader$Compile$ = true;
 webgl.shader.Multiply.prototype.webgl$shader$Compile$compile$arity$1 = function(_) {
-  var this__114037 = this;
-  return webgl.shader.code.stars.call(null, cljs.core.map.call(null, webgl.shader.compile, this__114037.args))
+  var this__225820 = this;
+  return webgl.shader.code.stars.call(null, cljs.core.map.call(null, webgl.shader.compile, this__225820.args))
 };
 webgl.shader.Multiply;
 webgl.shader._STAR_ = function() {
@@ -14097,8 +15016,8 @@ webgl.shader._STAR_ = function() {
     return _STAR___delegate.call(this, args)
   };
   _STAR_.cljs$lang$maxFixedArity = 0;
-  _STAR_.cljs$lang$applyTo = function(arglist__114038) {
-    var args = cljs.core.seq(arglist__114038);
+  _STAR_.cljs$lang$applyTo = function(arglist__225821) {
+    var args = cljs.core.seq(arglist__225821);
     return _STAR___delegate(args)
   };
   _STAR_.cljs$lang$arity$variadic = _STAR___delegate;
@@ -14112,10 +15031,36 @@ webgl.shader.Shader.cljs$lang$type = true;
 webgl.shader.Shader.cljs$lang$ctorPrSeq = function(this__2309__auto__) {
   return cljs.core.list.call(null, "webgl.shader/Shader")
 };
+webgl.shader.Shader.prototype.webgl$shader$Bind$ = true;
+webgl.shader.Shader.prototype.webgl$shader$Bind$bind$arity$3 = function(_, prog, frame) {
+  var this__225822 = this;
+  var G__225823__225824 = cljs.core.seq.call(null, this__225822.attributes);
+  if(G__225823__225824) {
+    var attribute__225825 = cljs.core.first.call(null, G__225823__225824);
+    var G__225823__225826 = G__225823__225824;
+    while(true) {
+      webgl.shader.bind.call(null, attribute__225825, prog, frame);
+      var temp__3974__auto____225827 = cljs.core.next.call(null, G__225823__225826);
+      if(temp__3974__auto____225827) {
+        var G__225823__225828 = temp__3974__auto____225827;
+        var G__225830 = cljs.core.first.call(null, G__225823__225828);
+        var G__225831 = G__225823__225828;
+        attribute__225825 = G__225830;
+        G__225823__225826 = G__225831;
+        continue
+      }else {
+        return null
+      }
+      break
+    }
+  }else {
+    return null
+  }
+};
 webgl.shader.Shader.prototype.webgl$shader$Compile$ = true;
 webgl.shader.Shader.prototype.webgl$shader$Compile$compile$arity$1 = function(_) {
-  var this__114039 = this;
-  return webgl.shader.code.shader.call(null, cljs.core.map.call(null, webgl.shader.declare, this__114039.attributes), webgl.shader.compile.call(null, this__114039.out))
+  var this__225829 = this;
+  return webgl.shader.code.shader.call(null, cljs.core.map.call(null, webgl.shader.declare, this__225829.attributes), webgl.shader.compile.call(null, this__225829.out))
 };
 webgl.shader.Shader;
 webgl.shader.shader = function shader(attributes, out) {
@@ -14129,41 +15074,68 @@ goog.require("webgl.program");
 goog.require("webgl.matrix");
 goog.require("webgl.constants");
 goog.require("webgl.buffers");
+goog.require("webgl.api");
+goog.require("goog.events");
 goog.require("goog.dom");
 webgl.core.fps = 30;
-webgl.core.vertices = [0, 0.5, 0, -0.5, -0.5, 0, 0.5, -0.5, 0];
-webgl.core.position = webgl.shader.attribute.call(null, webgl.shader.vec4);
-webgl.core.view = webgl.shader.uniform.call(null, webgl.shader.mat4);
+webgl.core.triangle = [0, 0.5, 0, -0.5, -0.5, 0, 0.5, -0.5, 0];
 webgl.core.time = webgl.scalar.time.call(null, webgl.core.fps);
-webgl.core.rotation = webgl.matrix.rotation.call(null, webgl.scalar.scale.call(null, webgl.scalar.easing.call(null, webgl.scalar.sin.call(null, webgl.core.time), webgl.scalar.quadratic), Math.PI));
-webgl.core.vertex_shader = webgl.shader.shader.call(null, cljs.core.vector.call(null, webgl.core.position, webgl.core.view), webgl.shader._STAR_.call(null, webgl.core.position, webgl.core.view));
 webgl.core.fragment_code = "precision mediump float;\n   void main()\n   {\n     gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n   }";
+webgl.core.frame = cljs.core.atom.call(null, 0);
+webgl.core.redraw = cljs.core.atom.call(null, true);
+webgl.core.next_frame = function next_frame() {
+  if(cljs.core.truth_(cljs.core.deref.call(null, webgl.core.redraw))) {
+    return cljs.core.swap_BANG_.call(null, webgl.core.frame, cljs.core.inc)
+  }else {
+    return null
+  }
+};
+webgl.core.render_frame = function render_frame(program, vertex_shader, frame) {
+  webgl.shader.bind.call(null, vertex_shader, program, frame);
+  webgl.api.clear.call(null, "\ufdd0'color-buffer");
+  return webgl.api.draw_arrays.call(null, "\ufdd0'triangles", 0, 3)
+};
+webgl.core.render = function render(gl, f) {
+  if(cljs.core.truth_(cljs.core.deref.call(null, webgl.core.redraw))) {
+    window.requestAnimFrame(cljs.core.partial.call(null, render, gl, f), gl.canvas);
+    return webgl.api.with_context.call(null, gl, f, cljs.core.deref.call(null, webgl.core.frame))
+  }else {
+    return null
+  }
+};
+webgl.core.prepare_program = function prepare_program(program, vertex_shader) {
+  webgl.program.attach_BANG_.call(null, program, "\ufdd0'vertex", webgl.shader.compile.call(null, vertex_shader));
+  webgl.program.attach_BANG_.call(null, program, "\ufdd0'fragment", webgl.core.fragment_code);
+  webgl.program.link_BANG_.call(null, program);
+  return webgl.program.use_BANG_.call(null, program)
+};
+webgl.core.model_view_shader = function model_view_shader(vertices, view) {
+  return webgl.shader.shader.call(null, cljs.core.vector.call(null, vertices, view), webgl.shader._STAR_.call(null, vertices, view))
+};
+webgl.core.init_scene = function init_scene(canvas) {
+  var program__222172 = webgl.program.make.call(null);
+  webgl.api.clear_color.call(null, 0, 0, 0, 1);
+  var gl__222173 = webgl.api.context.call(null);
+  var buffer__222174 = webgl.buffers.make.call(null, "\ufdd0'array", webgl.core.triangle);
+  var vertices__222175 = webgl.shader.attribute.call(null, webgl.shader.vec4, webgl.buffers.as_bindable.call(null, buffer__222174));
+  var view__222176 = webgl.shader.uniform.call(null, webgl.shader.mat4, webgl.matrix.z_rotation.call(null, webgl.scalar.scale.call(null, webgl.scalar.easing.call(null, webgl.scalar.sin.call(null, webgl.core.time), webgl.scalar.quadratic), Math.PI)));
+  var vertex_shader__222177 = webgl.core.model_view_shader.call(null, vertices__222175, view__222176);
+  var renderer__222178 = cljs.core.partial.call(null, webgl.core.render_frame, program__222172, vertex_shader__222177);
+  webgl.core.prepare_program.call(null, program__222172, vertex_shader__222177);
+  setInterval(webgl.core.next_frame, 1E3 / webgl.core.fps);
+  webgl.core.render.call(null, gl__222173, renderer__222178);
+  return goog.events.listen(canvas, "click", function(evt) {
+    cljs.core.swap_BANG_.call(null, webgl.core.redraw, cljs.core.not);
+    if(cljs.core.truth_(cljs.core.deref.call(null, webgl.core.redraw))) {
+      return webgl.core.render.call(null, gl__222173, renderer__222178)
+    }else {
+      return null
+    }
+  })
+};
 webgl.core.load_gl = function load_gl() {
-  var canvas__977238 = goog.dom.$("gl");
-  var gl__977239 = canvas__977238.getContext("experimental-webgl");
-  var prog__977240 = webgl.program.make.call(null, gl__977239);
-  var G__977241__977242 = gl__977239;
-  webgl.program.attach_BANG_.call(null, G__977241__977242, prog__977240, "\ufdd0'vertex", webgl.shader.compile.call(null, webgl.core.vertex_shader));
-  webgl.program.attach_BANG_.call(null, G__977241__977242, prog__977240, "\ufdd0'fragment", webgl.core.fragment_code);
-  webgl.program.link_BANG_.call(null, G__977241__977242, prog__977240);
-  webgl.program.use_BANG_.call(null, G__977241__977242, prog__977240);
-  G__977241__977242;
-  var buffer__977243 = webgl.buffers.make.call(null, gl__977239, "\ufdd0'array", webgl.core.vertices);
-  var frame__977244 = cljs.core.atom.call(null, 0);
-  var next_frame__977245 = function() {
-    return cljs.core.swap_BANG_.call(null, frame__977244, cljs.core.inc)
-  };
-  var render_frame__977248 = function render_frame() {
-    window.requestAnimFrame(render_frame, canvas__977238);
-    var rot__977247 = webgl.core.rotation.call(null, cljs.core.deref.call(null, frame__977244));
-    gl__977239.clearColor(0, 0, 0, 1);
-    gl__977239.clear(webgl.constants.get.call(null, "\ufdd0'color-buffer"));
-    webgl.shader.bind.call(null, webgl.core.view, gl__977239, prog__977240, rot__977247);
-    return gl__977239.drawArrays(webgl.constants.get.call(null, "\ufdd0'triangles"), 0, 3)
-  };
-  webgl.shader.bind.call(null, webgl.core.position, gl__977239, prog__977240, buffer__977243);
-  setInterval(next_frame__977245, 1E3 / webgl.core.fps);
-  return render_frame__977248.call(null)
+  var canvas__222180 = goog.dom.$("gl");
+  return webgl.api.with_context.call(null, webgl.api.make_context.call(null, canvas__222180), webgl.core.init_scene, canvas__222180)
 };
 webgl.core.init = function init() {
   return window.onload = webgl.core.load_gl

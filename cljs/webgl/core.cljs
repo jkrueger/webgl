@@ -11,29 +11,12 @@
 
 (def fps 30)
 
-(def vertices
+(def triangle
   (array  0.0  0.5 0.0
          -0.5 -0.5 0.0
           0.5 -0.5 0.0))
 
-(def position
-  (sh/attribute sh/vec4))
-
-(def view
-  (sh/uniform sh/mat4))
-
 (def time (scalar/time fps))
-
-(def rotation
-  (-> time
-      (scalar/sin)
-      (scalar/easing scalar/quadratic)
-      (scalar/scale js/Math.PI)
-      (matrix/rotation)))
-
-(def vertex-shader
-  (sh/shader (vector position view)
-    (sh/* position view)))
 
 (def fragment-code
   "precision mediump float;
@@ -49,36 +32,53 @@
   (when @redraw
     (swap! frame inc)))
 
-(defn render-frame [gl program vertex-buffer]
+(defn render-frame [program vertex-shader frame]
+  (sh/bind vertex-shader program frame)
+  (api/clear :color-buffer)
+  (api/draw-arrays :triangles 0 3))
+
+(defn render [gl f]
   (when @redraw
     (.requestAnimFrame
-       js/window
-       (partial render-frame gl program vertex-buffer)
-       (.-canvas gl))
+      js/window
+      (partial render gl f)
+      (.-canvas gl))
     (api/with-context gl
-      (fn []
-        (let [rot (rotation @frame)]
-          (sh/bind position program vertex-buffer)
-          (sh/bind view program rot)
-          (api/clear :color-buffer)
-          (api/draw-arrays :triangles 0 3))))))
+      f @frame)))
+
+(defn prepare-program [program vertex-shader]
+  (prog/attach! program :vertex   (sh/compile vertex-shader))
+  (prog/attach! program :fragment fragment-code)
+  (prog/link! program)
+  (prog/use! program))
+
+(defn model-view-shader [vertices view]
+  (sh/shader (vector vertices view)
+    (sh/* vertices view)))
 
 (defn init-scene [canvas]
   (let [program (prog/make)]
-      (prog/attach! program :vertex   (sh/compile vertex-shader))
-      (prog/attach! program :fragment fragment-code)
-      (prog/link! program)
-      (prog/use! program)
       (api/clear-color 0.0 0.0 0.0 1.0)
-      (let [gl     (api/context)
-            buffer (buffer/make :array vertices)]
+      (let [gl            (api/context)
+            buffer        (buffer/make :array triangle)
+            vertices      (sh/attribute sh/vec4
+                            (buffer/as-bindable buffer))
+            view          (sh/uniform sh/mat4
+                            (-> time
+                                (scalar/sin)
+                                (scalar/easing scalar/quadratic)
+                                (scalar/scale js/Math.PI)
+                                (matrix/z-rotation)))
+            vertex-shader (model-view-shader vertices view)
+            renderer      (partial render-frame program vertex-shader)]
+        (prepare-program program vertex-shader)
         (js/setInterval next-frame (/ 1000 fps))
-        (render-frame gl program buffer)
+        (render gl renderer)
         (event/listen canvas "click"
           (fn [evt]
             (swap! redraw not)
             (when @redraw
-              (render-frame gl program buffer)))))))
+              (render gl renderer)))))))
 
 (defn load-gl []
   (let [canvas (dom/$ "gl")]

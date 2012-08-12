@@ -1,8 +1,9 @@
 (ns webgl.shader
   (:refer-clojure :exclude [*])
   (:require [webgl.api         :as api]
-            [webgl.buffers     :as buffer]
-            [webgl.shader.code :as code]))
+            [webgl.buffer      :as buffer]
+            [webgl.shader.code :as code]
+            [webgl.geometry    :as geom]))
 
 (defprotocol GLSLType
   (type-name [_]))
@@ -32,7 +33,15 @@
       (buffer/bind this)
       (api/vertex-attribute-pointer location
         size :float false 0 0)
-      (api/enable-vertex-attribute-array location))))
+      (api/enable-vertex-attribute-array location)))
+  geom/BufferedGeometry
+  (attribute-binder [this]
+    (fn [location size val]
+      (buffer/bind (:vertices this))
+      (api/vertex-attribute-pointer location
+        size :float false 0 0)
+      (api/enable-vertex-attribute-array location)
+      (buffer/bind (:indices this)))))
 
 (deftype Vec4 []
   GLSLType
@@ -41,7 +50,7 @@
   ToAttribute
   (to-attribute [_ location val]
     (let [binder (attribute-binder val)]
-      (binder location 3 val))))
+      (binder location 4 val))))
 
 (deftype Mat4 []
   GLSLType

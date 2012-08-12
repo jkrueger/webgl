@@ -1,11 +1,11 @@
-(ns webgl.buffers
+(ns webgl.buffer
   (:require [webgl.api       :as api]
             [webgl.constants :as const]))
 
-(deftype Buffer [type id])
+(defrecord Buffer [type id])
 
 (defn bind [buffer]
-  (api/bind-buffer (.-type buffer) (.-id buffer)))
+  (api/bind-buffer (:type buffer) (:id buffer)))
 
 (defn make [buffer-type content]
   (let [id        (api/make-buffer)
@@ -13,5 +13,3 @@
     (bind buffer)
     (api/buffer-data buffer-type content)
     buffer))
-
-(def as-bindable constantly)

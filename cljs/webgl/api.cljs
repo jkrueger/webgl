@@ -45,7 +45,7 @@
 
 (defn buffer-data [buffer-type data]
   (.bufferData *context* (const/get buffer-type)
-    (js/Float32Array. data)
+    data
     (const/get :static)))
 
 ;;; attributes/uniforms
@@ -80,3 +80,20 @@
 
 (defn draw-arrays [primitive-type offset n]
   (.drawArrays *context* (const/get primitive-type) offset n))
+
+(defn draw-elements [primitive-type n data-type offset]
+  (.drawElements *context*
+    (const/get primitive-type)
+    n
+    (const/get data-type)
+    offset))
+
+(def error->str
+  {0      "No Error"
+   0x0500 "Invalid Enum"
+   0x0501 "Invalid Value"
+   0x0502 "Invalid Operation"
+   0x0505 "Out Of Memory"})
+
+(defn error []
+  (error->str (.getError *context*)))

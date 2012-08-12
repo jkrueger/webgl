@@ -3,7 +3,8 @@
 
 (def flags
   {;; data types
-   :float js/WebGLRenderingContext.FLOAT
+   :float          js/WebGLRenderingContext.FLOAT
+   :unsigned-short js/WebGLRenderingContext.UNSIGNED_SHORT
 
    ;; buffer types
    :array  js/WebGLRenderingContext.ARRAY_BUFFER

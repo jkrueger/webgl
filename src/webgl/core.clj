@@ -13,6 +13,7 @@
     (util/include-js  "http://code.jquery.com/jquery-1.7.2.min.js")
     (util/include-js  "js/webgl.js")
     (util/include-js  "js/webgl-utils.js")
+    (util/include-js  "js/webgl-debug.js")
     ;; (util/include-js  "http://www.diagram.ly/client?version=1.9.2.5")
     ]
    [:body

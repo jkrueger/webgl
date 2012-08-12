@@ -2,19 +2,16 @@
   (:require [goog.dom        :as dom]
             [goog.events     :as event]
             [webgl.api       :as api]
-            [webgl.buffers   :as buffer]
             [webgl.constants :as const]
+            [webgl.geometry  :as geom]
             [webgl.matrix    :as matrix]
             [webgl.program   :as prog]
             [webgl.scalar    :as scalar]
-            [webgl.shader    :as sh]))
+            [webgl.shader    :as sh]
+            ;; development stuff
+            [clojure.browser.repl :as repl]))
 
 (def fps 30)
-
-(def triangle
-  (array  0.0  0.5 0.0
-         -0.5 -0.5 0.0
-          0.5 -0.5 0.0))
 
 (def time (scalar/time fps))
 
@@ -32,10 +29,15 @@
   (when @redraw
     (swap! frame inc)))
 
+(def triangles 4)
+
 (defn render-frame [program vertex-shader frame]
   (sh/bind vertex-shader program frame)
   (api/clear :color-buffer)
-  (api/draw-arrays :triangles 0 3))
+  (api/draw-elements :triangles
+                     (* triangles 3)
+                     :unsigned-short
+                     0))
 
 (defn render [gl f]
   (when @redraw
@@ -53,22 +55,30 @@
   (prog/use! program))
 
 (defn model-view-shader [vertices view]
-  (sh/shader (vector vertices view)
+  (sh/shader [vertices view]
     (sh/* vertices view)))
 
 (defn init-scene [canvas]
   (let [program (prog/make)]
       (api/clear-color 0.0 0.0 0.0 1.0)
       (let [gl            (api/context)
-            buffer        (buffer/make :array triangle)
+            copy-trans    (matrix/*
+                            (matrix/z-rotation
+                              (- (/ js/Math.PI 5)))
+                            (matrix/translation
+                             (matrix/make 0.3 -0.1 0.0 0.0)))
+            move-trans    (matrix/translation
+                              (matrix/make 0.0 0.5 0.0 0.0))
             vertices      (sh/attribute sh/vec4
-                            (buffer/as-bindable buffer))
+                            (->> geom/triangle
+                                 (geom/clone (- triangles 1)
+                                   #(matrix/** %1 %2 copy-trans))
+                                 (geom/transform
+                                   #(matrix/** %1 %2 move-trans))
+                                 (geom/as-buffered)
+                                 (constantly)))
             view          (sh/uniform sh/mat4
-                            (-> time
-                                (scalar/sin)
-                                (scalar/easing scalar/quadratic)
-                                (scalar/scale js/Math.PI)
-                                (matrix/z-rotation)))
+                            (constantly matrix/identity))
             vertex-shader (model-view-shader vertices view)
             renderer      (partial render-frame program vertex-shader)]
         (prepare-program program vertex-shader)
@@ -83,9 +93,11 @@
 (defn load-gl []
   (let [canvas (dom/$ "gl")]
     (api/with-context
-      (api/make-context canvas)
+      (js/WebGLDebugUtils.makeDebugContext
+        (api/make-context canvas))
       init-scene
       canvas)))
 
 (defn ^:export init []
+  (repl/connect "http://localhost:9000/repl")
   (set! (.-onload js/window) load-gl))

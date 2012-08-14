@@ -23,10 +23,12 @@
         0.0 0.0 0.0 s))
 
 (defn x-rotation [angle]
-  (make 1.0 0.0 0.0 0.0
-        0.0 (js/Math.cos angle) (- (js/Math.sin angle)) 0.0
-        0.0 (js/Math.sin angle) (js/Math.cos angle) 0.0
-        0.0 0.0 0.0 1.0))
+  (let [sin (js/Math.sin angle)
+        cos (js/Math.cos angle)]
+    (make 1.0 0.0 0.0 0.0
+          0.0 cos (- sin) 0.0
+          0.0 sin cos     0.0
+          0.0 0.0 0.0     1.0)))
 
 (defn y-rotation [angle]
   (let [sin (js/Math.sin angle)
@@ -37,10 +39,12 @@
           0.0     0.0 0.0 1.0)))
 
 (defn z-rotation [angle]
-  (make (js/Math.cos angle) (- (js/Math.sin angle)) 0.0 0.0
-         (js/Math.sin angle) (js/Math.cos angle) 0.0 0.0
-         0.0 0.0 1.0 0.0
-         0.0 0.0 0.0 1.0))
+  (let [sin (js/Math.sin angle)
+        cos (js/Math.cos angle)]
+    (make cos (- sin) 0.0 0.0
+          sin cos     0.0 0.0
+          0.0 0.0     1.0 0.0
+          0.0 0.0     0.0 1.0)))
 
 (def *' clojure.core/*)
 (def +' clojure.core/+)

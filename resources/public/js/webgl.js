@@ -28654,58 +28654,62 @@ webgl.matrix.scaling = function scaling(s) {
   return webgl.matrix.make.call(null, s, 0, 0, 0, 0, s, 0, 0, 0, 0, s, 0, 0, 0, 0, s)
 };
 webgl.matrix.x_rotation = function x_rotation(angle) {
-  return webgl.matrix.make.call(null, 1, 0, 0, 0, 0, Math.cos(angle), -Math.sin(angle), 0, 0, Math.sin(angle), Math.cos(angle), 0, 0, 0, 0, 1)
+  var sin__28543 = Math.sin(angle);
+  var cos__28544 = Math.cos(angle);
+  return webgl.matrix.make.call(null, 1, 0, 0, 0, 0, cos__28544, -sin__28543, 0, 0, sin__28543, cos__28544, 0, 0, 0, 0, 1)
 };
 webgl.matrix.y_rotation = function y_rotation(angle) {
-  var sin__17899 = Math.sin(angle);
-  var cos__17900 = Math.cos(angle);
-  return webgl.matrix.make.call(null, cos__17900, 0, sin__17899, 0, 0, 1, 0, 0, -sin__17899, 0, cos__17900, 0, 0, 0, 0, 1)
+  var sin__28547 = Math.sin(angle);
+  var cos__28548 = Math.cos(angle);
+  return webgl.matrix.make.call(null, cos__28548, 0, sin__28547, 0, 0, 1, 0, 0, -sin__28547, 0, cos__28548, 0, 0, 0, 0, 1)
 };
 webgl.matrix.z_rotation = function z_rotation(angle) {
-  return webgl.matrix.make.call(null, Math.cos(angle), -Math.sin(angle), 0, 0, Math.sin(angle), Math.cos(angle), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+  var sin__28551 = Math.sin(angle);
+  var cos__28552 = Math.cos(angle);
+  return webgl.matrix.make.call(null, cos__28552, -sin__28551, 0, 0, sin__28551, cos__28552, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 };
 webgl.matrix._STAR__SINGLEQUOTE_ = cljs.core._STAR_;
 webgl.matrix._PLUS__SINGLEQUOTE_ = cljs.core._PLUS_;
 webgl.matrix.transpose = function transpose(m) {
-  var clone__17906 = m.slice();
-  var y__17907 = 0;
+  var clone__28558 = m.slice();
+  var y__28559 = 0;
   while(true) {
-    if(y__17907 < 3) {
-      var x__17908 = webgl.matrix._PLUS__SINGLEQUOTE_.call(null, y__17907, 1);
+    if(y__28559 < 3) {
+      var x__28560 = webgl.matrix._PLUS__SINGLEQUOTE_.call(null, y__28559, 1);
       while(true) {
-        if(x__17908 < 4) {
-          var upper__17909 = webgl.matrix._PLUS__SINGLEQUOTE_.call(null, x__17908, webgl.matrix._STAR__SINGLEQUOTE_.call(null, y__17907, 4));
-          var lower__17910 = webgl.matrix._PLUS__SINGLEQUOTE_.call(null, y__17907, webgl.matrix._STAR__SINGLEQUOTE_.call(null, x__17908, 4));
-          clone__17906[upper__17909] = m[lower__17910];
-          clone__17906[lower__17910] = m[upper__17909];
-          var G__17911 = 1 + 1;
-          x__17908 = G__17911;
+        if(x__28560 < 4) {
+          var upper__28561 = webgl.matrix._PLUS__SINGLEQUOTE_.call(null, x__28560, webgl.matrix._STAR__SINGLEQUOTE_.call(null, y__28559, 4));
+          var lower__28562 = webgl.matrix._PLUS__SINGLEQUOTE_.call(null, y__28559, webgl.matrix._STAR__SINGLEQUOTE_.call(null, x__28560, 4));
+          clone__28558[upper__28561] = m[lower__28562];
+          clone__28558[lower__28562] = m[upper__28561];
+          var G__28563 = 1 + 1;
+          x__28560 = G__28563;
           continue
         }else {
         }
         break
       }
-      var G__17912 = 1 + 1;
-      y__17907 = G__17912;
+      var G__28564 = 1 + 1;
+      y__28559 = G__28564;
       continue
     }else {
     }
     break
   }
-  return clone__17906
+  return clone__28558
 };
 webgl.matrix.row_dot_column = function row_dot_column(l, row, r, column) {
   return webgl.matrix._PLUS__SINGLEQUOTE_.call(null, webgl.matrix._STAR__SINGLEQUOTE_.call(null, l[row], r[column]), webgl.matrix._STAR__SINGLEQUOTE_.call(null, l[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, row, 1)], r[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, 4, column)]), webgl.matrix._STAR__SINGLEQUOTE_.call(null, l[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, row, 2)], r[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, 8, column)]), webgl.matrix._STAR__SINGLEQUOTE_.call(null, l[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, 
   row, 3)], r[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, 12, column)]))
 };
 webgl.matrix._STAR_ = function _STAR_(l, r) {
-  var clone__17915 = l.slice();
-  var row__17916 = 0;
+  var clone__28567 = l.slice();
+  var row__28568 = 0;
   while(true) {
-    if(row__17916 >= l.length) {
-      return clone__17915
+    if(row__28568 >= l.length) {
+      return clone__28567
     }else {
-      return clone__17915[row__17916] = webgl.matrix.row_dot_column.call(null, l, row__17916, r, 0)
+      return clone__28567[row__28568] = webgl.matrix.row_dot_column.call(null, l, row__28568, r, 0)
     }
     break
   }

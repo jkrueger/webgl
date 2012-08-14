@@ -58,6 +58,10 @@
   (sh/shader [vertices view]
     (sh/* vertices view)))
 
+(defn make-trans [m]
+  (let [transposed (matrix/transpose m)]
+    #(matrix/* % transposed)))
+
 (defn init-scene [canvas]
   (let [program (prog/make)]
       (api/clear-color 0.0 0.0 0.0 1.0)
@@ -72,9 +76,9 @@
             vertices      (sh/attribute sh/vec4
                             (->> geom/triangle
                                  (geom/clone (- triangles 1)
-                                   (partial matrix/*>> copy-trans))
+                                   (make-trans copy-trans))
                                  (geom/transform
-                                   (partial matrix/*>> move-trans))
+                                   (make-trans move-trans))
                                  (geom/as-buffered)
                                  (constantly)))
             view          (sh/uniform sh/mat4

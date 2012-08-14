@@ -29,10 +29,12 @@
         0.0 0.0 0.0 1.0))
 
 (defn y-rotation [angle]
-  (make (js/Math.cos angle) 0.0 (js/Math.sin angle) 0.0
-        0.0 1.0 0.0 0.0
-         (- (js/Math.sin angle)) 0.0 (js/Math.cos angle) 0.0
-         0.0 0.0 0.0 1.0))
+  (let [sin (js/Math.sin angle)
+        cos (js/Math.cos angle)]
+    (make cos     0.0 sin 0.0
+          0.0     1.0 0.0 0.0
+          (- sin) 0.0 cos 0.0
+          0.0     0.0 0.0 1.0)))
 
 (defn z-rotation [angle]
   (make (js/Math.cos angle) (- (js/Math.sin angle)) 0.0 0.0
@@ -43,61 +45,42 @@
 (def *' clojure.core/*)
 (def +' clojure.core/+)
 
-(defn dot [l r]
-  (+' (*' (aget l 0) (aget r 0))
-      (*' (aget l 1) (aget r 1))
-      (*' (aget l 2) (aget r 2))
-      (*' (aget l 3) (aget r 3))))
+(defn transpose [m]
+  (let [clone (aclone m)]
+    (loop [y 0]
+      (when (< y 3)
+        (loop [x (+' y 1)]
+          (when (< x 4)
+            (let [upper (+' x (*' y 4))
+                  lower (+' y (*' x 4))]
+              (aset clone upper (aget m lower))
+              (aset clone lower (aget m upper)))
+            (recur (inc 1))))
+        (recur (inc 1))))
+     clone))
 
-(defn length2 [v]
-  (dot v v))
+(defn row-dot-column [l row r column]
+  (+' (*' (aget l row)
+          (aget r column))
+      (*' (aget l (+' row 1))
+          (aget r (+' 4 column)))
+      (*' (aget l (+' row 2))
+          (aget r (+' 8 column)))
+      (*' (aget l (+' row 3))
+          (aget r (+' 12 column)))))
 
-(defn length [v]
-  (js/Math.sqrt (length2 v)))
-
-(defn row [m row]
-  (make (aget m row)
-        (aget m (+' row 1))
-        (aget m (+' row 2))
-        (aget m (+' row 3))))
-
-(defn column [m col]
-  (make (aget m col)
-        (aget m (+' col 4))
-        (aget m (+' col 8))
-        (aget m (+' col 12))))
-
-(def rows    [0 4 8 12])
-(def columns [0 1 2 3])
-
-(defn * [l r]
-  (into-matrix
-    (for [x rows
-          y columns]
-      (dot (column l y) (row r x)))))
-
-(defn dot>> [l loff r roff]
-  (+' (*' (aget l loff)
-          (aget r roff))
-      (*' (aget l (+' loff 1))
-          (aget r (+' roff 1)))
-      (*' (aget l (+' loff 2))
-          (aget r (+' roff 2)))
-      (*' (aget l (+' loff 3))
-          (aget r (+' roff 3)))))
-
-(defn *>>
-  [m vs]
-  (let [clone (aclone vs)]
-    (loop [vertex 0]
-      (when (< vertex (.-length vs))
-        (aset clone vertex
-          (dot>> vs vertex m 0))
-        (aset clone (+' vertex 1)
-          (dot>> vs vertex m 4))
-        (aset clone (+' vertex 2)
-          (dot>> vs vertex m 8))
-        (aset clone (+' vertex 3)
-          (dot>> vs vertex m 12))
-        (recur (+' vertex 4))))
-    clone))
+(defn *
+  [l r]
+  (let [clone (aclone l)]
+    (loop [row 0]
+      (if (>= row (.-length l))
+        clone
+        (aset clone row
+          (row-dot-column l row r 0))
+        (aset clone (+' row 1)
+          (row-dot-column l row r 4))
+        (aset clone (+' row 2)
+          (row-dot-column l row r 8))
+        (aset clone (+' row 3)
+          (row-dot-column l row r 12))
+        (recur (+' row 4))))))

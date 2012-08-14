@@ -32,27 +32,22 @@
        (apply concat)
        (into-array)))
 
-(defn- trans-vertices [trans vertices]
-  (let [clone (aclone vertices)]
-    (dotimes [x (/ (.-length clone) 4)
-              ]
-      (trans clone x))
-    clone))
-
 (defn- cloned-indices [indices]
-  (let [c (count indices)]
-    (map (partial + c) indices)))
+  (let [c (.-length indices)]
+    (amap indices x out
+      (+ (aget indices x)
+         c))))
 
 (defn clone [n trans in]
   (Geometry.
     (concaterate (:vertices in)
                  n
-                 (partial trans-vertices trans))
+                 trans)
     (concaterate (:indices in)
                  n
                  cloned-indices)))
 
 (defn transform [trans in]
   (Geometry.
-    (trans-vertices trans (:vertices in))
+    (trans (:vertices in))
     (:indices in)))

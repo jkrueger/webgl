@@ -72,9 +72,9 @@
             vertices      (sh/attribute sh/vec4
                             (->> geom/triangle
                                  (geom/clone (- triangles 1)
-                                   #(matrix/** %1 %2 copy-trans))
+                                   (partial matrix/*>> copy-trans))
                                  (geom/transform
-                                   #(matrix/** %1 %2 move-trans))
+                                   (partial matrix/*>> move-trans))
                                  (geom/as-buffered)
                                  (constantly)))
             view          (sh/uniform sh/mat4
@@ -99,5 +99,5 @@
       canvas)))
 
 (defn ^:export init []
-  (repl/connect "http://localhost:9000/repl")
+  ;;(repl/connect "http://localhost:9000/repl")
   (set! (.-onload js/window) load-gl))

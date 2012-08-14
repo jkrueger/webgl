@@ -56,11 +56,10 @@
   (js/Math.sqrt (length2 v)))
 
 (defn row [m row]
-  (let [row (*' row 4)]
-    (make (aget m row)
-          (aget m (+' row 1))
-          (aget m (+' row 2))
-          (aget m (+' row 3)))))
+  (make (aget m row)
+        (aget m (+' row 1))
+        (aget m (+' row 2))
+        (aget m (+' row 3))))
 
 (defn column [m col]
   (make (aget m col)
@@ -68,15 +67,37 @@
         (aget m (+' col 8))
         (aget m (+' col 12))))
 
+(def rows    [0 4 8 12])
+(def columns [0 1 2 3])
+
 (defn * [l r]
   (into-matrix
-    (for [x (range 4)
-          y (range 4)]
+    (for [x rows
+          y columns]
       (dot (column l y) (row r x)))))
 
-(defn ** [l offset r]
-  (let [in (row l offset)]
-    (dotimes [x 4]
-      (aset l (+' (*' offset 4)
-                  x)
-            (dot in (row r x))))))
+(defn dot>> [l loff r roff]
+  (+' (*' (aget l loff)
+          (aget r roff))
+      (*' (aget l (+' loff 1))
+          (aget r (+' roff 1)))
+      (*' (aget l (+' loff 2))
+          (aget r (+' roff 2)))
+      (*' (aget l (+' loff 3))
+          (aget r (+' roff 3)))))
+
+(defn *>>
+  [m vs]
+  (let [clone (aclone vs)]
+    (loop [vertex 0]
+      (when (< vertex (.-length vs))
+        (aset clone vertex
+          (dot>> vs vertex m 0))
+        (aset clone (+' vertex 1)
+          (dot>> vs vertex m 4))
+        (aset clone (+' vertex 2)
+          (dot>> vs vertex m 8))
+        (aset clone (+' vertex 3)
+          (dot>> vs vertex m 12))
+        (recur (+' vertex 4))))
+    clone))

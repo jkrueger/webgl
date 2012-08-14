@@ -26079,24 +26079,24 @@ webgl.geometry.as_uint16 = function as_uint16(v) {
 webgl.geometry.AsBuffered = {};
 webgl.geometry.as_buffered = function as_buffered(_) {
   if(function() {
-    var and__3822__auto____409582 = _;
-    if(and__3822__auto____409582) {
+    var and__3822__auto____256918 = _;
+    if(and__3822__auto____256918) {
       return _.webgl$geometry$AsBuffered$as_buffered$arity$1
     }else {
-      return and__3822__auto____409582
+      return and__3822__auto____256918
     }
   }()) {
     return _.webgl$geometry$AsBuffered$as_buffered$arity$1(_)
   }else {
-    var x__2363__auto____409583 = _ == null ? null : _;
+    var x__2363__auto____256919 = _ == null ? null : _;
     return function() {
-      var or__3824__auto____409584 = webgl.geometry.as_buffered[goog.typeOf(x__2363__auto____409583)];
-      if(or__3824__auto____409584) {
-        return or__3824__auto____409584
+      var or__3824__auto____256920 = webgl.geometry.as_buffered[goog.typeOf(x__2363__auto____256919)];
+      if(or__3824__auto____256920) {
+        return or__3824__auto____256920
       }else {
-        var or__3824__auto____409585 = webgl.geometry.as_buffered["_"];
-        if(or__3824__auto____409585) {
-          return or__3824__auto____409585
+        var or__3824__auto____256921 = webgl.geometry.as_buffered["_"];
+        if(or__3824__auto____256921) {
+          return or__3824__auto____256921
         }else {
           throw cljs.core.missing_protocol.call(null, "AsBuffered.as-buffered", _);
         }
@@ -26121,33 +26121,33 @@ webgl.geometry.BufferedGeometry = function(source, vertices, indices, __meta, __
   }
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$IHash$_hash$arity$1 = function(this__2318__auto__) {
-  var this__409589 = this;
-  var h__2192__auto____409590 = this__409589.__hash;
-  if(!(h__2192__auto____409590 == null)) {
-    return h__2192__auto____409590
+  var this__256925 = this;
+  var h__2192__auto____256926 = this__256925.__hash;
+  if(!(h__2192__auto____256926 == null)) {
+    return h__2192__auto____256926
   }else {
-    var h__2192__auto____409591 = cljs.core.hash_imap.call(null, this__2318__auto__);
-    this__409589.__hash = h__2192__auto____409591;
-    return h__2192__auto____409591
+    var h__2192__auto____256927 = cljs.core.hash_imap.call(null, this__2318__auto__);
+    this__256925.__hash = h__2192__auto____256927;
+    return h__2192__auto____256927
   }
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$ILookup$_lookup$arity$2 = function(this__2323__auto__, k__2324__auto__) {
-  var this__409592 = this;
+  var this__256928 = this;
   return this__2323__auto__.cljs$core$ILookup$_lookup$arity$3(this__2323__auto__, k__2324__auto__, null)
 };
-webgl.geometry.BufferedGeometry.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2325__auto__, k409587, else__2326__auto__) {
-  var this__409593 = this;
-  if(k409587 === "\ufdd0'source") {
-    return this__409593.source
+webgl.geometry.BufferedGeometry.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2325__auto__, k256923, else__2326__auto__) {
+  var this__256929 = this;
+  if(k256923 === "\ufdd0'source") {
+    return this__256929.source
   }else {
-    if(k409587 === "\ufdd0'vertices") {
-      return this__409593.vertices
+    if(k256923 === "\ufdd0'vertices") {
+      return this__256929.vertices
     }else {
-      if(k409587 === "\ufdd0'indices") {
-        return this__409593.indices
+      if(k256923 === "\ufdd0'indices") {
+        return this__256929.indices
       }else {
         if("\ufdd0'else") {
-          return cljs.core._lookup.call(null, this__409593.__extmap, k409587, else__2326__auto__)
+          return cljs.core._lookup.call(null, this__256929.__extmap, k256923, else__2326__auto__)
         }else {
           return null
         }
@@ -26155,26 +26155,26 @@ webgl.geometry.BufferedGeometry.prototype.cljs$core$ILookup$_lookup$arity$3 = fu
     }
   }
 };
-webgl.geometry.BufferedGeometry.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2330__auto__, k__2331__auto__, G__409586) {
-  var this__409594 = this;
-  var pred__409595__409598 = cljs.core.identical_QMARK_;
-  var expr__409596__409599 = k__2331__auto__;
-  if(pred__409595__409598.call(null, "\ufdd0'source", expr__409596__409599)) {
-    return new webgl.geometry.BufferedGeometry(G__409586, this__409594.vertices, this__409594.indices, this__409594.__meta, this__409594.__extmap, null)
+webgl.geometry.BufferedGeometry.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2330__auto__, k__2331__auto__, G__256922) {
+  var this__256930 = this;
+  var pred__256931__256934 = cljs.core.identical_QMARK_;
+  var expr__256932__256935 = k__2331__auto__;
+  if(pred__256931__256934.call(null, "\ufdd0'source", expr__256932__256935)) {
+    return new webgl.geometry.BufferedGeometry(G__256922, this__256930.vertices, this__256930.indices, this__256930.__meta, this__256930.__extmap, null)
   }else {
-    if(pred__409595__409598.call(null, "\ufdd0'vertices", expr__409596__409599)) {
-      return new webgl.geometry.BufferedGeometry(this__409594.source, G__409586, this__409594.indices, this__409594.__meta, this__409594.__extmap, null)
+    if(pred__256931__256934.call(null, "\ufdd0'vertices", expr__256932__256935)) {
+      return new webgl.geometry.BufferedGeometry(this__256930.source, G__256922, this__256930.indices, this__256930.__meta, this__256930.__extmap, null)
     }else {
-      if(pred__409595__409598.call(null, "\ufdd0'indices", expr__409596__409599)) {
-        return new webgl.geometry.BufferedGeometry(this__409594.source, this__409594.vertices, G__409586, this__409594.__meta, this__409594.__extmap, null)
+      if(pred__256931__256934.call(null, "\ufdd0'indices", expr__256932__256935)) {
+        return new webgl.geometry.BufferedGeometry(this__256930.source, this__256930.vertices, G__256922, this__256930.__meta, this__256930.__extmap, null)
       }else {
-        return new webgl.geometry.BufferedGeometry(this__409594.source, this__409594.vertices, this__409594.indices, this__409594.__meta, cljs.core.assoc.call(null, this__409594.__extmap, k__2331__auto__, G__409586), null)
+        return new webgl.geometry.BufferedGeometry(this__256930.source, this__256930.vertices, this__256930.indices, this__256930.__meta, cljs.core.assoc.call(null, this__256930.__extmap, k__2331__auto__, G__256922), null)
       }
     }
   }
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$ICollection$_conj$arity$2 = function(this__2328__auto__, entry__2329__auto__) {
-  var this__409600 = this;
+  var this__256936 = this;
   if(cljs.core.vector_QMARK_.call(null, entry__2329__auto__)) {
     return this__2328__auto__.cljs$core$IAssociative$_assoc$arity$3(this__2328__auto__, cljs.core._nth.call(null, entry__2329__auto__, 0), cljs.core._nth.call(null, entry__2329__auto__, 1))
   }else {
@@ -26182,33 +26182,33 @@ webgl.geometry.BufferedGeometry.prototype.cljs$core$ICollection$_conj$arity$2 = 
   }
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$ISeqable$_seq$arity$1 = function(this__2335__auto__) {
-  var this__409601 = this;
-  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'source", this__409601.source), cljs.core.vector.call(null, "\ufdd0'vertices", this__409601.vertices), cljs.core.vector.call(null, "\ufdd0'indices", this__409601.indices)], true), this__409601.__extmap))
+  var this__256937 = this;
+  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'source", this__256937.source), cljs.core.vector.call(null, "\ufdd0'vertices", this__256937.vertices), cljs.core.vector.call(null, "\ufdd0'indices", this__256937.indices)], true), this__256937.__extmap))
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$IPrintable$_pr_seq$arity$2 = function(this__2337__auto__, opts__2338__auto__) {
-  var this__409602 = this;
-  var pr_pair__2339__auto____409603 = function(keyval__2340__auto__) {
+  var this__256938 = this;
+  var pr_pair__2339__auto____256939 = function(keyval__2340__auto__) {
     return cljs.core.pr_sequential.call(null, cljs.core.pr_seq, "", " ", "", opts__2338__auto__, keyval__2340__auto__)
   };
-  return cljs.core.pr_sequential.call(null, pr_pair__2339__auto____409603, [cljs.core.str("#"), cljs.core.str("BufferedGeometry"), cljs.core.str("{")].join(""), ", ", "}", opts__2338__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'source", this__409602.source), cljs.core.vector.call(null, "\ufdd0'vertices", this__409602.vertices), cljs.core.vector.call(null, "\ufdd0'indices", this__409602.indices)], true), this__409602.__extmap))
+  return cljs.core.pr_sequential.call(null, pr_pair__2339__auto____256939, [cljs.core.str("#"), cljs.core.str("BufferedGeometry"), cljs.core.str("{")].join(""), ", ", "}", opts__2338__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'source", this__256938.source), cljs.core.vector.call(null, "\ufdd0'vertices", this__256938.vertices), cljs.core.vector.call(null, "\ufdd0'indices", this__256938.indices)], true), this__256938.__extmap))
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$ICounted$_count$arity$1 = function(this__2327__auto__) {
-  var this__409604 = this;
-  return 3 + cljs.core.count.call(null, this__409604.__extmap)
+  var this__256940 = this;
+  return 3 + cljs.core.count.call(null, this__256940.__extmap)
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(this__2319__auto__, other__2320__auto__) {
-  var this__409605 = this;
+  var this__256941 = this;
   if(cljs.core.truth_(function() {
-    var and__3822__auto____409606 = other__2320__auto__;
-    if(cljs.core.truth_(and__3822__auto____409606)) {
-      var and__3822__auto____409607 = this__2319__auto__.constructor === other__2320__auto__.constructor;
-      if(and__3822__auto____409607) {
+    var and__3822__auto____256942 = other__2320__auto__;
+    if(cljs.core.truth_(and__3822__auto____256942)) {
+      var and__3822__auto____256943 = this__2319__auto__.constructor === other__2320__auto__.constructor;
+      if(and__3822__auto____256943) {
         return cljs.core.equiv_map.call(null, this__2319__auto__, other__2320__auto__)
       }else {
-        return and__3822__auto____409607
+        return and__3822__auto____256943
       }
     }else {
-      return and__3822__auto____409606
+      return and__3822__auto____256942
     }
   }())) {
     return true
@@ -26216,20 +26216,20 @@ webgl.geometry.BufferedGeometry.prototype.cljs$core$IEquiv$_equiv$arity$2 = func
     return false
   }
 };
-webgl.geometry.BufferedGeometry.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2322__auto__, G__409586) {
-  var this__409608 = this;
-  return new webgl.geometry.BufferedGeometry(this__409608.source, this__409608.vertices, this__409608.indices, G__409586, this__409608.__extmap, this__409608.__hash)
+webgl.geometry.BufferedGeometry.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2322__auto__, G__256922) {
+  var this__256944 = this;
+  return new webgl.geometry.BufferedGeometry(this__256944.source, this__256944.vertices, this__256944.indices, G__256922, this__256944.__extmap, this__256944.__hash)
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$IMeta$_meta$arity$1 = function(this__2321__auto__) {
-  var this__409609 = this;
-  return this__409609.__meta
+  var this__256945 = this;
+  return this__256945.__meta
 };
 webgl.geometry.BufferedGeometry.prototype.cljs$core$IMap$_dissoc$arity$2 = function(this__2332__auto__, k__2333__auto__) {
-  var this__409610 = this;
+  var this__256946 = this;
   if(cljs.core.contains_QMARK_.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'vertices", "\ufdd0'source", "\ufdd0'indices"]), k__2333__auto__)) {
-    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2332__auto__), this__409610.__meta), k__2333__auto__)
+    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2332__auto__), this__256946.__meta), k__2333__auto__)
   }else {
-    return new webgl.geometry.BufferedGeometry(this__409610.source, this__409610.vertices, this__409610.indices, this__409610.__meta, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__409610.__extmap, k__2333__auto__)), null)
+    return new webgl.geometry.BufferedGeometry(this__256946.source, this__256946.vertices, this__256946.indices, this__256946.__meta, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__256946.__extmap, k__2333__auto__)), null)
   }
 };
 webgl.geometry.BufferedGeometry.cljs$lang$type = true;
@@ -26239,8 +26239,8 @@ webgl.geometry.BufferedGeometry.cljs$lang$ctorPrSeq = function(this__2357__auto_
 webgl.geometry.__GT_BufferedGeometry = function __GT_BufferedGeometry(source, vertices, indices) {
   return new webgl.geometry.BufferedGeometry(source, vertices, indices)
 };
-webgl.geometry.map__GT_BufferedGeometry = function map__GT_BufferedGeometry(G__409588) {
-  return new webgl.geometry.BufferedGeometry((new cljs.core.Keyword("\ufdd0'source")).call(null, G__409588), (new cljs.core.Keyword("\ufdd0'vertices")).call(null, G__409588), (new cljs.core.Keyword("\ufdd0'indices")).call(null, G__409588), null, cljs.core.dissoc.call(null, G__409588, "\ufdd0'source", "\ufdd0'vertices", "\ufdd0'indices"))
+webgl.geometry.map__GT_BufferedGeometry = function map__GT_BufferedGeometry(G__256924) {
+  return new webgl.geometry.BufferedGeometry((new cljs.core.Keyword("\ufdd0'source")).call(null, G__256924), (new cljs.core.Keyword("\ufdd0'vertices")).call(null, G__256924), (new cljs.core.Keyword("\ufdd0'indices")).call(null, G__256924), null, cljs.core.dissoc.call(null, G__256924, "\ufdd0'source", "\ufdd0'vertices", "\ufdd0'indices"))
 };
 webgl.geometry.BufferedGeometry;
 webgl.geometry.Geometry = function(vertices, indices, __meta, __extmap) {
@@ -26259,52 +26259,52 @@ webgl.geometry.Geometry = function(vertices, indices, __meta, __extmap) {
   }
 };
 webgl.geometry.Geometry.prototype.cljs$core$IHash$_hash$arity$1 = function(this__2318__auto__) {
-  var this__409614 = this;
-  var h__2192__auto____409615 = this__409614.__hash;
-  if(!(h__2192__auto____409615 == null)) {
-    return h__2192__auto____409615
+  var this__256950 = this;
+  var h__2192__auto____256951 = this__256950.__hash;
+  if(!(h__2192__auto____256951 == null)) {
+    return h__2192__auto____256951
   }else {
-    var h__2192__auto____409616 = cljs.core.hash_imap.call(null, this__2318__auto__);
-    this__409614.__hash = h__2192__auto____409616;
-    return h__2192__auto____409616
+    var h__2192__auto____256952 = cljs.core.hash_imap.call(null, this__2318__auto__);
+    this__256950.__hash = h__2192__auto____256952;
+    return h__2192__auto____256952
   }
 };
 webgl.geometry.Geometry.prototype.cljs$core$ILookup$_lookup$arity$2 = function(this__2323__auto__, k__2324__auto__) {
-  var this__409617 = this;
+  var this__256953 = this;
   return this__2323__auto__.cljs$core$ILookup$_lookup$arity$3(this__2323__auto__, k__2324__auto__, null)
 };
-webgl.geometry.Geometry.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2325__auto__, k409612, else__2326__auto__) {
-  var this__409618 = this;
-  if(k409612 === "\ufdd0'vertices") {
-    return this__409618.vertices
+webgl.geometry.Geometry.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2325__auto__, k256948, else__2326__auto__) {
+  var this__256954 = this;
+  if(k256948 === "\ufdd0'vertices") {
+    return this__256954.vertices
   }else {
-    if(k409612 === "\ufdd0'indices") {
-      return this__409618.indices
+    if(k256948 === "\ufdd0'indices") {
+      return this__256954.indices
     }else {
       if("\ufdd0'else") {
-        return cljs.core._lookup.call(null, this__409618.__extmap, k409612, else__2326__auto__)
+        return cljs.core._lookup.call(null, this__256954.__extmap, k256948, else__2326__auto__)
       }else {
         return null
       }
     }
   }
 };
-webgl.geometry.Geometry.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2330__auto__, k__2331__auto__, G__409611) {
-  var this__409619 = this;
-  var pred__409620__409623 = cljs.core.identical_QMARK_;
-  var expr__409621__409624 = k__2331__auto__;
-  if(pred__409620__409623.call(null, "\ufdd0'vertices", expr__409621__409624)) {
-    return new webgl.geometry.Geometry(G__409611, this__409619.indices, this__409619.__meta, this__409619.__extmap, null)
+webgl.geometry.Geometry.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2330__auto__, k__2331__auto__, G__256947) {
+  var this__256955 = this;
+  var pred__256956__256959 = cljs.core.identical_QMARK_;
+  var expr__256957__256960 = k__2331__auto__;
+  if(pred__256956__256959.call(null, "\ufdd0'vertices", expr__256957__256960)) {
+    return new webgl.geometry.Geometry(G__256947, this__256955.indices, this__256955.__meta, this__256955.__extmap, null)
   }else {
-    if(pred__409620__409623.call(null, "\ufdd0'indices", expr__409621__409624)) {
-      return new webgl.geometry.Geometry(this__409619.vertices, G__409611, this__409619.__meta, this__409619.__extmap, null)
+    if(pred__256956__256959.call(null, "\ufdd0'indices", expr__256957__256960)) {
+      return new webgl.geometry.Geometry(this__256955.vertices, G__256947, this__256955.__meta, this__256955.__extmap, null)
     }else {
-      return new webgl.geometry.Geometry(this__409619.vertices, this__409619.indices, this__409619.__meta, cljs.core.assoc.call(null, this__409619.__extmap, k__2331__auto__, G__409611), null)
+      return new webgl.geometry.Geometry(this__256955.vertices, this__256955.indices, this__256955.__meta, cljs.core.assoc.call(null, this__256955.__extmap, k__2331__auto__, G__256947), null)
     }
   }
 };
 webgl.geometry.Geometry.prototype.cljs$core$ICollection$_conj$arity$2 = function(this__2328__auto__, entry__2329__auto__) {
-  var this__409625 = this;
+  var this__256961 = this;
   if(cljs.core.vector_QMARK_.call(null, entry__2329__auto__)) {
     return this__2328__auto__.cljs$core$IAssociative$_assoc$arity$3(this__2328__auto__, cljs.core._nth.call(null, entry__2329__auto__, 0), cljs.core._nth.call(null, entry__2329__auto__, 1))
   }else {
@@ -26312,33 +26312,33 @@ webgl.geometry.Geometry.prototype.cljs$core$ICollection$_conj$arity$2 = function
   }
 };
 webgl.geometry.Geometry.prototype.cljs$core$ISeqable$_seq$arity$1 = function(this__2335__auto__) {
-  var this__409626 = this;
-  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'vertices", this__409626.vertices), cljs.core.vector.call(null, "\ufdd0'indices", this__409626.indices)], true), this__409626.__extmap))
+  var this__256962 = this;
+  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'vertices", this__256962.vertices), cljs.core.vector.call(null, "\ufdd0'indices", this__256962.indices)], true), this__256962.__extmap))
 };
 webgl.geometry.Geometry.prototype.cljs$core$IPrintable$_pr_seq$arity$2 = function(this__2337__auto__, opts__2338__auto__) {
-  var this__409627 = this;
-  var pr_pair__2339__auto____409628 = function(keyval__2340__auto__) {
+  var this__256963 = this;
+  var pr_pair__2339__auto____256964 = function(keyval__2340__auto__) {
     return cljs.core.pr_sequential.call(null, cljs.core.pr_seq, "", " ", "", opts__2338__auto__, keyval__2340__auto__)
   };
-  return cljs.core.pr_sequential.call(null, pr_pair__2339__auto____409628, [cljs.core.str("#"), cljs.core.str("Geometry"), cljs.core.str("{")].join(""), ", ", "}", opts__2338__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'vertices", this__409627.vertices), cljs.core.vector.call(null, "\ufdd0'indices", this__409627.indices)], true), this__409627.__extmap))
+  return cljs.core.pr_sequential.call(null, pr_pair__2339__auto____256964, [cljs.core.str("#"), cljs.core.str("Geometry"), cljs.core.str("{")].join(""), ", ", "}", opts__2338__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'vertices", this__256963.vertices), cljs.core.vector.call(null, "\ufdd0'indices", this__256963.indices)], true), this__256963.__extmap))
 };
 webgl.geometry.Geometry.prototype.cljs$core$ICounted$_count$arity$1 = function(this__2327__auto__) {
-  var this__409629 = this;
-  return 2 + cljs.core.count.call(null, this__409629.__extmap)
+  var this__256965 = this;
+  return 2 + cljs.core.count.call(null, this__256965.__extmap)
 };
 webgl.geometry.Geometry.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(this__2319__auto__, other__2320__auto__) {
-  var this__409630 = this;
+  var this__256966 = this;
   if(cljs.core.truth_(function() {
-    var and__3822__auto____409631 = other__2320__auto__;
-    if(cljs.core.truth_(and__3822__auto____409631)) {
-      var and__3822__auto____409632 = this__2319__auto__.constructor === other__2320__auto__.constructor;
-      if(and__3822__auto____409632) {
+    var and__3822__auto____256967 = other__2320__auto__;
+    if(cljs.core.truth_(and__3822__auto____256967)) {
+      var and__3822__auto____256968 = this__2319__auto__.constructor === other__2320__auto__.constructor;
+      if(and__3822__auto____256968) {
         return cljs.core.equiv_map.call(null, this__2319__auto__, other__2320__auto__)
       }else {
-        return and__3822__auto____409632
+        return and__3822__auto____256968
       }
     }else {
-      return and__3822__auto____409631
+      return and__3822__auto____256967
     }
   }())) {
     return true
@@ -26346,25 +26346,25 @@ webgl.geometry.Geometry.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(thi
     return false
   }
 };
-webgl.geometry.Geometry.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2322__auto__, G__409611) {
-  var this__409633 = this;
-  return new webgl.geometry.Geometry(this__409633.vertices, this__409633.indices, G__409611, this__409633.__extmap, this__409633.__hash)
+webgl.geometry.Geometry.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2322__auto__, G__256947) {
+  var this__256969 = this;
+  return new webgl.geometry.Geometry(this__256969.vertices, this__256969.indices, G__256947, this__256969.__extmap, this__256969.__hash)
 };
 webgl.geometry.Geometry.prototype.cljs$core$IMeta$_meta$arity$1 = function(this__2321__auto__) {
-  var this__409634 = this;
-  return this__409634.__meta
+  var this__256970 = this;
+  return this__256970.__meta
 };
 webgl.geometry.Geometry.prototype.webgl$geometry$AsBuffered$ = true;
 webgl.geometry.Geometry.prototype.webgl$geometry$AsBuffered$as_buffered$arity$1 = function(this$) {
-  var this__409635 = this;
-  return new webgl.geometry.BufferedGeometry(this$, webgl.buffer.make.call(null, "\ufdd0'array", webgl.geometry.as_float32.call(null, this__409635.vertices)), webgl.buffer.make.call(null, "\ufdd0'index", webgl.geometry.as_uint16.call(null, this__409635.indices)))
+  var this__256971 = this;
+  return new webgl.geometry.BufferedGeometry(this$, webgl.buffer.make.call(null, "\ufdd0'array", webgl.geometry.as_float32.call(null, this__256971.vertices)), webgl.buffer.make.call(null, "\ufdd0'index", webgl.geometry.as_uint16.call(null, this__256971.indices)))
 };
 webgl.geometry.Geometry.prototype.cljs$core$IMap$_dissoc$arity$2 = function(this__2332__auto__, k__2333__auto__) {
-  var this__409636 = this;
+  var this__256972 = this;
   if(cljs.core.contains_QMARK_.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'vertices", "\ufdd0'indices"]), k__2333__auto__)) {
-    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2332__auto__), this__409636.__meta), k__2333__auto__)
+    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2332__auto__), this__256972.__meta), k__2333__auto__)
   }else {
-    return new webgl.geometry.Geometry(this__409636.vertices, this__409636.indices, this__409636.__meta, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__409636.__extmap, k__2333__auto__)), null)
+    return new webgl.geometry.Geometry(this__256972.vertices, this__256972.indices, this__256972.__meta, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__256972.__extmap, k__2333__auto__)), null)
   }
 };
 webgl.geometry.Geometry.cljs$lang$type = true;
@@ -26374,39 +26374,36 @@ webgl.geometry.Geometry.cljs$lang$ctorPrSeq = function(this__2357__auto__) {
 webgl.geometry.__GT_Geometry = function __GT_Geometry(vertices, indices) {
   return new webgl.geometry.Geometry(vertices, indices)
 };
-webgl.geometry.map__GT_Geometry = function map__GT_Geometry(G__409613) {
-  return new webgl.geometry.Geometry((new cljs.core.Keyword("\ufdd0'vertices")).call(null, G__409613), (new cljs.core.Keyword("\ufdd0'indices")).call(null, G__409613), null, cljs.core.dissoc.call(null, G__409613, "\ufdd0'vertices", "\ufdd0'indices"))
+webgl.geometry.map__GT_Geometry = function map__GT_Geometry(G__256949) {
+  return new webgl.geometry.Geometry((new cljs.core.Keyword("\ufdd0'vertices")).call(null, G__256949), (new cljs.core.Keyword("\ufdd0'indices")).call(null, G__256949), null, cljs.core.dissoc.call(null, G__256949, "\ufdd0'vertices", "\ufdd0'indices"))
 };
 webgl.geometry.Geometry;
 webgl.geometry.triangle = new webgl.geometry.Geometry([0, 0.1, 0, 1, -0.1, -0.1, 0, 1, 0.1, -0.1, 0, 1], [0, 1, 2]);
 webgl.geometry.concaterate = function concaterate(coll, n, trans) {
   return cljs.core.into_array.call(null, cljs.core.apply.call(null, cljs.core.concat, cljs.core.take.call(null, 1 + n, cljs.core.iterate.call(null, trans, coll))))
 };
-webgl.geometry.trans_vertices = function trans_vertices(trans, vertices) {
-  var clone__409640 = vertices.slice();
-  var n__2527__auto____409641 = clone__409640.length / 4;
-  var x__409642 = 0;
+webgl.geometry.cloned_indices = function cloned_indices(indices) {
+  var c__256977 = indices.length;
+  var a__2515__auto____256978 = indices;
+  var out__256979 = a__2515__auto____256978.slice();
+  var x__256980 = 0;
   while(true) {
-    if(x__409642 < n__2527__auto____409641) {
-      trans.call(null, clone__409640, x__409642);
-      var G__409643 = x__409642 + 1;
-      x__409642 = G__409643;
+    if(x__256980 < a__2515__auto____256978.length) {
+      out__256979[x__256980] = indices[x__256980] + c__256977;
+      var G__256981 = x__256980 + 1;
+      x__256980 = G__256981;
       continue
     }else {
+      return out__256979
     }
     break
   }
-  return clone__409640
-};
-webgl.geometry.cloned_indices = function cloned_indices(indices) {
-  var c__409645 = cljs.core.count.call(null, indices);
-  return cljs.core.map.call(null, cljs.core.partial.call(null, cljs.core._PLUS_, c__409645), indices)
 };
 webgl.geometry.clone = function clone(n, trans, in$) {
-  return new webgl.geometry.Geometry(webgl.geometry.concaterate.call(null, (new cljs.core.Keyword("\ufdd0'vertices")).call(null, in$), n, cljs.core.partial.call(null, webgl.geometry.trans_vertices, trans)), webgl.geometry.concaterate.call(null, (new cljs.core.Keyword("\ufdd0'indices")).call(null, in$), n, webgl.geometry.cloned_indices))
+  return new webgl.geometry.Geometry(webgl.geometry.concaterate.call(null, (new cljs.core.Keyword("\ufdd0'vertices")).call(null, in$), n, trans), webgl.geometry.concaterate.call(null, (new cljs.core.Keyword("\ufdd0'indices")).call(null, in$), n, webgl.geometry.cloned_indices))
 };
 webgl.geometry.transform = function transform(trans, in$) {
-  return new webgl.geometry.Geometry(webgl.geometry.trans_vertices.call(null, trans, (new cljs.core.Keyword("\ufdd0'vertices")).call(null, in$)), (new cljs.core.Keyword("\ufdd0'indices")).call(null, in$))
+  return new webgl.geometry.Geometry(trans.call(null, (new cljs.core.Keyword("\ufdd0'vertices")).call(null, in$)), (new cljs.core.Keyword("\ufdd0'indices")).call(null, in$))
 };
 goog.provide("goog.messaging.MessageChannel");
 goog.messaging.MessageChannel = function() {
@@ -28284,44 +28281,45 @@ webgl.matrix.length = function length(v) {
   return Math.sqrt(webgl.matrix.length2.call(null, v))
 };
 webgl.matrix.row = function row(m, row) {
-  var row__289056 = webgl.matrix._STAR__SINGLEQUOTE_.call(null, row, 4);
-  return webgl.matrix.make.call(null, m[row__289056], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, row__289056, 1)], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, row__289056, 2)], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, row__289056, 3)])
+  return webgl.matrix.make.call(null, m[row], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, row, 1)], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, row, 2)], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, row, 3)])
 };
 webgl.matrix.column = function column(m, col) {
   return webgl.matrix.make.call(null, m[col], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, col, 4)], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, col, 8)], m[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, col, 12)])
 };
+webgl.matrix.rows = cljs.core.PersistentVector.fromArray([0, 4, 8, 12], true);
+webgl.matrix.columns = cljs.core.PersistentVector.fromArray([0, 1, 2, 3], true);
 webgl.matrix._STAR_ = function _STAR_(l, r) {
   return webgl.matrix.into_matrix.call(null, function() {
-    var iter__2462__auto____289098 = function iter__289078(s__289079) {
+    var iter__2462__auto____235222 = function iter__235202(s__235203) {
       return new cljs.core.LazySeq(null, false, function() {
-        var s__289079__289090 = s__289079;
+        var s__235203__235214 = s__235203;
         while(true) {
-          if(cljs.core.seq.call(null, s__289079__289090)) {
-            var x__289091 = cljs.core.first.call(null, s__289079__289090);
-            var iterys__2460__auto____289096 = function(s__289079__289090, x__289091) {
-              return function iter__289080(s__289081) {
-                return new cljs.core.LazySeq(null, false, function(s__289079__289090, x__289091) {
+          if(cljs.core.seq.call(null, s__235203__235214)) {
+            var x__235215 = cljs.core.first.call(null, s__235203__235214);
+            var iterys__2460__auto____235220 = function(s__235203__235214, x__235215) {
+              return function iter__235204(s__235205) {
+                return new cljs.core.LazySeq(null, false, function(s__235203__235214, x__235215) {
                   return function() {
-                    var s__289081__289094 = s__289081;
+                    var s__235205__235218 = s__235205;
                     while(true) {
-                      if(cljs.core.seq.call(null, s__289081__289094)) {
-                        var y__289095 = cljs.core.first.call(null, s__289081__289094);
-                        return cljs.core.cons.call(null, webgl.matrix.dot.call(null, webgl.matrix.column.call(null, l, y__289095), webgl.matrix.row.call(null, r, x__289091)), iter__289080.call(null, cljs.core.rest.call(null, s__289081__289094)))
+                      if(cljs.core.seq.call(null, s__235205__235218)) {
+                        var y__235219 = cljs.core.first.call(null, s__235205__235218);
+                        return cljs.core.cons.call(null, webgl.matrix.dot.call(null, webgl.matrix.column.call(null, l, y__235219), webgl.matrix.row.call(null, r, x__235215)), iter__235204.call(null, cljs.core.rest.call(null, s__235205__235218)))
                       }else {
                         return null
                       }
                       break
                     }
                   }
-                }(s__289079__289090, x__289091), null)
+                }(s__235203__235214, x__235215), null)
               }
-            }(s__289079__289090, x__289091);
-            var fs__2461__auto____289097 = cljs.core.seq.call(null, iterys__2460__auto____289096.call(null, cljs.core.range.call(null, 4)));
-            if(fs__2461__auto____289097) {
-              return cljs.core.concat.call(null, fs__2461__auto____289097, iter__289078.call(null, cljs.core.rest.call(null, s__289079__289090)))
+            }(s__235203__235214, x__235215);
+            var fs__2461__auto____235221 = cljs.core.seq.call(null, iterys__2460__auto____235220.call(null, webgl.matrix.columns));
+            if(fs__2461__auto____235221) {
+              return cljs.core.concat.call(null, fs__2461__auto____235221, iter__235202.call(null, cljs.core.rest.call(null, s__235203__235214)))
             }else {
-              var G__289099 = cljs.core.rest.call(null, s__289079__289090);
-              s__289079__289090 = G__289099;
+              var G__235223 = cljs.core.rest.call(null, s__235203__235214);
+              s__235203__235214 = G__235223;
               continue
             }
           }else {
@@ -28331,24 +28329,30 @@ webgl.matrix._STAR_ = function _STAR_(l, r) {
         }
       }, null)
     };
-    return iter__2462__auto____289098.call(null, cljs.core.range.call(null, 4))
+    return iter__2462__auto____235222.call(null, webgl.matrix.rows)
   }())
 };
-webgl.matrix._STAR__STAR_ = function _STAR__STAR_(l, offset, r) {
-  var in__289103 = webgl.matrix.row.call(null, l, offset);
-  var n__2527__auto____289104 = 4;
-  var x__289105 = 0;
+webgl.matrix.dot_GT__GT_ = function dot_GT__GT_(l, loff, r, roff) {
+  return webgl.matrix._PLUS__SINGLEQUOTE_.call(null, webgl.matrix._STAR__SINGLEQUOTE_.call(null, l[loff], r[roff]), webgl.matrix._STAR__SINGLEQUOTE_.call(null, l[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, loff, 1)], r[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, roff, 1)]), webgl.matrix._STAR__SINGLEQUOTE_.call(null, l[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, loff, 2)], r[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, roff, 2)]), webgl.matrix._STAR__SINGLEQUOTE_.call(null, l[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, 
+  loff, 3)], r[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, roff, 3)]))
+};
+webgl.matrix._STAR__GT__GT_ = function _STAR__GT__GT_(m, vs) {
+  var clone__235226 = vs.slice();
+  var vertex__235227 = 0;
   while(true) {
-    if(x__289105 < n__2527__auto____289104) {
-      l[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, webgl.matrix._STAR__SINGLEQUOTE_.call(null, offset, 4), x__289105)] = webgl.matrix.dot.call(null, in__289103, webgl.matrix.row.call(null, r, x__289105));
-      var G__289106 = x__289105 + 1;
-      x__289105 = G__289106;
+    if(vertex__235227 < vs.length) {
+      clone__235226[vertex__235227] = webgl.matrix.dot_GT__GT_.call(null, vs, vertex__235227, m, 0);
+      clone__235226[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, vertex__235227, 1)] = webgl.matrix.dot_GT__GT_.call(null, vs, vertex__235227, m, 4);
+      clone__235226[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, vertex__235227, 2)] = webgl.matrix.dot_GT__GT_.call(null, vs, vertex__235227, m, 8);
+      clone__235226[webgl.matrix._PLUS__SINGLEQUOTE_.call(null, vertex__235227, 3)] = webgl.matrix.dot_GT__GT_.call(null, vs, vertex__235227, m, 12);
+      var G__235228 = webgl.matrix._PLUS__SINGLEQUOTE_.call(null, vertex__235227, 4);
+      vertex__235227 = G__235228;
       continue
     }else {
-      return null
     }
     break
   }
+  return clone__235226
 };
 goog.provide("clojure.browser.repl");
 goog.require("cljs.core");
@@ -28892,37 +28896,32 @@ webgl.core.model_view_shader = function model_view_shader(vertices, view) {
   return webgl.shader.shader.call(null, cljs.core.PersistentVector.fromArray([vertices, view], true), webgl.shader._STAR_.call(null, vertices, view))
 };
 webgl.core.init_scene = function init_scene(canvas) {
-  var program__457624 = webgl.program.make.call(null);
+  var program__224503 = webgl.program.make.call(null);
   webgl.api.clear_color.call(null, 0, 0, 0, 1);
-  var gl__457625 = webgl.api.context.call(null);
-  var copy_trans__457626 = webgl.matrix._STAR_.call(null, webgl.matrix.z_rotation.call(null, -(Math.PI / 5)), webgl.matrix.translation.call(null, webgl.matrix.make.call(null, 0.3, -0.1, 0, 0)));
-  var move_trans__457627 = webgl.matrix.translation.call(null, webgl.matrix.make.call(null, 0, 0.5, 0, 0));
-  var vertices__457628 = webgl.shader.attribute.call(null, webgl.shader.vec4, cljs.core.constantly.call(null, webgl.geometry.as_buffered.call(null, webgl.geometry.transform.call(null, function(p1__457614_SHARP_, p2__457615_SHARP_) {
-    return webgl.matrix._STAR__STAR_.call(null, p1__457614_SHARP_, p2__457615_SHARP_, move_trans__457627)
-  }, webgl.geometry.clone.call(null, webgl.core.triangles - 1, function(p1__457612_SHARP_, p2__457613_SHARP_) {
-    return webgl.matrix._STAR__STAR_.call(null, p1__457612_SHARP_, p2__457613_SHARP_, copy_trans__457626)
-  }, webgl.geometry.triangle)))));
-  var view__457629 = webgl.shader.uniform.call(null, webgl.shader.mat4, cljs.core.constantly.call(null, webgl.matrix.identity));
-  var vertex_shader__457630 = webgl.core.model_view_shader.call(null, vertices__457628, view__457629);
-  var renderer__457631 = cljs.core.partial.call(null, webgl.core.render_frame, program__457624, vertex_shader__457630);
-  webgl.core.prepare_program.call(null, program__457624, vertex_shader__457630);
+  var gl__224504 = webgl.api.context.call(null);
+  var copy_trans__224505 = webgl.matrix._STAR_.call(null, webgl.matrix.z_rotation.call(null, -(Math.PI / 5)), webgl.matrix.translation.call(null, webgl.matrix.make.call(null, 0.3, -0.1, 0, 0)));
+  var move_trans__224506 = webgl.matrix.translation.call(null, webgl.matrix.make.call(null, 0, 0.5, 0, 0));
+  var vertices__224507 = webgl.shader.attribute.call(null, webgl.shader.vec4, cljs.core.constantly.call(null, webgl.geometry.as_buffered.call(null, webgl.geometry.transform.call(null, cljs.core.partial.call(null, webgl.matrix._STAR__GT__GT_, move_trans__224506), webgl.geometry.clone.call(null, webgl.core.triangles - 1, cljs.core.partial.call(null, webgl.matrix._STAR__GT__GT_, copy_trans__224505), webgl.geometry.triangle)))));
+  var view__224508 = webgl.shader.uniform.call(null, webgl.shader.mat4, cljs.core.constantly.call(null, webgl.matrix.identity));
+  var vertex_shader__224509 = webgl.core.model_view_shader.call(null, vertices__224507, view__224508);
+  var renderer__224510 = cljs.core.partial.call(null, webgl.core.render_frame, program__224503, vertex_shader__224509);
+  webgl.core.prepare_program.call(null, program__224503, vertex_shader__224509);
   setInterval(webgl.core.next_frame, 1E3 / webgl.core.fps);
-  webgl.core.render.call(null, gl__457625, renderer__457631);
+  webgl.core.render.call(null, gl__224504, renderer__224510);
   return goog.events.listen(canvas, "click", function(evt) {
     cljs.core.swap_BANG_.call(null, webgl.core.redraw, cljs.core.not);
     if(cljs.core.truth_(cljs.core.deref.call(null, webgl.core.redraw))) {
-      return webgl.core.render.call(null, gl__457625, renderer__457631)
+      return webgl.core.render.call(null, gl__224504, renderer__224510)
     }else {
       return null
     }
   })
 };
 webgl.core.load_gl = function load_gl() {
-  var canvas__457633 = goog.dom.$("gl");
-  return webgl.api.with_context.call(null, WebGLDebugUtils.makeDebugContext(webgl.api.make_context.call(null, canvas__457633)), webgl.core.init_scene, canvas__457633)
+  var canvas__224512 = goog.dom.$("gl");
+  return webgl.api.with_context.call(null, WebGLDebugUtils.makeDebugContext(webgl.api.make_context.call(null, canvas__224512)), webgl.core.init_scene, canvas__224512)
 };
 webgl.core.init = function init() {
-  clojure.browser.repl.connect.call(null, "http://localhost:9000/repl");
   return window.onload = webgl.core.load_gl
 };
 goog.exportSymbol("webgl.core.init", webgl.core.init);

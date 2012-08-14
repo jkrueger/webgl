@@ -28901,9 +28901,15 @@ goog.exportSymbol("webgl.core.init", webgl.core.init);
 goog.provide("webgl.vector");
 goog.require("cljs.core");
 webgl.vector.make = cljs.core.array;
-webgl.vector.dot = function dot(l, r) {
-  return l[0] * r[0] + l[1] * r[1] + l[2] * r[2] + l[3] * r[3]
+webgl.vector._STAR__SINGLEQUOTE_ = cljs.core._STAR_;
+webgl.vector._PLUS__SINGLEQUOTE_ = cljs.core._PLUS_;
+webgl.vector._PLUS_ = function _PLUS_(l, r) {
+  return webgl.vector.make.call(null, webgl.vector._PLUS__SINGLEQUOTE_.call(null, l[0], r[0]), webgl.vector._PLUS__SINGLEQUOTE_.call(null, l[1], r[1]), webgl.vector._PLUS__SINGLEQUOTE_.call(null, l[2], r[2]), webgl.vector._PLUS__SINGLEQUOTE_.call(null, l[3], r[3]))
 };
+webgl.vector.dot = function dot(l, r) {
+  return webgl.vector._PLUS__SINGLEQUOTE_.call(null, webgl.vector._STAR__SINGLEQUOTE_.call(null, l[0], r[0]), webgl.vector._STAR__SINGLEQUOTE_.call(null, l[1], r[1]), webgl.vector._STAR__SINGLEQUOTE_.call(null, l[2], r[2]), webgl.vector._STAR__SINGLEQUOTE_.call(null, l[3], r[3]))
+};
+webgl.vector._STAR_ = webgl.vector.dot;
 webgl.vector.length2 = function length2(v) {
   return webgl.vector.dot.call(null, v, v)
 };

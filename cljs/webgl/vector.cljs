@@ -1,4 +1,5 @@
-(ns webgl.vector)
+(ns webgl.vector
+  (:refer-clojure :exclude (* +)))
 
 (def make array)
 

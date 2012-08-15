@@ -103,5 +103,5 @@
       canvas)))
 
 (defn ^:export init []
-  ;;(repl/connect "http://localhost:9000/repl")
+  (repl/connect "http://localhost:9000/repl")
   (set! (.-onload js/window) load-gl))

@@ -16,13 +16,14 @@
   AsBuffered
   (as-buffered [this]
     (BufferedGeometry. this
-      (buffer/make :array (as-float32 vertices))
+      (buffer/make :array vertices)
       (buffer/make :index (as-uint16 indices)))))
 
 (def triangle
-  (Geometry. (array  0.0  0.1 0.0 1.0
-                    -0.1 -0.1 0.0 1.0
-                     0.1 -0.1 0.0 1.0)
+  (Geometry. (-> (array  0.0  0.1 0.0 1.0
+                        -0.1 -0.1 0.0 1.0
+                         0.1 -0.1 0.0 1.0)
+                 (as-float32))
              (array 0 1 2)))
 
 (defn- concaterate [coll n trans]

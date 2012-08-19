@@ -6,14 +6,16 @@
             [webgl.geometry  :as geom]
             [webgl.matrix    :as matrix]
             [webgl.program   :as prog]
-            [webgl.scalar    :as scalar]
+            [webgl.operators :as op]
             [webgl.shader    :as sh]
             ;; development stuff
             [clojure.browser.repl :as repl]))
 
-(def fps 30)
-
-(def time (scalar/time fps))
+(def fps  30)
+(def time (op/time fps))
+(def zero (op/constant 0.0))
+(def one  (op/constant 1.0))
+(def up   (op/constant 0.5))
 
 (def fragment-code
   "precision mediump float;
@@ -29,7 +31,7 @@
   (when @redraw
     (swap! frame inc)))
 
-(def triangles 4)
+(def triangles 10)
 
 (defn render-frame [program vertex-shader frame]
   (sh/bind vertex-shader program frame)
@@ -67,20 +69,22 @@
       (api/clear-color 0.0 0.0 0.0 1.0)
       (let [gl            (api/context)
             copy-trans    (matrix/*
-                            (matrix/z-rotation
-                              (- (/ js/Math.PI 5)))
                             (matrix/translation
-                             (matrix/make 0.3 -0.1 0.0 0.0)))
-            move-trans    (matrix/translation
-                              (matrix/make 0.0 0.5 0.0 0.0))
+                              (matrix/make 0.3 -0.1 0.0 0.0))
+                            (matrix/z-rotation
+                              (- (/ js/Math.PI 5))))
             vertices      (sh/attribute sh/vec4
-                            (->> geom/triangle
-                                 (geom/clone (- triangles 1)
-                                   (make-trans copy-trans))
-                                 (geom/transform
-                                   (make-trans move-trans))
-                                 (geom/as-buffered)
-                                 (constantly)))
+                            (-> geom/triangle
+                                (op/cloner (- triangles 1) copy-trans)
+                                (op/transformer zero
+                                                (-> (op/sin time)
+                                                    (op/easing op/cubic)
+                                                    (op/offset 0.5))
+                                                zero
+                                                zero zero
+                                                (op/offset (op/sin time) 1.0)
+                                                (op/constant 2.0))
+                                (op/bufferer)))
             view          (sh/uniform sh/mat4
                             (constantly matrix/identity))
             vertex-shader (model-view-shader vertices view)
@@ -103,5 +107,5 @@
       canvas)))
 
 (defn ^:export init []
-  (repl/connect "http://localhost:9000/repl")
+;;  (repl/connect "http://localhost:9000/repl")
   (set! (.-onload js/window) load-gl))

@@ -11,14 +11,16 @@
                  [waltz "0.1.0-alpha1"]
                  [noir  "1.2.2" :exclusions [org.clojure/clojure]]]
   :cljsbuild
-  {:crossovers     [fetch.macros]
+  {:crossovers     []
    :crossover-path "crossover"
    :repl-launch-commands
-   {"chrome" ["chromium-browser" "http://localhost:8080/webgl"]}
+     {"chrome" ["chromium-browser" "http://localhost:8080/webgl"]}
    :builds
-   [{:source-path "cljs"
-     :compiler    {:output-to "resources/public/js/webgl.js"
-                   ;; :optimizations :advanced
-                   :optimizations :whitespace
-                   :pretty-print true
-                   :externs ["externs/jquery.js"]}}]})
+     [{:source-path "cljs/webgl"
+       :compiler    {:output-to     "resources/public/js/webgl.js"
+                     :optimizations :whitespace
+                     :pretty-print  true}}
+      {:source-path "cljs"
+       :compiler {:output-to     "resources/private/js/unit-test.js"
+                  :optimizations :whitespace
+                  :pretty-print  true}}]})

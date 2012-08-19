@@ -17,36 +17,52 @@
   (as-buffered [this]
     (BufferedGeometry. this
       (buffer/make :array vertices)
-      (buffer/make :index (as-uint16 indices)))))
+      (buffer/make :index indices))))
 
 (def triangle
   (Geometry. (-> (array  0.0  0.1 0.0 1.0
                         -0.1 -0.1 0.0 1.0
                          0.1 -0.1 0.0 1.0)
                  (as-float32))
-             (array 0 1 2)))
+             (-> (array 0 1 2)
+                 (as-uint16))))
 
-(defn- concaterate [coll n trans]
-  (->> coll
-       (iterate trans)
-       (take (+ 1 n))
-       (apply concat)
-       (into-array)))
+(defn- aiterate [acoll n trans]
+  (let [length (.-length acoll)
+        n      (inc n)
+        ctor   (type acoll)
+        out    (ctor. (* n length))]
+    (.set out acoll)
+    (loop [i        1
+           original acoll]
+      (when (< i n)
+        (let [offset      (* i length)
+              end         (+ offset length)
+              destination (.subarray out offset end)]
+          (->> original
+               (trans)
+               (.set destination))
+          (recur (inc i) destination))))
+    out))
 
 (defn- cloned-indices [indices]
-  (let [c (.-length indices)]
-    (amap indices x out
-      (+ (aget indices x)
-         c))))
+  (let [c   (.-length indices)
+        out (js/Uint16Array. c)]
+    (dotimes [x c]
+      (aset out
+            x
+            (+ (aget indices x)
+               c)))
+    out))
 
 (defn clone [n trans in]
   (Geometry.
-    (concaterate (:vertices in)
-                 n
-                 trans)
-    (concaterate (:indices in)
-                 n
-                 cloned-indices)))
+    (aiterate (:vertices in)
+              n
+              trans)
+    (aiterate (:indices in)
+              n
+              cloned-indices)))
 
 (defn transform [trans in]
   (Geometry.

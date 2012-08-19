@@ -1,5 +1,5 @@
 (ns webgl.matrix
-  (:refer-clojure :exclude (identity *)))
+  (:refer-clojure :exclude (identity * =)))
 
 (def make (comp #(js/Float32Array. %) array))
 
@@ -16,9 +16,9 @@
         0.0 0.0 0.0 1.0))
 
 (defn scaling [s]
-  (make s 0.0 0.0 0.0
-        0.0 s 0.0 0.0
-        0.0 0.0 s 0.0
+  (make s   0.0 0.0 0.0
+        0.0 s   0.0 0.0
+        0.0 0.0 s   0.0
         0.0 0.0 0.0 s))
 
 (defn x-rotation [angle]
@@ -66,7 +66,7 @@
       (when (< row (.-length l))
         (let [r1 (+ row 1)
               r2 (+ row 2)
-              r3 (+ row 2)
+              r3 (+ row 3)
               v0 (aget l row)
               v1 (aget l r1)
               v2 (aget l r2)

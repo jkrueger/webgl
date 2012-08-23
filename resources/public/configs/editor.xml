@@ -1,0 +1,55 @@
+<mxEditor>
+  <ui>
+    <resource basename="resources/operators"/>
+    <add as="graph" element="operators" 
+         style="height:57%;left:1200px;right:10px;bottom:10px"/>
+  </ui>
+  <Array as="templates">
+    <add as="triangle">
+      <Triangle>
+        <mxCell vertex="1" style="rounded">
+          <mxGeometry as="geometry" width="72" height="32"/>
+        </mxCell>
+      </Triangle>
+    </add>
+    <add as="linear">
+      <LinearTransform label="Linear">
+        <mxCell vertex="1" style="rounded">
+          <mxGeometry as="geometry" width="72" height="32"/>
+        </mxCell>
+      </LinearTransform>
+    </add>
+  </Array>
+  <mxGraph as="graph">
+    <mxGraphModel as="model">
+      <root>
+        <Workflow label="MyWorkflow" id="0"/>
+        <Layer label="Default Layer">
+	  <mxCell parent="0"/>
+        </Layer>
+      </root>
+    </mxGraphModel>
+    <mxStylesheet as="stylesheet">
+      <add as="defaultVertex">
+	<add as="shape" value="label"/>
+	<add as="perimeter" value="rectanglePerimeter"/>
+	<add as="labelBackgroundColor" value="white"/>
+	<add as="fontSize" value="10"/>
+	<add as="align" value="center"/>
+	<add as="verticalAlign" value="middle"/>
+	<add as="strokeColor" value="black"/>
+      </add>
+      <add as="rounded">
+	<add as="rounded" value="1"/>
+      </add>
+    </mxStylesheet>
+  </mxGraph>
+  <mxDefaultPopupMenu as="popupHandler">
+      <add as="generators" icon="images/box.png">
+        <add as="triangle" action="triangle"></add>
+      </add>
+      <add as="transformations" icon="images/box.png">
+        <add as="linear" action="linear"></add>
+      </add>
+  </mxDefaultPopupMenu>
+</mxEditor>

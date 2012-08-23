@@ -14,10 +14,12 @@
     (util/include-js  "js/webgl.js")
     (util/include-js  "js/webgl-utils.js")
     (util/include-js  "js/webgl-debug.js")
-    ;; (util/include-js  "http://www.diagram.ly/client?version=1.9.2.5")
-    ]
+    (util/include-js  "js/mxClient.js")]
    [:body
-    [:canvas#gl {:width 500 :height 500}]
+    [:div#wrapper
+     [:canvas#gl {:width 1180 :height 950}]
+     [:div#properties]
+     [:div#operators {:class "base"}]]
     (util/javascript-tag "webgl.core.init()")]))
 
 (defn start [& {:keys [port] :or {:port 8080}}]

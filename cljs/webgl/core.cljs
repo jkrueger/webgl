@@ -3,6 +3,7 @@
             [goog.events     :as event]
             [webgl.api       :as api]
             [webgl.constants :as const]
+            [webgl.editor    :as editor]
             [webgl.geometry  :as geom]
             [webgl.matrix    :as matrix]
             [webgl.program   :as prog]
@@ -98,8 +99,9 @@
             (when @redraw
               (render gl renderer)))))))
 
-(defn load-gl []
+(defn load []
   (let [canvas (dom/$ "gl")]
+    (editor/load-config "configs/editor.xml")
     (api/with-context
       (js/WebGLDebugUtils.makeDebugContext
         (api/make-context canvas))
@@ -108,4 +110,4 @@
 
 (defn ^:export init []
 ;;  (repl/connect "http://localhost:9000/repl")
-  (set! (.-onload js/window) load-gl))
+  (set! (.-onload js/window) load))

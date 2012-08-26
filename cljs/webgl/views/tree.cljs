@@ -20,33 +20,35 @@
       (d3/attr :width  width)
       (d3/attr :height height)))
 
+(defn- axis-inversion [d]
+  (array (aget d "y") (aget d "x")))
+
 (defn- layout [svg width height]
   (let [width    (js/parseInt width)
         height   (js/parseInt height)
-        tree     (-> (d3.tree/layout)
-                     (d3.tree/size height width))
+        tree     (d3.tree/layout height width)
         nodes    (d3.tree/nodes tree test)
+        links    (d3.tree/links tree nodes)
         vertices (-> (d3/select* svg :g.node)
                      (d3/data nodes))
         links    (-> (d3/select* svg :path.link)
-                     (d3/data (.links tree nodes)))
-        diagonal (-> (d3.svg/diagonal)
-                     (.projection
-                       (fn [d]
-                         (array (aget d "y") (aget d "x")))))]
-    ;; resize svg element...
+                     (d3/data link))
+        diagonal (d3.svg/project axis-inversion)]
     (resize svg width height)
-    ;; ...and relayout nodes
+    ;; new nodes have to be created
     (-> (d3/entered vertices)
         (d3/append :g :class "node")
         (d3/append :circle :r 4.5))
+    ;; all nodes should be transformed
     (-> vertices
         (d3/attr :transform
           (fn [d]
             (transform (aget d "y") (aget d "x")))))
+    ;; new edges have to be created
     (-> (d3/entered links)
         (d3/insert :path :g)
         (d3/attr :class "link"))
+    ;; all edges should be transformed
     (-> links
         (d3/attr :d diagonal))))
 

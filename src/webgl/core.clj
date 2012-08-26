@@ -13,8 +13,7 @@
     (util/include-js  "http://code.jquery.com/jquery-1.7.2.min.js")
     (util/include-js  "js/webgl.js")
     (util/include-js  "js/webgl-utils.js")
-    (util/include-js  "js/webgl-debug.js")
-    (util/include-js  "js/mxClient.js")]
+    (util/include-js  "js/webgl-debug.js")]
    [:body
     [:div#wrapper
      [:canvas#gl {:width 1180 :height 950}]

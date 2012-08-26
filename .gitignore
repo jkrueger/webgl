@@ -1,3 +1,5 @@
+/.lein*
+/out
 /target
 /lib
 /classes
@@ -5,6 +7,5 @@
 pom.xml
 *.jar
 *.class
-.lein-deps-sum
-.lein-failures
-.lein-plugins
+/resources/private/js
+/resources/public/js

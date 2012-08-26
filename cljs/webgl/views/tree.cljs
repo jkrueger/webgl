@@ -1,54 +1,9 @@
 (ns webgl.views.tree
-  (:require [jayq.core    :as jayq]
-            [webgl.kit.rx :as rx]))
-
-(defn select
-  ([parent selector]
-     (.select parent (name selector)))
-  ([selector]
-     (select js/d3 (name selector))))
-
-(defn select*
-  ([parent selector]
-     (.selectAll parent (name selector)))
-  ([selector]
-     (select* js/d3 (name selector))))
-
-(defn attr
-  ([selection type]
-     (.attr selection (name type)))
-  ([selection type value]
-     (.attr selection (name type) value)))
-
-(defn append [selection type & attrs]
-  (let [appended (.append selection (name type))]
-    (doseq [attribute (partition 2 attrs)]
-      (apply attr appended attribute))
-    appended))
-
-(defn insert [selection type before]
-  (.insert selection (name type) (name before)))
-
-(defn css
-  ([selection type]
-     (.style selection (name type)))
-  ([selection type value]
-     (.style selection (name type) value)))
-
-(defn data [selection data]
-  (.data selection data))
-
-(defn entered [selection]
-  (.enter selection))
-
-(defn tree-layout []
-  (js/d3.layout.tree))
-
-(defn children [tree f]
-  (.children tree f))
-
-(defn size [tree x y]
-  (.size tree (array x y)))
+  (:require [jayq.core         :as jayq]
+            [webgl.kit.d3      :as d3]
+            [webgl.kit.d3.tree :as d3.tree]
+            [webgl.kit.d3.svg  :as d3.svg]
+            [webgl.kit.rx      :as rx]))
 
 (declare resize-to-container)
 
@@ -62,43 +17,46 @@
 
 (defn resize [selection width height]
   (-> selection
-      (attr :width  width)
-      (attr :height height)))
+      (d3/attr :width  width)
+      (d3/attr :height height)))
 
 (defn- layout [svg width height]
   (let [width    (js/parseInt width)
         height   (js/parseInt height)
-        tree     (-> (tree-layout) (size height width))
-        nodes    (.nodes tree test)
-        vertices (-> (select* svg :g.node)
-                     (data nodes))
-        links    (-> (select* svg :path.link)
-                     (data (.links tree nodes)))
-        diagonal (-> (js/d3.svg.diagonal)
+        tree     (-> (d3.tree/layout)
+                     (d3.tree/size height width))
+        nodes    (d3.tree/nodes tree test)
+        vertices (-> (d3/select* svg :g.node)
+                     (d3/data nodes))
+        links    (-> (d3/select* svg :path.link)
+                     (d3/data (.links tree nodes)))
+        diagonal (-> (d3.svg/diagonal)
                      (.projection
                        (fn [d]
                          (array (aget d "y") (aget d "x")))))]
     ;; resize svg element...
     (resize svg width height)
     ;; ...and relayout nodes
-    (-> (entered vertices)
-        (append :g :class "node")
-        (append :circle :r 4.5))
+    (-> (d3/entered vertices)
+        (d3/append :g :class "node")
+        (d3/append :circle :r 4.5))
     (-> vertices
-        (attr :transform
+        (d3/attr :transform
           (fn [d]
             (transform (aget d "y") (aget d "x")))))
-    (-> (entered links)
-        (insert :path :g)
-        (attr :class "link"))
+    (-> (d3/entered links)
+        (d3/insert :path :g)
+        (d3/attr :class "link"))
     (-> links
-        (attr :d diagonal))))
+        (d3/attr :d diagonal))))
 
 (defn make [container]
-  (let [container (select container)
-        svg       (append container :svg)]
-  (append svg :g)
-  (layout svg (css container :width) (css container :height))
+  (let [container (d3/select container)
+        svg       (d3/append container :svg)]
+  (d3/append svg :g)
+  (layout svg
+    (d3/css container :width)
+    (d3/css container :height))
   (resize-to-container container svg)))
 
 (defn- resize-to-container
@@ -110,5 +68,5 @@
       (rx/observe
         (fn []
           (layout svg
-            (css container :width)
-            (css container :height))))))
+            (d3/css container :width)
+            (d3/css container :height))))))

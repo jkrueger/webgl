@@ -26,6 +26,9 @@
       (apply attr appended attribute))
     appended))
 
+(defn insert [selection type before]
+  (.insert selection (name type) (name before)))
+
 (defn css
   ([selection type]
      (.style selection (name type)))
@@ -63,21 +66,34 @@
       (attr :height height)))
 
 (defn- layout [svg width height]
-  (let [width   (js/parseInt width)
-        height  (js/parseInt height)
-        tree    (-> (tree-layout) (size height width))
-        nodes   (-> (select* svg :g.node)
-                    (data (.nodes tree test)))
-        entered (-> (entered nodes)
-                    (append :g :class "node")
-                    (append :circle :r 4.5))]
+  (let [width    (js/parseInt width)
+        height   (js/parseInt height)
+        tree     (-> (tree-layout) (size height width))
+        nodes    (.nodes tree test)
+        vertices (-> (select* svg :g.node)
+                     (data nodes))
+        links    (-> (select* svg :path.link)
+                     (data (.links tree nodes)))
+        diagonal (-> (js/d3.svg.diagonal)
+                     (.projection
+                       (fn [d]
+                         (array (aget d "y") (aget d "x")))))]
     ;; resize svg element...
     (resize svg width height)
     ;; ...and relayout nodes
-    (-> nodes
+    (-> (entered vertices)
+        (append :g :class "node")
+        (append :circle :r 4.5))
+    (-> vertices
         (attr :transform
           (fn [d]
-            (transform (aget d "y") (aget d "x")))))))
+            (transform (aget d "y") (aget d "x")))))
+    (-> (entered links)
+        (insert :path :g)
+        (attr :class "link")
+        (attr :d diagonal)
+        )
+    ))
 
 (defn make [container]
   (let [container (select container)

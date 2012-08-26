@@ -90,10 +90,9 @@
             (transform (aget d "y") (aget d "x")))))
     (-> (entered links)
         (insert :path :g)
-        (attr :class "link")
-        (attr :d diagonal)
-        )
-    ))
+        (attr :class "link"))
+    (-> links
+        (attr :d diagonal))))
 
 (defn make [container]
   (let [container (select container)

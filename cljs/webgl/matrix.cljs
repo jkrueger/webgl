@@ -24,7 +24,7 @@
 (defn x-rotation [angle]
   (let [sin (js/Math.sin angle)
         cos (js/Math.cos angle)]
-    (make 1.0 0.0 0.0 0.0
+    (make 1.0 0.0 0.0     0.0
           0.0 cos (- sin) 0.0
           0.0 sin cos     0.0
           0.0 0.0 0.0     1.0)))

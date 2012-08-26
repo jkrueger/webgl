@@ -9,16 +9,23 @@
    [:head
     [:meta {:charset "UTF-8"}]
     [:title "webgl"]
+    (util/include-css "css/common.css")
     (util/javascript-tag "var CLOSURE_NO_DEPS = true;")
     (util/include-js  "http://code.jquery.com/jquery-1.7.2.min.js")
+    (util/include-js  "http://d3js.org/d3.v2.js")
     (util/include-js  "js/webgl.js")
     (util/include-js  "js/webgl-utils.js")
     (util/include-js  "js/webgl-debug.js")]
    [:body
     [:div#wrapper
-     [:canvas#gl {:width 1180 :height 950}]
-     [:div#properties]
-     [:div#operators {:class "base"}]]
+     [:div#left
+      [:div#viewport]]
+     [:div#right
+      [:div#editor
+       [:div#properties {:class "base"}
+        [:div#panel]]
+       [:div#operators {:class "base"}
+        [:div#tree]]]]]
     (util/javascript-tag "webgl.core.init()")]))
 
 (defn start [& {:keys [port] :or {:port 8080}}]

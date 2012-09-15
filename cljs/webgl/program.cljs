@@ -1,6 +1,5 @@
 (ns webgl.program
-  (:require [webgl.api       :as api]
-            [webgl.constants :as const]))
+  (:require [webgl.api :as api]))
 
 (def make api/make-program)
 

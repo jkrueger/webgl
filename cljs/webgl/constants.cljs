@@ -3,25 +3,25 @@
 
 (def flags
   {;; data types
-   :float          js/WebGLRenderingContext.FLOAT
-   :unsigned-short js/WebGLRenderingContext.UNSIGNED_SHORT
+   :float          "FLOAT"
+   :unsigned-short "UNSIGNED_SHORT"
 
    ;; buffer types
-   :array  js/WebGLRenderingContext.ARRAY_BUFFER
-   :index  js/WebGLRenderingContext.ELEMENT_ARRAY_BUFFER
+   :array  "ARRAY_BUFFER"
+   :index  "ELEMENT_ARRAY_BUFFER"
 
    ;; buffer life times flags
-   :static js/WebGLRenderingContext.STATIC_DRAW
+   :static "STATIC_DRAW"
 
    ;; buffer areas
-   :color-buffer js/WebGLRenderingContext.COLOR_BUFFER_BIT
+   :color-buffer "COLOR_BUFFER_BIT"
 
    ;; primitive types
-   :triangles js/WebGLRenderingContext.TRIANGLES
+   :triangles "TRIANGLES"
 
    ;; shader types
-   :vertex   js/WebGLRenderingContext.VERTEX_SHADER
-   :fragment js/WebGLRenderingContext.FRAGMENT_SHADER})
+   :vertex   "VERTEX_SHADER"
+   :fragment "FRAGMENT_SHADER"})
 
-(def get flags)
-
+(defn get [context flag]
+  (aget context (get flags flag)))

@@ -16,11 +16,14 @@
   (binding [*context* context]
     (apply f args)))
 
+(defn flag [flag]
+  (const/get *context* flag))
+
 (defn make-program []
   (.createProgram *context*))
 
 (defn make-shader [type]
-  (.createShader *context* (const/get type)))
+  (.createShader *context* (const/get *context* type)))
 
 (defn set-source [shader code]
   (.shaderSource *context* shader code))
@@ -41,12 +44,12 @@
   (.createBuffer *context*))
 
 (defn bind-buffer [buffer-type id]
-  (.bindBuffer *context* (const/get buffer-type) id))
+  (.bindBuffer *context* (const/get *context* buffer-type) id))
 
 (defn buffer-data [buffer-type data]
-  (.bufferData *context* (const/get buffer-type)
+  (.bufferData *context* (const/get *context* buffer-type)
     data
-    (const/get :static)))
+    (const/get *context* :static)))
 
 ;;; attributes/uniforms
 
@@ -57,7 +60,7 @@
   [location size data-type normalized? stride offset]
   (.vertexAttribPointer *context*
     location
-    size (const/get data-type)
+    size (const/get *context* data-type)
     normalized? stride offset))
 
 (defn enable-vertex-attribute-array [location]
@@ -76,16 +79,16 @@
   (.clearColor *context* r g b a))
 
 (defn clear [buffer-type]
-  (.clear *context* (const/get buffer-type)))
+  (.clear *context* (const/get *context* buffer-type)))
 
 (defn draw-arrays [primitive-type offset n]
-  (.drawArrays *context* (const/get primitive-type) offset n))
+  (.drawArrays *context* (const/get *context* primitive-type) offset n))
 
 (defn draw-elements [primitive-type n data-type offset]
   (.drawElements *context*
-    (const/get primitive-type)
+    (const/get *context* primitive-type)
     n
-    (const/get data-type)
+    (const/get *context* data-type)
     offset))
 
 (def error->str

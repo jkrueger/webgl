@@ -1,6 +1,5 @@
 (ns webgl.buffer
-  (:require [webgl.api       :as api]
-            [webgl.constants :as const]))
+  (:require [webgl.api :as api]))
 
 (defrecord Buffer [type id])
 

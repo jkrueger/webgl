@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Jasmine Spec Runner</title>
+
+  <link rel="shortcut icon" type="image/png" href="jasmine/jasmine_favicon.png">
+
+  <link rel="stylesheet" type="text/css" href="jasmine/jasmine.css">
+  <script type="text/javascript" src="jasmine/jasmine.js"></script>
+  <script type="text/javascript" src="jasmine/jasmine-html.js"></script>
+  <script type="text/javascript" src="jasmine/jasmine.junit_reporter.js"></script>
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src="http://d3js.org/d3.v2.js"></script>
+  <script type="text/javascript">
+    var CLOSURE_NO_DEPS = true;
+  </script>
+  <script type="text/javascript" src="resources/private/js/unit-test.js"></script>
+</head>
+
+<body>
+  
+  <script type="text/javascript">
+    (function() {
+      var jasmineEnv = jasmine.getEnv();
+      jasmineEnv.updateInterval = 1000;
+
+      var trivialReporter = new jasmine.TrivialReporter();
+
+      jasmineEnv.addReporter(trivialReporter);
+      jasmineEnv.addReporter(new jasmine.JUnitXmlReporter("target/test-reports/"));
+
+      jasmineEnv.specFilter = function(spec) {
+        return trivialReporter.specFilter(spec);
+      };
+
+      var currentWindowOnload = window.onload;
+
+      window.onload = function() {
+        if (currentWindowOnload) {
+          currentWindowOnload();
+        }
+        execJasmine();
+      };
+
+      function execJasmine() {
+        jasmineEnv.execute();
+      }
+
+    })();
+  </script>
+
+    <!-- script type="text/javascript">
+        window["resultsObj"] = {};
+        window.__phantom_writeFile = function(filename, text) {
+          console.log("Write XML Data");
+          window["resultsObj"][filename] = text;
+        };
+
+        var jasmineEnv = jasmine.getEnv();
+        jasmineEnv.addReporter(new jasmine.TrivialReporter());
+        jasmineEnv.addReporter(new jasmine.JUnitXmlReporter());
+    </script -->
+  </body>
+
+</html>

@@ -15,6 +15,10 @@
    :crossover-path "crossover"
    :repl-launch-commands
      {"chrome" ["chromium-browser" "http://localhost:8080/webgl"]}
+   :test-commands
+     {"unit" ["phantomjs"
+              "phantom/phantomjs-testrunner.js"
+              "PhantomRunner.html"]}
    :builds
      [{:source-path "cljs/webgl"
        :compiler    {:output-to     "resources/public/js/webgl.js"

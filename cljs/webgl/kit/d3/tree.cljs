@@ -7,7 +7,7 @@
   (.nodes tree root))
 
 (defn links [tree nodes]
-  (.link tree nodes))
+  (.links tree nodes))
 
 (defn size [tree x y]
   (.size tree (array x y)))

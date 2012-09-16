@@ -24,4 +24,4 @@
    :fragment "FRAGMENT_SHADER"})
 
 (defn get [context flag]
-  (aget context (get flags flag)))
+  (aget context (clojure.core/get flags flag)))

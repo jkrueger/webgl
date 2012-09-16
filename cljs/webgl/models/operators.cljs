@@ -2,29 +2,26 @@
   (:require [webgl.kit.rx           :as rx]
             [webgl.kit.rx.protocols :as rxp]))
 
-(defrecord Model [operators connections channel]
-  rxp/Source
-  (observe [_ sink]
-    ;; listen to model changes
-    ))
+(def reload ::reload)
+
+(deftype Operator [name children])
+
+(defrecord Model [root events])
 
 (defn make []
-  (Model. #{} [] (rx/channel)))
+  (Model.
+    #{}
+    (rx/named-channels reload)))
 
-(defn add
-  "Add a new operator to the model"
-  [node]
-  )
+(defprotocol Load
+  (load [operator-source]))
 
-(defn connect
-  "Connect two operators in the model making
-   one the input of the other"
-  [from to n]
-  )
+(extend-protocol Load
+  Operator
+  (load [root] root))
 
-(defn disconnect
-  "Disconnect an operator from another one.
-   This will remove the operator from the list
-   of external inputs of the target"
-  [operator from]
-  )
+(defn set! [model operator-source]
+  (let [root (load operator-source)]
+    (set! (.-root model) root)
+    (rx/named-event (:events model) reload root))
+  nil)

@@ -1,24 +1,34 @@
 (ns webgl.jasmine)
 
+(def native-checkers
+  #{"toBeTruthy"
+    "toBeFalsy"
+    "toBe"
+    "toEqual"
+    "toContain"
+    "toHaveBeenCalled"
+    "toHaveBeenCalledWith"})
+
 (defmacro describe [description & body]
   `(~'js/describe ~description
      (fn [] ~@body)))
 
-(defmacro it [description body]
+(defmacro it [description & body]
   `(~'js/it ~description
-            ~body))
+     (fn []
+       ~@body)))
 
 (defmacro expect [expected _ check]
   (let [checker-form (if (symbol? check)
-                       (check)
+                       `(~check)
                        check)
         checker-name (first checker-form)
         this-sym     (gensym "this")
         expected-sym (gensym "expected")]
-     `(fn []
-        (when-not (contains? #{'toBeTruthy 'toBeFalsy} '~checker-name)
-          (~'this-as this#
-            (~checker-name this#)))
+     `(do
+        ~(when-not (contains? native-checkers (name checker-name))
+          `(~'this-as this#
+             (~checker-name this#)))
         (. (~'js/expect ~expected)
            ~checker-form))))
 

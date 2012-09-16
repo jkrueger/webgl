@@ -72,7 +72,7 @@
       (j/expect (m/transpose (m/transpose to-transpose)) => (roughly to-transpose))))
 
   (j/it "of the multiplication of two matrices is the same as the multiplication of
-           the trnaspose of each individual matrix"
+           the transpose of each individual matrix"
     (let [A (m/x-rotation 1.5)
           B (m/z-rotation 0.8)]
       (j/expect

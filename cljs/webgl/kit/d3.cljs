@@ -19,6 +19,8 @@
      (select* js/d3 selector)))
 
 (defn attr
+  ([selection]
+     (.attr selection))
   ([selection type]
      (.attr selection (name type)))
   ([selection type value]
@@ -48,14 +50,35 @@
 (defn height [selection]
   (js/parseInt (css selection :height)))
 
-(defn data [selection data]
-  (.data selection data))
+(defn text [selection text]
+  (.text selection text))
+
+(defn data
+  ([selection data]
+     (.data selection data))
+  ([selection data key-fn]
+     (.data selection data key-fn)))
+
+(defn datum
+  ([selection]
+     (.datum selection))
+  ([selection value]
+     (.datum selection value)))
 
 (defn entered [selection]
   (.enter selection))
 
 (defn exited [selection]
   (.exit selection))
+
+(defn each [selection f]
+  (.each selection f))
+
+(defn call [selection f & args]
+  ;; small hack to get apply working. memfn in
+  ;; cljs seems to be broken atm, so we have to
+  ;; work around it
+  (.call selection #(apply f % args)))
 
 (defn on [selection event listener]
   (.on selection (name event) listener))

@@ -6,7 +6,6 @@
   :min-lein-version "2.0.0"
   :plugins [[lein-cljsbuild "0.2.7"]]
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [org.clojure/clojurescript "0.0-1450" :scope "test"]
                  [crate "0.2.0-alpha4"]
                  [fetch "0.1.0-alpha2"]
                  [jayq  "0.1.0-alpha2"]

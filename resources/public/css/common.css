@@ -16,7 +16,7 @@ div.error {
     left: 0px;
     right: 0px;
     background-color: #888888;
-    border: 3px solid #CF8340;
+    border: 3px solid #dfaf8f;
     border-radius:15px;
 }
 
@@ -37,9 +37,9 @@ div#left {
 
 div#viewport {
     position:absolute;
-    top:8px;
-    bottom:8px;
-    left:8px;
+    top:4px;
+    bottom:4px;
+    left:4px;
     right:0px;
 }
 
@@ -70,45 +70,63 @@ div#editor {
 div.base#properties {
     top:0px;
     height:40%;
-    width:100%;
+    width:60%;
 }
 
-div.base#operators {
+div.base#help {
+    top:0px;
+    right:0px;
+    height:40%;
+    width:40%;
+}
+
+div.base#tree {
     bottom:0px;
     height:60%;
     width:100%;
 }
 
-div#panel {
+#properties > div {
     position:absolute;
     top:0px;
     bottom:0px;
     left:0px;
     right:0px;
-    border: 2px solid #CF8340;
-    background-color: #888888;
+    border: 2px solid #dfaf8f;
+    background-color: #5f5f5f;
     border-radius:8px;
-    margin:8px;
-
+    margin:4px 2px 4px 4px;
 }
 
-div#tree {
+#help > div {
+    position:absolute;
+    top:0px;
+    left:0px;
+    bottom:0px;
+    right:0px;
+    border: 2px solid #dfaf8f;
+    background-color: #5f5f5f;
+    border-radius:8px;
+    margin:4px 4px 4px 2px;
+}
+
+#tree > div {
     position:absolute;
     top:0px;
     bottom:0px;
     left:0px;
     right:0px;
-    border: 2px solid #CF8340;
+    border: 2px solid #dfaf8f;
     /* background: url('../images/grid.gif'); */
     border-radius:8px;
-    margin:8px;
+    margin:4px;
     margin-top:0px;
 }
 
-.node circle {
+.node circle.geometry {
   cursor: pointer;
-  fill: #fff;
-  stroke: steelblue;
+  fill: white;
+  stroke: #7f9f7f;
   stroke-width: 1.5px;
 }
 
@@ -116,4 +134,56 @@ div#tree {
   fill: none;
   stroke: #ccc;
   stroke-width: 1.5px;
+}
+
+ul.form {
+  overflow:auto;
+  list-style-type:none;
+  padding:0px;
+  margin:0px;
+  height:100%;
+}
+
+li.form {
+  padding:5px 15px 5px 10px;
+  border-bottom:1px solid #3f3f3f;
+  border-left:1px solid #3f3f3f;
+  border-radius:8px;
+  left:0px;
+  right:0px;
+  background-image:-webkit-linear-gradient(top,#6f6f6f,#5f5f5f);
+  /* float:left; */
+}
+
+label.form {
+  display:block;
+  float:left;
+  font-weight:bold;
+  padding-top:0.5em;
+  /* text-align:right; */
+  /* line-height:25px; */
+  width:80%;
+}
+
+input.form[type=text] {
+  border:1px solid darkgray;
+  padding:5px;
+  width:80%;
+}
+
+input.form[type=range] {
+  width:80%;
+}
+
+input.form[type=number] {
+  border:1px solid #3f3f3f;
+  width:20%;
+  background-color:#7f7f7f;
+  padding:2px;
+}
+
+input.form[type=number]:focus {
+  outline:1px solid #7cb8bb;
+  border:1px solid #4c7073;
+  background-color:#8f8f8f;
 }

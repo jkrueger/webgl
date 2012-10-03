@@ -9,7 +9,28 @@
 
 (def node-clicked ::node-clicked)
 
+(defprotocol Node
+  (children [_])
+  (style [_]))
+
+(defprotocol Wrap
+  (wrap [_]))
+
 (defrecord View [root container svg events])
+
+(defrecord NodeWrapper [wrapped])
+
+(extend-protocol Wrap
+  js/Object
+  (wrap [o]
+    (NodeWrapper. o))
+  PersistentVector
+  (wrap [v]
+    (into-array (map wrap v)))
+  nil
+  (wrap [_]))
+
+(def unwrap :wrapped)
 
 (defn tree-width [view]
   (- (d3/width (:svg view)) (* 2 side-margin)))
@@ -37,6 +58,9 @@
     #(this-as dom
       (rx/named-event (:events view) node-clicked dom))))
 
+(defn node-class [d]
+  (-> d (unwrap) (style)))
+
 (defn- enter-vertices
   "New nodes have to be created (i.e. geometry has to be attached)"
   [view vertices]
@@ -44,6 +68,7 @@
       (d3/append :g :class "node")
       (position-nodes)
       (d3/append :circle :r 4.5)
+      (d3/attr :class node-class)
       (register-node-events view)))
 
 (defn- enter-edges
@@ -54,23 +79,29 @@
       (d3/attr :class "link")
       (position-edges)))
 
+(defn make-layout [view]
+  (let [tree (d3.tree/layout (tree-height view) (tree-width view))]
+    (d3.tree/children tree (comp wrap children unwrap))
+    tree))
+
 (defn layout [view]
-  (let [tree     (d3.tree/layout (tree-height view) (tree-width view))
-        nodes    (d3.tree/nodes tree (:root view))
-        links    (d3.tree/links tree nodes)
-        vertices (-> (d3/select* (:svg view) :g.node)
-                     (d3/data nodes))
-        edges    (-> (d3/select* (:svg view) :path.link)
-                     (d3/data links))]
-    ;; add new nodes and edges
-    (enter-vertices view vertices)
-    (enter-edges edges)
-    ;; move the existing nodes and edges to their new positions
-    (position-nodes vertices)
-    (position-edges edges)
-    ;; remove everything else
-    (-> vertices (d3/exited) (d3/remove))
-    (-> edges (d3/exited) (d3/remove))))
+  (when (:root view)
+    (let [tree     (make-layout view)
+          nodes    (d3.tree/nodes tree (:root view))
+          links    (d3.tree/links tree nodes)
+          vertices (-> (d3/select* (:svg view) :g.node)
+                       (d3/data nodes))
+          edges    (-> (d3/select* (:svg view) :path.link)
+                       (d3/data links))]
+      ;; add new nodes and edges
+      (enter-vertices view vertices)
+      (enter-edges edges)
+      ;; move the existing nodes and edges to their new positions
+      (position-nodes vertices)
+      (position-edges edges)
+      ;; remove everything else
+      (-> vertices (d3/exited) (d3/remove))
+      (-> edges (d3/exited) (d3/remove)))))
 
 (extend-protocol b/Contained
   View
@@ -95,23 +126,23 @@
   (let [container (d3/select container)
         svg       (d3/append container :svg)
         events    (rx/named-channels node-clicked :keydown)
-        view      (View. (js-obj) container svg events)]
+        view      (View. nil container svg events)]
   (d3/append svg :g)
   (b/resize-to-container view)
   (register-key-events container events)
   view))
 
 (defn set-root!
-  "Set a new tree root and relayout the view"
+  "Set a new tree root and relayouts the view"
   [view root]
-  (set! (.-root view) root)
+  (set! (.-root view) (wrap root))
   (layout view)
   nil)
 
 (defn clear
   "Remove all tree nodes and edges from the view"
   [view]
-  (set-root! view (js-obj)))
+  (set-root! view nil))
 
 (defn- resize-node [dom size]
   (-> (d3/select dom)
@@ -124,3 +155,12 @@
 
 (defn lower [view dom]
   (resize-node dom 4.5))
+
+;;; tree node API
+
+(defn node-data [node]
+  (-> node
+      (.-parentNode)
+      (d3/select)
+      (d3/datum)
+      (unwrap)))

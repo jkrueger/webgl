@@ -1,18 +1,26 @@
 (ns webgl.presenters.selection
-  (:require  [webgl.kit.rx           :as rx]
-             [webgl.models.selection :as m]))
+  (:require [webgl.kit.rx           :as rx]
+            [webgl.kit.rx.protocols :as rxp]
+            [webgl.models.selection :as m]))
+
+(def selected   ::selected)
+(def deselected ::deselected)
+
+(defrecord Presenter [model events]
+  rxp/Sink
+  (event [_ evt]
+    (let [current (m/current model)]
+      (when (not (= evt current))
+        (when (m/selected? model)
+          (rx/named-event events deselected current))
+        (rx/named-event events selected evt)
+        (m/select! model evt)))))
 
 (defn present
-  [model view & {:keys [on-select on-deselect]}]
-  (let [ch (rx/channel)]
-    ;; lower previous model
-    (when on-deselect
-      (-> (rx/when ch #(m/selected? model))
-          (rx/observe #(on-deselect view (m/current model)))))
-    ;; raise current model
-    (when on-select
-      (-> (rx/filter ch #(not (= % (m/current model))))
-          (rx/observe #(on-select view %))))
-    ;; remember previous model
-    (rx/observe ch #(m/select! model %))
-    ch))
+  [model]
+  (Presenter.
+    model
+    (rx/named-channels selected deselected)))
+
+(def current   (comp m/current :model))
+(def selected? (comp m/selected? :model))

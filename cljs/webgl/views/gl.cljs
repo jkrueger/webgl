@@ -27,15 +27,19 @@
 
 (declare resize-to-container renderer make-geometry-program)
 
+(defn setup-context [dom]
+  (let [context (js/WebGLUtils.setupWebGL dom)]
+    (when-not context
+      (throw (js/Error. "Your browser does not support webgl")))
+    context))
+
 (defn make [container]
   (let [$container (jayq/$ container)
         dom        (canvas $container)
-        context    (js/WebGLUtils.setupWebGL dom)
+        context    (setup-context dom)
         program    (make-geometry-program context)
         frames     (rx/channel)
         geometry   (atom nil)]
-    (when-not context
-      (throw (js/Error. "Your browser does not support webgl")))
     (-> $container
         (jayq/append dom)
         (resize-to-container dom))

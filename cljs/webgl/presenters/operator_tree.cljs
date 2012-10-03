@@ -37,5 +37,4 @@
     (register-view-events view presenter)
     (register-model-events model presenter)
     (display/start view)
-    (display/pause view)
     presenter))

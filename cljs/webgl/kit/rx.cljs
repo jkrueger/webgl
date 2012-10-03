@@ -1,5 +1,5 @@
 (ns webgl.kit.rx
-  (:refer-clojure :exclude (case filter map when))
+  (:refer-clojure :exclude (case filter map when do))
   (:require [webgl.kit.rx.protocols :as p]
             [webgl.kit.rx.dom       :as d]))
 
@@ -11,7 +11,7 @@
   (event [f x]
     (f x))
   nil
-  (event [_ x]))
+  (event [_ _]))
 
 (deftype Pipe []
   p/Source
@@ -54,9 +54,7 @@
   (event (on* channels k) evt))
 
 (defn map-sink [sink f]
-  (reify p/Sink
-    (event [_ x]
-      (p/event sink (f x)))))
+  #(p/event sink (f %)))
 
 (defn map [source f]
   (reify
@@ -65,10 +63,7 @@
       (p/observe source (map-sink sink f)))))
 
 (defn filter-sink [sink p]
-  (reify p/Sink
-    (event [_ x]
-      (clojure.core/when (p x)
-        (event sink x)))))
+  #(clojure.core/when (p %) (event sink %)))
 
 (defn filter [source p]
   (reify
@@ -84,6 +79,11 @@
       (fn [evt]
         (when-let [sink (get m (:type evt evt))]
           (event sink evt))))))
+
+(defn do [& sinks]
+  (fn [evt]
+    (doseq [sink sinks]
+      (event sink evt))))
 
 ;;; imported API from submodules
 

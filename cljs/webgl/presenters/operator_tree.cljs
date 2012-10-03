@@ -1,60 +1,41 @@
 (ns webgl.presenters.operator-tree
-  (:require [webgl.api      :as gl]
-            [webgl.kit.rx   :as rx]
-            [webgl.views.gl :as display]))
+  (:require [webgl.kit.rx           :as rx]
+            [webgl.matrix           :as mat]
+            [webgl.models.operators :as model]
+            [webgl.views.gl         :as display])
+  (:require-macros [webgl.kit.rx.macros :as rxm]))
 
-;; [webgl.geometry  :as geom]
-;; [webgl.matrix    :as matrix]
-;; [webgl.program   :as prog]
-;; [webgl.operators :as op]
-;; [webgl.shader    :as sh]
+(defrecord Presenter [view])
 
-;; (def fragment-code
-;;   "precision mediump float;
-;;    void main()
-;;    {
-;;      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-;;    }")
+(defn display [presenter op]
+  (let [view (:view presenter)]
+    (->> op
+         (model/eval)
+         (display/set-geometry view))))
 
-;; (defn render-frame [program vertex-shader frame]
-;;   (sh/bind vertex-shader program frame)
-;;   (api/clear :color-buffer)
-;;   (api/draw-elements :triangles
-;;                      (* triangles 3)
-;;                      :unsigned-short
-;;                      0))
+(defn update [presenter op]
+  (let [view (:view presenter)]
+    (->> op
+         (model/eval)
+         (display/set-geometry-data view))))
 
-;; (defn prepare-program [program vertex-shader]
-;;   (prog/attach! program :vertex   (sh/compile vertex-shader))
-;;   (prog/attach! program :fragment fragment-code)
-;;   (prog/link! program)
-;;   (prog/use! program))
-
-;; (defn model-view-shader [vertices view]
-;;   (sh/shader [vertices view]
-;;     (sh/* vertices view)))
-
-;; (defn init-scene [canvas]
-;;   (let [program (prog/make)]
-;;       (let [gl            (api/context)
-;;             view          (sh/uniform sh/mat4
-;;                             (constantly matrix/identity))
-;;             vertex-shader (model-view-shader vertices view)
-;;             renderer      (partial render-frame program vertex-shader)]
-;;         (prepare-program program vertex-shader)))))
-
-(defn frame [n]
-  (gl/clear-color 0.0 0.0 0.0 1.0)
-  (gl/clear :color-buffer))
-
-(defn present [model view]
-  (rx/observe (:frames view) frame)
+(defn- register-view-events [view presenter]
   (-> (rx/event-source :click (:dom view))
       (rx/observe
        (fn [_]
          (if (display/paused? view)
            (display/resume view)
-           (display/pause view)))))
-  (display/start view)
-  (display/pause view)
-  nil)
+           (display/pause view))))))
+
+(defn- register-model-events [model presenter]
+  (rxm/on (:events model)
+    model/update #(update presenter %)))
+
+(defn present [model view]
+  (let [displayed (atom nil)
+        presenter (Presenter. view displayed)]
+    (register-view-events view presenter)
+    (register-model-events model presenter)
+    (display/start view)
+    (display/pause view)
+    presenter))

@@ -1,4 +1,4 @@
-(ns webgl.shader.code
+(ns webgl.views.gl.shader.code
   (:require [clojure.string :as str]))
 
 (defn joiner [delimeter]

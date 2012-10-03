@@ -23,9 +23,11 @@
      [:div#right
       [:div#editor
        [:div#properties {:class "base"}
-        [:div#panel]]
-       [:div#operators {:class "base"}
-        [:div#tree]]]]]
+        [:div]]
+       [:div#help {:class "base"}
+        [:div]]
+       [:div#tree {:class "base"}
+        [:div]]]]]
     (util/javascript-tag "webgl.core.init()")]))
 
 (defn start [& {:keys [port] :or {:port 8080}}]

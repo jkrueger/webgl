@@ -1,5 +1,5 @@
-(ns webgl.program
-  (:require [webgl.api :as api]))
+(ns webgl.views.gl.program
+  (:require [webgl.views.gl.api :as api]))
 
 (def make api/make-program)
 

@@ -1,9 +1,8 @@
-(ns webgl.shader
+(ns webgl.views.gl.shader
   (:refer-clojure :exclude [*])
-  (:require [webgl.api         :as api]
-            [webgl.buffer      :as buffer]
-            [webgl.shader.code :as code]
-            [webgl.geometry    :as geom]))
+  (:require [webgl.views.gl.api         :as api]
+            [webgl.views.gl.buffer      :as buffer]
+            [webgl.views.gl.shader.code :as code]))
 
 (defprotocol GLSLType
   (type-name [_]))
@@ -15,7 +14,7 @@
   (compile [_]))
 
 (defprotocol Bind
-  (bind [_ program frame]))
+  (bind [_ program value]))
 
 (defprotocol ToAttribute
   (to-attribute [_ location val]))
@@ -34,7 +33,7 @@
       (api/vertex-attribute-pointer location
         size :float false 0 0)
       (api/enable-vertex-attribute-array location)))
-  geom/BufferedGeometry
+  buffer/BufferedGeometry
   (attribute-binder [this]
     (fn [location size val]
       (buffer/bind (:vertices this))
@@ -63,7 +62,7 @@
 (def vec4 (Vec4.))
 (def mat4 (Mat4.))
 
-(deftype Attribute [type name printer value-fn]
+(deftype Attribute [type name printer]
   Declare
   (declare [_]
     (printer "attribute"
@@ -73,12 +72,11 @@
   (compile [_]
     name)
   Bind
-  (bind [_ prog frame]
-    (let [location (api/attribute-location prog name)
-          value    (value-fn frame)]
+  (bind [_ prog value]
+    (let [location (api/attribute-location prog name)]
       (to-attribute type location value))))
 
-(deftype Uniform [type name printer value-fn]
+(deftype Uniform [type name printer]
   Declare
   (declare [_]
     (printer "uniform"
@@ -88,24 +86,21 @@
   (compile [_]
     name)
   Bind
-  (bind [_ prog frame]
-    (let [location (api/uniform-location prog name)
-          value    (value-fn frame)]
+  (bind [_ prog value]
+    (let [location (api/uniform-location prog name)]
       (to-uniform type location value))))
 
-(defn attribute [type value-fn]
+(defn attribute [type]
   (Attribute.
     type
     (code/identifier :attribute)
-    code/attribute-printer
-    value-fn))
+    code/attribute-printer))
 
-(defn uniform [type value-fn]
+(defn uniform [type]
   (Uniform.
     type
     (code/identifier :uniform)
-    code/attribute-printer
-    value-fn))
+    code/attribute-printer))
 
 (deftype Multiply [args]
   Compile
@@ -120,11 +115,7 @@
   (compile [_]
     (code/shader
       (map declare attributes)
-      (compile out)))
-  Bind
-  (bind [_ prog frame]
-    (doseq [attribute attributes]
-      (bind attribute prog frame))))
+      (compile out))))
 
 (defn shader [attributes out]
   (Shader. attributes out))

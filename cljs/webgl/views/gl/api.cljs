@@ -1,5 +1,5 @@
-(ns webgl.api
-  (:require [webgl.constants :as const]))
+(ns webgl.views.gl.api
+  (:require [webgl.views.gl.constants :as const]))
 
 (def ^:dynamic *context* nil)
 

@@ -1,41 +1,61 @@
 (ns webgl.core
   (:require [jayq.core                      :as jayq]
-            [webgl.api                      :as api]
+            [webgl.geometry                 :as geo]
             [webgl.kit.rx                   :as rx]
             [webgl.presenters.editor        :as editor]
-            [webgl.presenters.operator-tree :as renderer]
+            [webgl.presenters.properties    :as props]
+            [webgl.presenters.operator-tree :as viewport]
             [webgl.models.operators         :as model]
+            [webgl.models.operators.factory :as model.factory]
             [webgl.views.fatal              :as fatal]
-            [webgl.views.gl                 :as display]
+            [webgl.views.gl                 :as gl]
+            [webgl.views.form               :as form]
             [webgl.views.tree               :as tree]
             ;; development stuff
             [clojure.browser.repl :as repl])
   (:require-macros [webgl.kit.rx.macros :as rxm]))
 
 (def test-data
-  (model/Operator.
-    "foo"
-    (array (model/Operator. "bar" (array))
-           (model/Operator. "baz" (array)))))
+  (doto (model.factory/make :transform)
+    (model/set-input 0
+      (model.factory/make :triangle))))
 
 (defn- add-viewport [model]
-  (renderer/present
+  (viewport/present
     model
-    (display/make (jayq/$ :#viewport))))
+    (gl/make :#viewport)))
+
+(defn- add-properties [model]
+  (props/present
+    model
+    (form/make "#properties > div")))
 
 (defn- add-editor [model]
   (editor/present
     model
-    (tree/make :#tree)))
+    (tree/make "#tree > div")))
+
+(defn- display-operator [renderer]
+  #(viewport/display renderer %))
+
+(defn- show-operator-properties [properties]
+  #(props/show-operator properties %))
+
+(defn- register-editor-events [editor renderer properties]
+  ;; events on the editor itself
+  (rxm/on (:events editor)
+    editor/display           (display-operator renderer)
+    editor/operator-selected (show-operator-properties properties)))
 
 (defn load []
   (.log js/console "Loading app...")
   (try
-    (let [operators (model/make)
-          viewport  (add-viewport operators)
-          editor    (add-editor operators)]
-      (rxm/on (:events editor)
-        editor/display #(.log js/console "TEST"))
+    (let [operators  (model/make)
+          renderer   (add-viewport operators)
+          properties (add-properties operators)
+          editor     (add-editor operators)]
+      (register-editor-events
+       editor renderer properties)
       ;; simulate a reload of the model
       (model/set! operators test-data))
     (catch js/Error e
@@ -46,5 +66,6 @@
       (throw e))))
 
 (defn ^:export init []
-;; (repl/connect "http://localhost:9000/repl")
+  ;; (repl/connect "http://localhost:9000/repl")
+  (set! *print-fn* #(.log js/console %))
   (jayq/document-ready load))

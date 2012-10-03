@@ -1,4 +1,4 @@
-(ns webgl.constants
+(ns webgl.views.gl.constants
   (:refer-clojure :exclude [get]))
 
 (def flags

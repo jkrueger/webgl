@@ -132,7 +132,7 @@ div.base#tree {
 #help div.text {
     background: rgba(0,0,0,0);
     margin:12px;
-    font-family: SourceCode, Arial;
+    font-family: Arial;
     font-size:10pt;
     color:#dcdccc;
     white-space:normal;
@@ -157,6 +157,11 @@ div.base#tree {
   fill: white;
   stroke: #7f9f7f;
   stroke-width: 1.5px;
+}
+
+.node text {
+  fill: #dcdccc;
+  font-family: SourceCode, Arial;
 }
 
 .link {

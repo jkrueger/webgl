@@ -31,8 +31,8 @@
     "<p>When selecting an operator you get to see a set of properties
         you can change to alter the operators behaviour. The properties
         are shown in the panel to the right of this one.</p>
-     <p>If you change a property the changed value will be remembered
-        if you change to another operator.</p>
+     <p>If you modify a property the changed value will be remembered
+        if you switch to another operator.</p>
      <p>To see the effects of your change you can press <b>r</b> while
         an operator is selected to display it.</p>"))
 

@@ -17,6 +17,8 @@
 
 (extend-protocol tree/Node
   ops/Operator
+  (label [op]
+    (ops/label op))
   (children [op]
     (->> (ops/children op)
          (remove (is? ops/op-name :constant))

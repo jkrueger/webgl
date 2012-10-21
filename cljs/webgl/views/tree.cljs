@@ -10,6 +10,7 @@
 (def node-clicked ::node-clicked)
 
 (defprotocol Node
+  (label [_])
   (children [_])
   (style [_]))
 
@@ -58,18 +59,32 @@
     #(this-as dom
       (rx/named-event (:events view) node-clicked dom))))
 
-(defn node-class [d]
+(defn- node-class [d]
   (-> d (unwrap) (style)))
+
+(defn- node-label [d]
+  (-> d (unwrap) (label)))
+
+(defn- has-children? [d]
+  (boolean (.-children d)))
 
 (defn- enter-vertices
   "New nodes have to be created (i.e. geometry has to be attached)"
   [view vertices]
-  (-> (d3/entered vertices)
-      (d3/append :g :class "node")
-      (position-nodes)
-      (d3/append :circle :r 4.5)
-      (d3/attr :class node-class)
-      (register-node-events view)))
+  (let [node (-> (d3/entered vertices) (d3/append :g :class "node"))]
+    (-> node
+        (position-nodes))
+    (-> node
+        (d3/append :circle :r 4.5)
+        (d3/attr :class node-class)
+        (register-node-events view))
+    (-> node
+        (d3/append :text)
+        (d3/attr :dx 0)
+        (d3/attr :dy 24)
+        (d3/attr :text-anchor #(if (has-children? %) "start" "end"))
+        (d3/text node-label))
+    node))
 
 (defn- enter-edges
   "New edges have to be created (i.e. geometry has to be attached)"

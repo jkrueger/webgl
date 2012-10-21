@@ -3,6 +3,7 @@
             [webgl.geometry                 :as geo]
             [webgl.kit.rx                   :as rx]
             [webgl.presenters.editor        :as editor]
+            [webgl.presenters.help          :as help]
             [webgl.presenters.properties    :as props]
             [webgl.presenters.operator-tree :as viewport]
             [webgl.models.operators         :as model]
@@ -35,6 +36,9 @@
     model
     (tree/make "#tree > div")))
 
+(defn- add-help []
+  (help/present "#help div.text"))
+
 (defn- display-operator [renderer]
   #(viewport/display renderer %))
 
@@ -47,21 +51,29 @@
     editor/display           (display-operator renderer)
     editor/operator-selected (show-operator-properties properties)))
 
+(defn register-help-events [editor help]
+  (rxm/on (:events editor)
+    editor/display           #(help/transition help :display)
+    editor/operator-selected #(help/transition help :selected)))
+
 (defn load []
   (.log js/console "Loading app...")
   (try
     (let [operators  (model/make)
           renderer   (add-viewport operators)
           properties (add-properties operators)
-          editor     (add-editor operators)]
+          editor     (add-editor operators)
+          help       (add-help)]
       (register-editor-events
-       editor renderer properties)
+        editor renderer properties)
+      (register-help-events
+        editor help)
       ;; simulate a reload of the model
       (model/set! operators test-data))
     (catch js/Error e
-      (->> (aget e "message")
-           (fatal/make)
-           (jayq/inner (jayq/$ :#wrapper)))
+      ;; (->> (aget e "message")
+      ;;      (fatal/make)
+      ;;      (jayq/inner (jayq/$ :#wrapper)))
       (.log js/console (aget e "stack"))
       (throw e))))
 

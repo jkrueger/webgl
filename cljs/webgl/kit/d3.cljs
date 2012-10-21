@@ -53,6 +53,9 @@
 (defn text [selection text]
   (.text selection text))
 
+(defn html [selection text]
+  (.html selection text))
+
 (defn data
   ([selection data]
      (.data selection data))

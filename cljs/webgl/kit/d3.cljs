@@ -89,5 +89,16 @@
 (defn transition [selection]
   (.transition selection))
 
-(defn duration [selection t]
-  (.duration selection t))
+(defn duration [transition t]
+  (.duration transition t))
+
+(defn delay [transition t]
+  (.delay transition t))
+
+(defn- ->name [arg]
+  (if (keyword? arg)
+    (name arg)
+    arg))
+
+(defn ease [transition easing & args]
+  (.ease transition (apply js/d3.ease (name easing) (map ->name args))))

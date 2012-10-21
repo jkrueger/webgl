@@ -11,7 +11,7 @@
 
 (def field-tag (comp :tag meta))
 
-(defrecord View [container events])
+(defrecord View [container events empty-message])
 
 (defmulti format-value
   (fn [dom]
@@ -64,24 +64,49 @@
 (defn- add [view inputs]
   (let [container (:container view)
         form      (-> container (d3/append :ul) (d3/attr :class "form"))
-        tagged    (into-array (tag inputs))]
-    (-> (d3/select* form :li)
-        (d3/data tagged)
-        (d3/entered)
-        (d3/append :li)
-        (d3/attr :class "form")
-        (d3/call add-field view))))
+        tagged    (into-array (tag inputs))
+        fields    (-> (d3/select* form :li)
+                      (d3/data tagged)
+                      (d3/entered)
+                      (d3/append :li)
+                      (d3/css :opacity 0.0)
+                      (d3/attr :class "form"))]
+        (-> fields
+            (d3/call add-field view))
+        fields))
+
+(defn- empty-message [view]
+  (-> (:container view)
+      (d3/append :p)
+      (d3/attr :class "form")
+      (d3/text (:empty-message view))))
+
+(defn- add-when-not-empty [view inputs]
+  (if (= 0 (count inputs))
+    (empty-message view)
+    (add view inputs)))
+
+(defn transition [selection type]
+  (-> selection
+      (d3/transition)
+      (d3/delay (fn [d i] (* i 50)))
+      (d3/duration 300)
+      (d3/ease :cubic type)))
 
 (defn clear [view]
   (-> (:container view)
       (d3/select* :*)
+      (transition :out)
+      (d3/css :opacity 0.0)
       (d3/remove)))
 
 (defn set! [view inputs]
   (clear view)
-  (add view inputs))
+  (-> (add-when-not-empty view inputs)
+      (transition :in)
+      (d3/css :opacity 1.0)))
 
-(defn make [container]
+(defn make [container empty-message]
   (let [container (d3/select container)
         events    (rx/named-channels field-changed)]
-    (View. container events)))
+    (View. container events empty-message)))

@@ -29,7 +29,8 @@
 (defn- add-properties [model]
   (props/present
     model
-    (form/make "#properties > div")))
+    (form/make "#properties > div"
+      "This operator has no configurable properties")))
 
 (defn- add-editor [model]
   (editor/present

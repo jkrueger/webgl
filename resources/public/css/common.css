@@ -199,6 +199,16 @@ label.form {
   width:80%;
 }
 
+p.form {
+  position:absolute;
+  top:45%;
+  width:100%;
+  font-family: Arial;
+  font-size:11pt;
+  color:#dcdccc;
+  text-align:center;
+}
+
 input.form[type=text] {
   border:1px solid darkgray;
   padding:5px;

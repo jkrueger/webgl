@@ -6,18 +6,12 @@
             [webgl.kit.rx         :as rx]))
 
 (def side-margin 18)
-
 (def node-clicked ::node-clicked)
 
-(defprotocol Node
-  (label [_])
-  (children [_])
-  (style [_]))
+;;; tree node API
 
 (defprotocol Wrap
   (wrap [_]))
-
-(defrecord View [root container svg events])
 
 (defrecord NodeWrapper [wrapped])
 
@@ -32,6 +26,20 @@
   (wrap [_]))
 
 (def unwrap :wrapped)
+
+(defprotocol Node
+  (id [_])
+  (label [_])
+  (children [_])
+  (style [_]))
+
+(defn node-data [node]
+  (-> node
+      (d3/select)
+      (d3/datum)
+      (unwrap)))
+
+(defrecord View [root container svg events])
 
 (defn tree-width [view]
   (- (d3/width (:svg view)) (* 2 side-margin)))
@@ -49,15 +57,25 @@
   (array (+ side-margin (aget d "y")) (aget d "x")))
 
 (defn- position-nodes [selection]
-  (d3/attr selection :transform (comp translate axis-inversion)))
+  (d3/attr selection
+    :transform
+    (comp translate axis-inversion)))
 
 (defn- position-edges [selection]
   (d3/attr selection :d (d3.svg/project axis-inversion)))
 
+(defn- fire [view event data]
+  (rx/named-event (:events view) event data))
+
 (defn- register-node-events [selection view]
   (d3/on selection :click
     #(this-as dom
-      (rx/named-event (:events view) node-clicked dom))))
+       (->> (.-parentNode dom)
+            (node-data)
+            (fire view node-clicked)))))
+
+(defn- node-id [d]
+  (-> d (unwrap) (id)))
 
 (defn- node-class [d]
   (-> d (unwrap) (style)))
@@ -68,21 +86,33 @@
 (defn- has-children? [d]
   (boolean (.-children d)))
 
+(defn- anchorer [nodes]
+  (fn [d]
+    (if (= 1 (count nodes))
+      "middle"
+      (if (has-children? d)
+        "start"
+        "end"))))
+
 (defn- enter-vertices
   "New nodes have to be created (i.e. geometry has to be attached)"
   [view vertices]
-  (let [node (-> (d3/entered vertices) (d3/append :g :class "node"))]
+  (let [node (-> (d3/entered vertices)
+                 (d3/append :g)
+                 (d3/attr :class "node")
+                 (d3/attr :nid #(str "node" (node-id %))))]
     (-> node
         (position-nodes))
     (-> node
-        (d3/append :circle :r 4.5)
+        (d3/append :circle)
+        (d3/attr :r 4.5)
         (d3/attr :class node-class)
         (register-node-events view))
     (-> node
         (d3/append :text)
         (d3/attr :dx 0)
         (d3/attr :dy 24)
-        (d3/attr :text-anchor #(if (has-children? %) "start" "end"))
+        (d3/attr :text-anchor (anchorer vertices))
         (d3/text node-label))
     node))
 
@@ -94,20 +124,31 @@
       (d3/attr :class "link")
       (position-edges)))
 
-(defn make-layout [view]
+(def ->children (comp wrap children unwrap))
+
+(defn- make-layout [view]
   (let [tree (d3.tree/layout (tree-height view) (tree-width view))]
-    (d3.tree/children tree (comp wrap children unwrap))
+    (d3.tree/children tree ->children)
     tree))
+
+(defn- offset-single-root [view selection]
+  (let [width (if (= 1 (count selection))
+                (tree-width view)
+                0)]
+    (-> (d3/select (:svg view) :g.root)
+        (d3/attr :transform (translate (array (* 0.5 width) 0))))))
 
 (defn layout [view]
   (when (:root view)
     (let [tree     (make-layout view)
           nodes    (d3.tree/nodes tree (:root view))
           links    (d3.tree/links tree nodes)
-          vertices (-> (d3/select* (:svg view) :g.node)
-                       (d3/data nodes))
+          vertices (-> (d3/select (:svg view) :g.root)
+                       (d3/select* :g.node)
+                       (d3/data nodes node-id))
           edges    (-> (d3/select* (:svg view) :path.link)
                        (d3/data links))]
+      (offset-single-root view nodes)
       ;; add new nodes and edges
       (enter-vertices view vertices)
       (enter-edges edges)
@@ -129,22 +170,13 @@
 (defn- enable-keyboard [dom]
   (d3/attr dom :tabindex 0))
 
-(defn- fire [events k]
-  (rx/named-event events k js/d3.event.keyCode))
-
-(defn- register-key-events [dom events]
-  (-> dom
-      (enable-keyboard)
-      (d3/on :keydown #(fire events :keydown))))
-
 (defn make [container]
   (let [container (d3/select container)
         svg       (d3/append container :svg)
-        events    (rx/named-channels node-clicked :keydown)
+        events    (rx/named-channels node-clicked)
         view      (View. nil container svg events)]
-  (d3/append svg :g)
+  (-> (d3/append svg :g) (d3/attr :class "root"))
   (b/resize-to-container view)
-  (register-key-events container events)
   view))
 
 (defn set-root!
@@ -160,22 +192,21 @@
   (set-root! view nil))
 
 (defn- resize-node [dom size]
-  (-> (d3/select dom)
+  (-> dom
       (d3/transition)
       (d3/duration 500)
       (d3/attr :r size)))
 
-(defn raise [view dom]
-  (resize-node dom 9))
+(defn- nid [node]
+  (str "g[nid=node" (id node) "]"))
 
-(defn lower [view dom]
-  (resize-node dom 4.5))
+(defn resize [view node size]
+  (-> (d3/select (:svg view) (nid node))
+      (d3/select :circle)
+      (resize-node size)))
 
-;;; tree node API
+(defn raise [view node]
+  (resize view node 9))
 
-(defn node-data [node]
-  (-> node
-      (.-parentNode)
-      (d3/select)
-      (d3/datum)
-      (unwrap)))
+(defn lower [view node]
+  (resize view node 4.5))

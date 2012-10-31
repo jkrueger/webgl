@@ -25,7 +25,9 @@
        [:div#properties {:class "base"}
         [:div]]
        [:div#help {:class "base"}
-        [:div [:p.backdrop "?"] [:div.text]]]
+        [:div.content [:p.backdrop "?"]
+          [:div.help]
+          [:div.menu]]]
        [:div#tree {:class "base"}
         [:div]]]]]
     (util/javascript-tag "webgl.core.init()")]))

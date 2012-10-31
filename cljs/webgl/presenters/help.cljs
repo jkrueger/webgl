@@ -1,63 +1,65 @@
 (ns webgl.presenters.help
-  (:require [webgl.kit.d3       :as d3]
-            [webgl.kit.rx       :as rx]
-            [webgl.kit.workflow :as w])
+  (:require [webgl.kit.workflow :as w]
+            [webgl.views.help   :as h])
   (:require-macros [webgl.kit.workflow.macros :as wm]))
 
-(defrecord Presenter [view])
-
-(defn show-help [view txt]
-  (-> view (d3/html txt)))
+(defrecord Presenter [menu view])
 
 (wm/defworkflow help-flow)
 
 (wm/defstate help-flow :init
   [view]
-  (show-help view
+  (h/show-help view
     "<p>Welcome to this web based content editor proto type.</p>
      <p>When starting this editor you are presented with three panels.
         Right now only the bottom panel shows anything interesting
-        so let us focus on that for now, Each of the dots you
-        can see represents an <b>operator</b></p>
-     <p>The dot to the right for example is a <b>generator</b> It simply
-        produces a triangle with a default size. The dot to the right
-        is a <b>transformation</b>. It's is connected to the triangle operator
-        and is therefore <b>applied</b> to it.</p>
-     <p>Why don't you click on the transformation operator now ?</p>"))
+        so let us focus on that for now. The dot you can see represents an
+        <b>operator</b>.</p>
+     <p>As you can see it is currently labeled as unassigned. This means it
+        isn't doing anything right now.</p>
+     <p>Why don't you click on the operator now so we can assign
+        something to it?</p>"))
 
-(wm/defstate help-flow :operator-selected
+(wm/defstate help-flow :operator-first-selected
   [view]
-  (show-help view
-    "<p>When selecting an operator you get to see a set of properties
-        you can change to alter the operators behaviour. The properties
-        are shown in the panel to the right of this one. Notice that
-        the triangle operator has no properties.</p>
-     <p>If you modify a property the changed value will be remembered
-        if you switch to another operator.</p>
-     <p>To see the effects of your change you can press <b>r</b> while
-        an operator is selected to display it.</p>"))
+  (h/show-help view
+    "<p>When selecting an <b>unassigned</b> operator, you need to
+        turn it into a real operator before you can work with it.
+        To do that you first have to press <b>Alt</b>,
+        which will display a help menu showing you the different kinds
+        of operator types to pick from.</p>")
+  (h/show-extended-button view)
+  ;; (fn []
+  ;;   (h/hide-extended-button view))
+  )
+
+(wm/defstate help-flow :operator-assigned
+  [view]
+  (h/show-help view
+    "<p>Notice that the panel to the right has changed.
+        It will either display the configurable properties
+        or a message saying that there are none, based on
+        your choice of operator</p>
+     <p>After having assigned something to the operator
+        you can display the result in the large area to the
+        left. To do that press <b>Alt + r</b></p>"))
 
 (wm/defstate help-flow :operator-displayed
   [view]
-  (show-help view
-    "<p>When displaying an operator it is rendered in the panel
-        on the right side of the screen.</p>
-     <p>The displayed operator
-        is <b>pinned</b> in the sense that selecting another operator
-        won't change the currently displayed operator unless you
-        press <b>r</b> again.</p>
-     <p>Notice that the property editor for the selected operator
-        is still active. When you change the properties of the
-        displayed operator or any of its children the output view
-        will be updated automatically, giving you instant feedback.</p>"))
+  (h/show-help view
+    "<p>As you can see the shape you have picked is simply drawn
+        in the output window and stull quite boring.</p>
+     <p>As a next step let's transform the single operator we
+        just created.</p>
+     <p>...</p>"))
 
-(wm/deftrans help-flow :init :selected :operator-selected)
-(wm/deftrans help-flow :operator-selected :display :operator-displayed)
+(wm/deftrans help-flow :init :selected :operator-first-selected)
+(wm/deftrans help-flow :operator-first-selected :assigned :operator-assigned)
+(wm/deftrans help-flow :operator-assigned :display :operator-displayed)
 
 (defn transition [presenter event]
   (w/trigger help-flow event (:view presenter)))
 
-(defn present [view]
-  (let [view (d3/select view)]
-    (w/set help-flow :init view)
-    (Presenter. view)))
+(defn present [menu view]
+  (w/set help-flow :init view)
+  (Presenter. menu view))

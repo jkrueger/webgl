@@ -103,7 +103,7 @@ div.base#tree {
     margin:4px 2px 4px 4px;
 }
 
-#help > div {
+#help > div.content {
     position:absolute;
     top:0px;
     left:0px;
@@ -125,18 +125,87 @@ div.base#tree {
     text-align:center;
     font-size:200pt;
     font-weight:bold;
-    -webkit-transform: rotate(25deg);
+    -webkit-transform:rotate(25deg);
     z-index:-2;
 }
 
 #help div.text {
     background: rgba(0,0,0,0);
     margin:12px;
+    margin-top:20px;
     font-family: Arial;
     font-size:10pt;
     color:#dcdccc;
     white-space:normal;
     z-index:-1;
+}
+
+#help div.menu {
+    opacity:0;
+    -webkit-transform:scale(0.6);
+}
+
+#help div.help > div.keybox {
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    width:38px;
+    height:38px;
+    display:none;
+}
+
+#help div.content ul {
+  list-style-type:none;
+  font-family:Verdana;
+  font-size:18pt;
+  font-weight:bold;
+  font-style:oblique;
+  color:#222222;
+  padding:0px;
+  margin:0px;
+  margin-top:28%;
+}
+
+#help div.content li {
+    border-top:1px solid #3f3f3f;
+    border-bottom:1px solid #3f3f3f;
+    padding-top:10px;
+    padding-bottom:10px;
+    background-image:-webkit-linear-gradient(top,#6f6f6f,#5f5f5f);
+    margin-bottom:6px;
+}
+
+#help div.content ul div.keybox {
+    float:left;
+    width:28px;
+    height:28px;
+    font-family: Arial;
+    font-size:8pt;
+    padding-left:25px;
+}
+
+#help div.content span {
+    padding-left:28%;
+}
+
+.keybox rect{
+    fill-rule:evenodd;
+}
+
+.keybox rect.back {
+    fill:url(#back);
+    stroke:#8d8d8d;
+    stroke-width:1px;
+}
+
+.keybox rect.front {
+    fill:url(#front);
+    stroke:#f8f8f8;
+    stroke-width:0.83429003px;
+}
+
+.keybox > text {
+    font-family:Verdana;
 }
 
 #tree > div {
@@ -152,11 +221,18 @@ div.base#tree {
     margin-top:0px;
 }
 
-.node circle.geometry {
+.node circle {
   cursor: pointer;
   fill: white;
-  stroke: #7f9f7f;
   stroke-width: 1.5px;
+}
+
+.node circle.geometry {
+  stroke: #7f9f7f;
+}
+
+.node circle.unassigned {
+  stroke: #cc9393;
 }
 
 .node text {

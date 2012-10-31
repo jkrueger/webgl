@@ -10,6 +10,26 @@
 (defn as-uint16 [v]
   (js/Uint16Array. v))
 
+(defn- disc-point [r n i]
+  (let [angle (/ (* 2 js/Math.PI) n)]
+    [(* r (js/Math.cos angle))
+     (* r (js/Math.sin angle))]))
+
+(defn- disc-triangles [n]
+  (take n (iterate #(map inc %) [0 1 2])))
+
+(defn- disc [n]
+  (geo/Geometry.
+    (->> (iterate inc 1)
+         (take n)
+         (mapcat (partial disc-point 1.0 n))
+         (into-array)
+         (as-float32))
+    (->> (disc-triangles n)
+         (apply concat)
+         (into-array)
+         (as-uint16))))
+
 (defn- triangle []
   (geo/Geometry.
       (-> (array  0.0  0.1 0.0 1.0
@@ -22,6 +42,14 @@
 (defmethod f/make :triangle
   [_]
   (f/operator :triangle :geometry nil triangle "Triangle"))
+
+(defmethod f/make :disc
+  [_]
+  (f/operator
+   :disc :geometry
+   [(f/make :constant :scalar 5 "Detail")]
+   disc
+   "Disc"))
 
 (defn- matrix-transform [m]
   (let [transposed (mat/transpose m)]

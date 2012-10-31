@@ -71,8 +71,7 @@
                       (d3/append :li)
                       (d3/css :opacity 0.0)
                       (d3/attr :class "form"))]
-        (-> fields
-            (d3/call add-field view))
+        (-> fields (d3/call add-field view))
         fields))
 
 (defn- empty-message [view]
@@ -91,7 +90,7 @@
       (d3/transition)
       (d3/delay (fn [d i] (* i 50)))
       (d3/duration 300)
-      (d3/ease :cubic type)))
+      (d3/ease :quad type)))
 
 (defn clear [view]
   (-> (:container view)

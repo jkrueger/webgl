@@ -26,11 +26,10 @@
   ([selection type value]
      (.attr selection (name type) value)))
 
-(defn append [selection type & attrs]
-  (let [appended (.append selection (name type))]
-    (doseq [attribute (partition 2 attrs)]
-      (apply attr appended attribute))
-    appended))
+(defn attr* [selection & kvs]
+  (doseq [[k v] (partition 2 kvs)]
+    (attr selection k v))
+  selection)
 
 (defn insert [selection type before]
   (.insert selection (name type) (name before)))
@@ -55,6 +54,33 @@
 
 (defn html [selection text]
   (.html selection text))
+
+(defprotocol Append
+  (append-impl [_ selection]))
+
+(defn- handle-attrs [selection v]
+  (let [sec (second v)]
+    (if (map? sec)
+      (do
+        (apply attr* selection (apply concat sec))
+        (nnext v))
+      (next v))))
+
+(extend-protocol Append
+  js/String
+  (append-impl [k selection]
+    (.append selection k))
+  PersistentVector
+  (append-impl [v selection]
+    (let [res (-> (first v) (selector->name) (append-impl selection))
+          ns   (handle-attrs res v)]
+      (doseq [n ns]
+        (if (vector? n)
+          (append-impl n res)
+          (text res n))))))
+
+(defn append [selection element]
+  (append-impl (selector->name element) selection))
 
 (defn data
   ([selection data]

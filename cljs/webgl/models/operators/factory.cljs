@@ -1,7 +1,15 @@
 (ns webgl.models.operators.factory)
 
+(def ids (atom 0))
+
+(defn next-id []
+  (let [id @ids]
+    (swap! ids inc)
+    id))
+
 (defrecord Operator
-  [operator-fn
+  [parent
+   operator-fn
    inputs
    name
    label
@@ -9,13 +17,15 @@
 
 (defn operator
   ([name result-type inputs f label]
-     (Operator. f (atom inputs) name label result-type)))
+     (with-meta
+       (Operator. (atom nil) f (atom inputs) name label result-type)
+       {:id (next-id)})))
 
 (defmulti make (fn [type & rest] type))
 
 (defmethod make :unassigned
   [_ result-type]
-  (operator :unassigned result-type nil :unassigned "Unassigned value"))
+  (operator :unassigned result-type nil :unassigned "Unassigned"))
 
 (defmethod make :constant
   [_ result-type value label]

@@ -17,7 +17,7 @@
   (let [view (:view presenter)]
     (->> op
          (model/eval)
-         (display/set-geometry-data view))))
+         (display/set-geometry view))))
 
 (defn- register-view-events [view presenter]
   (-> (rx/event-source :click (:dom view))

@@ -163,11 +163,7 @@
 
 (defn set-geometry [view geometry]
   (api/with-context (:context view)
-    #(reset! (:geometry view) (p/factory geometry))))
-
-(defn set-geometry-data [view geometry]
-  (let [buffered @(:geometry view)]
-    (api/with-context (:context view)
-      (fn []
-        (buffer/set-data (:vertices buffered) (:vertices geometry))
-        (buffer/set-data (:indices  buffered) (:indices geometry))))))
+    (fn []
+      (if @(:geometry view)
+        (swap!  (:geometry view) buffer/update-buffer geometry)
+        (reset! (:geometry view) (p/factory geometry))))))

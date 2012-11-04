@@ -25,11 +25,19 @@
 (defrecord BufferedGeometry [vertices indices])
 
 (def num-triangles :num-triangles)
+(def num-vertices  :num-vertices)
+
+(defn update-buffer [buffered geometry]
+  (bind (:vertices buffered))
+  (set-data (:vertices buffered) (:vertices geometry))
+  (bind (:indices buffered))
+  (set-data (:indices  buffered) (:indices geometry))
+  (assoc buffered
+    num-triangles (geo/num-triangles geometry)
+    num-vertices  (geo/num-vertices  geometry)))
 
 (extend-protocol p/Factory
   webgl.geometry.Geometry
   (factory [this]
-    (-> (BufferedGeometry.
-          (make :array (:vertices this))
-          (make :index (:indices this)))
-        (assoc num-triangles (geo/num-triangles this)))))
+    (-> (BufferedGeometry. (make :array) (make :index))
+        (update-buffer this))))

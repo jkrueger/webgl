@@ -2,7 +2,8 @@
   (:require [webgl.geometry                 :as geo]
             [webgl.matrix                   :as mat]
             [webgl.models.operators.factory :as f]
-            [webgl.models.operators.scalar  :as scalar]))
+            [webgl.models.operators.scalar  :as scalar])
+  (:require-macros [webgl.models.operators.macros :as m]))
 
 (defn as-float32 [v]
   (js/Float32Array. v))
@@ -10,76 +11,106 @@
 (defn as-uint16 [v]
   (js/Uint16Array. v))
 
+(defn- polar [r angle]
+  [(* r (js/Math.cos angle))
+   (* r (js/Math.sin angle))
+   0.0
+   1.0])
+
+(defn- interpol [a b steps i]
+  (* i (/ (- b a) steps)))
+
 (defn- disc-point [r n i]
-  (let [angle (/ (* 2 js/Math.PI) n)]
-    [(* r (js/Math.cos angle))
-     (* r (js/Math.sin angle))]))
+  (if (= i n)
+    [0.0 0.0 0.0 1.0]
+    (polar r (interpol 0.0 (* 2 js/Math.PI) n i))))
 
-(defn- disc-triangles [n]
-  (take n (iterate #(map inc %) [0 1 2])))
+(defn- disc-faces [n]
+  (->> [n 0 1]
+       (iterate
+         (fn [[a b c]]
+           [a
+            (inc b)
+            (mod (inc c) n)]))
+       (take n)))
 
-(defn- disc [n]
-  (geo/Geometry.
-    (->> (iterate inc 1)
-         (take n)
-         (mapcat (partial disc-point 1.0 n))
-         (into-array)
+(defn- enumerate [n f]
+  (->> (iterate inc 0)
+       (take n)
+       (map f)))
+
+(defn- ->native [as-type coll]
+  (->> coll
+       (apply concat)
+       (into-array)
+       (as-type)))
+
+(defn- disc [radius detail]
+  (let [num (inc detail)]
+    (geo/Geometry.
+      (->> (enumerate num (partial disc-point radius num))
+           (->native as-float32))
+      (->> (disc-faces detail)
+           (->native as-uint16)))))
+
+(m/defop :triangle [] :geometry
+  "Triangle"
+  []
+  []
+  #(geo/Geometry.
+     (-> (array  0.0  0.5 0.0 5.0
+                -0.5 -0.5 0.0 5.0
+                 0.5 -0.5 0.0 5.0)
          (as-float32))
-    (->> (disc-triangles n)
-         (apply concat)
-         (into-array)
+     (-> (array 0 1 2)
          (as-uint16))))
 
-(defn- triangle []
-  (geo/Geometry.
-      (-> (array  0.0  0.1 0.0 1.0
-                 -0.1 -0.1 0.0 1.0
-                  0.1 -0.1 0.0 1.0)
-          (as-float32))
-      (-> (array 0 1 2)
-          (as-uint16))))
+(m/defop :square [] :geometry
+  "Square"
+  []
+  []
+  #(geo/Geometry.
+    (-> (array -0.5  0.5 0.0 1.0
+                0.5  0.5 0.0 1.0
+                0.5 -0.5 0.0 1.0
+               -0.5 -0.5 0.0 1.0)
+        (as-float32))
+    (-> (array 0 1 2 0 3 2)
+        (as-uint16))))
 
-(defmethod f/make :triangle
-  [_]
-  (f/operator :triangle :geometry nil triangle "Triangle"))
-
-(defmethod f/make :disc
-  [_]
-  (f/operator
-   :disc :geometry
-   [(f/make :constant :scalar 5 "Detail")]
-   disc
-   "Disc"))
+(m/defop :disc [:scalar :scalar] :geometry
+  "Disc"
+  [(f/make :constant :scalar {:label "Radius"} 0.5)
+   (f/make :constant :scalar {:label "Detail"} 5)]
+  []
+  disc)
 
 (defn- matrix-transform [m]
   (let [transposed (mat/transpose m)]
     #(mat/* % transposed)))
 
-(defn- transform [geometry tx ty tz rx ry rz s]
-  (geo/transform
-    geometry
-    (->> mat/identity
-         (mat/* (mat/scaling s))
-         (mat/* (mat/translation (mat/make tx ty tz)))
-         (mat/* (mat/x-rotation rx))
-         (mat/* (mat/y-rotation ry))
-         (mat/* (mat/z-rotation rz))
-         (matrix-transform))))
+;; (f/defop :transform [] :geometry
+;;   "Transform"
+;;   [geometry (f/make :unassigned :geometry)
+;;    tx (f/make :constant :scalar 0.0 "Tx")
+;;    ty (f/make :constant :scalar 0.0 "Ty")
+;;    tz (f/make :constant :scalar 0.0 "Tz")
+;;    rx (f/make :constant :scalar 0.0 "Rx")
+;;    ry (f/make :constant :scalar 0.0 "Ry")
+;;    rz (f/make :constant :scalar 0.0 "Rz")
+;;    s  (f/make :constant :scalar 1.0 "S")]
+;;    (geo/transform
+;;      geometry
+;;      (->> mat/identity
+;;        (mat/* (mat/scaling s))
+;;        (mat/* (mat/translation (mat/make tx ty tz)))
+;;        (mat/* (mat/x-rotation rx))
+;;        (mat/* (mat/y-rotation ry))
+;;        (mat/* (mat/z-rotation rz))
+;;        (matrix-transform)))))
 
-(defmethod f/make :transform
-  [_]
-  (f/operator
-    :transform :geometry
-    [(f/make :unassigned :geometry)
-     (f/make :constant :scalar 0.0 "Tx")
-     (f/make :constant :scalar 0.0 "Ty")
-     (f/make :constant :scalar 0.0 "Tz")
-     (f/make :constant :scalar 0.0 "Rx")
-     (f/make :constant :scalar 0.0 "Ry")
-     (f/make :constant :scalar 0.0 "Rz")
-     (f/make :constant :scalar 1.0 "S")]
-    transform
-    "Transform"))
+;; (defmethod f/make :revolution-solid
+;;   )
 
 ;;; FIXME: write operators for these
 

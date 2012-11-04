@@ -17,8 +17,8 @@
   (model.factory/make
     :constant
     (model/result-type operator)
-    value
-    (model/label operator)))
+    {:label (model/label operator)}
+    value))
 
 (defn- change-constant [presenter model]
   (fn [evt]

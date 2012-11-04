@@ -59,12 +59,18 @@
 (defmethod operator->menu :default [presenter op])
 
 (defmethod operator->menu :unassigned [presenter op]
-  (men/root
-    (men/command
-      "Triangle" 84
-      #(assign-operator presenter op :triangle))))
+  (apply men/root
+    (map-indexed
+      (fn [i type]
+        (men/command
+          (:label type)
+          (+ 68 i)
+          #(assign-operator presenter op (:name type))))
+      (ops/discover-by
+        :result-type :geometry
+        (is? ops/unassigned-count 0)))))
 
-(defmethod operator->menu :triangle [presenter op]
+(defmethod operator->menu :default [presenter op]
   (men/root
     (men/command
       "Render" 82

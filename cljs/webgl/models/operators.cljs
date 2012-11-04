@@ -26,8 +26,9 @@
 (defprotocol Operators
   (id          [_])
   (op-name     [_])
-  (label       [_])
+  (input-types [_])
   (result-type [_])
+  (label       [_])
   (operator    [_])
   (parent      [_])
   (children    [_])
@@ -38,15 +39,17 @@
 (extend-protocol Operators
   f/Operator
   (id [op]
-    (-> op meta :id))
+    (:id op))
   (op-name [op]
-    (:name op))
-  (label [op]
-    (:label op))
+    (-> op :type :name))
   (result-type [op]
-    (:result-type op))
+    (-> op :type :result-type))
+  (input-types [op]
+    (-> op :type :input-types))
+  (label [op]
+    (-> op :type :label))
   (operator [op]
-    (:operator-fn op))
+    (-> op :type :operator-fn))
   (parent [op]
     @(:parent op))
   (children [op]
@@ -54,6 +57,20 @@
   (set-input [op n child]
     (reset! (:parent child) op)
     (swap! (:inputs op) assoc n child)))
+
+;;; type API
+
+(defn discover-by [k idx filter-fn]
+  (->> (f/by k idx)
+       (filter filter-fn)))
+
+(defn input-count [type]
+  (count (:input-types type)))
+
+(defn unassigned-count [type]
+  (->> (:defaults type)
+       (filter #(= (op-name %) :unassinged))
+       (count)))
 
 (defn eval [op]
   (apply (operator op) (map eval (children op))))
@@ -74,7 +91,6 @@
 (defn replace [model old new]
   (if-let [owner (parent old)]
     (when-let [indexed-child (find-child-indexed old new)]
-      (println "TEST")
       (apply set-input owner indexed-child)
       (fire-update model owner))
     (set-root! model new)))

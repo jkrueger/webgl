@@ -1,4 +1,5 @@
-(ns webgl.models.operators.factory)
+(ns webgl.models.operators.factory
+  (:require-macros [webgl.models.operators.macros :as m]))
 
 (def ids (atom 0))
 
@@ -7,26 +8,47 @@
     (swap! ids inc)
     id))
 
-(defrecord Operator
-  [parent
-   operator-fn
-   inputs
-   name
+(defrecord OperatorType
+  [name
+   input-types
+   result-type
    label
-   result-type])
+   operator-fn
+   defaults])
 
-(defn operator
-  ([name result-type inputs f label]
-     (with-meta
-       (Operator. (atom nil) f (atom inputs) name label result-type)
-       {:id (next-id)})))
+(defrecord Operator
+  [type id parent inputs])
 
 (defmulti make (fn [type & rest] type))
 
-(defmethod make :unassigned
-  [_ result-type]
-  (operator :unassigned result-type nil :unassigned "Unassigned"))
+(defn operator [type]
+  (Operator. type (next-id) (atom nil) (atom (:defaults type))))
 
-(defmethod make :constant
-  [_ result-type value label]
-  (operator :constant result-type nil (constantly value) label))
+(def types
+  (atom {:types       []
+         :result-type {}}))
+
+(defn add-type! [type]
+  (swap! types
+    (fn [types]
+      (-> types
+          (update-in [:types] conj type)
+          (update-in [:result-type (:result-type type)] conj type)))))
+
+(defn by [k index]
+  (get-in @types [k index]))
+
+(defn make-type [name input-types result-type label f defaults]
+  (OperatorType. name input-types result-type label f defaults))
+
+(m/defgeneric :unassigned []
+  "Unassigned"
+  []
+  []
+  nil)
+
+(m/defgeneric :constant []
+  "Constant<T>"
+  []
+  [value]
+  (constantly value))

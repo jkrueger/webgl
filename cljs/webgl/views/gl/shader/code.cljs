@@ -34,6 +34,9 @@
 
 (def line-cat (concatter lines))
 
+(defn op [o]
+  #(words* %1 op %2))
+
 (defn statement [x]
   (str x ";"))
 
@@ -58,7 +61,7 @@
          (words)
          (statement))))
 
-(defn shader [declarations out]
+(defn shader [declarations stmts]
   (lines*
     (lines declarations)
-    (main out)))
+    (main (lines stmts))))

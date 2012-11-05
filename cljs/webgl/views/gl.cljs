@@ -13,12 +13,47 @@
 (def fps 30)
 (def frame-timeout (/ 1000 fps))
 
-(def fragment-code
-  "precision mediump float;
+(def vertex-shader
+  "uniform mat4 view;
+
+   attribute vec4 in_vertex;
+   attribute vec4 in_normal;
+
+   varying vec4 normal;
+   varying vec4 L;
+
    void main()
    {
-     gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+     vec4 vertex = in_vertex * view;
+
+     normal = in_normal;
+     L      = vec4(0.0, 5.0, 5.0, 1.0) - vertex;
+
+     gl_Position = vertex;
    }")
+
+(def fragment-code
+  "precision mediump float;
+
+   varying vec4 normal;
+   varying vec4 L;
+
+   void main()
+   {
+     vec4  nn      = normalize(normal);
+     vec4  nL      = normalize(L);
+     float diffuse = clamp(dot(nn, nL), 0.0, 1.0);
+
+     gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);
+   }")
+
+(def model-view
+  (sh/uniform sh/mat4 "view"))
+
+(def vertex-channels
+  (sh/channels
+    :vertices (sh/attribute sh/vec4 "in_vertex")
+    :normals  (sh/attribute sh/vec4 "in_normal")))
 
 (defrecord View [dom context paused frames program geometry])
 
@@ -126,24 +161,18 @@
   (fn [frame]
     (api/clear-color 0.0 0.0 0.0 1.0)
     (api/clear :color-buffer)
-    (when-let [vertices @geometry]
-      (let [native  (:native program)
-            shader  (:vertex-shader  program)
-            channel (:vertex-channel program)
-            view    (:view-matrix program)]
-        (sh/bind view    native mat/identity)
-        (sh/bind channel native vertices)
+    (when-let [channel-data @geometry]
+      (let [native (:native program)]
+        (sh/bind model-view native mat/identity)
+        (sh/bind vertex-channels native channel-data)
+        (buffer/bind (:indices channel-data))
         (api/draw-elements :triangles
-          (* (buffer/num-triangles vertices) 3)
+          (* (buffer/num-triangles channel-data) 3)
           :unsigned-short
           0)))))
 
-(defn- model-view-shader [vertices view]
-  (sh/shader [vertices view]
-    (sh/* vertices view)))
-
-(defn- prepare-program [program vertex-shader]
-  (prog/attach! program :vertex   (sh/compile vertex-shader))
+(defn- prepare-program [program]
+  (prog/attach! program :vertex   vertex-shader)
   (prog/attach! program :fragment fragment-code)
   (prog/link! program)
   (prog/use! program))
@@ -151,15 +180,9 @@
 (defn- make-geometry-program [context]
   (api/with-context context
     (fn []
-      (let [program          (prog/make)
-            vertex-attribute (sh/attribute sh/vec4)
-            model-view       (sh/uniform   sh/mat4)
-            shader           (model-view-shader vertex-attribute model-view)]
-        (prepare-program program shader)
-        {:native         program
-         :vertex-shader  shader
-         :vertex-channel vertex-attribute
-         :view-matrix    model-view}))))
+      (let [program (prog/make)]
+        (prepare-program program)
+        {:native program}))))
 
 (defn set-geometry [view geometry]
   (api/with-context (:context view)

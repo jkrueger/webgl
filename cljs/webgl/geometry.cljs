@@ -1,6 +1,6 @@
 (ns webgl.geometry)
 
-(defrecord Geometry [vertices indices])
+(defrecord Geometry [vertices normals indices])
 
 (defn num-triangles [geometry]
   (/ (.-length (:indices geometry)) 3))

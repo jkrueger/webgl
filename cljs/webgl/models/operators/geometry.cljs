@@ -50,6 +50,9 @@
     (geo/Geometry.
       (->> (enumerate num (partial disc-point radius num))
            (->native as-float32))
+      (->> (repeat [0.0 0.0 1.0 0.0])
+           (take num)
+           (->native as-float32))
       (->> (disc-faces detail)
            (->native as-uint16)))))
 
@@ -58,9 +61,13 @@
   []
   []
   #(geo/Geometry.
-     (-> (array  0.0  0.5 0.0 5.0
-                -0.5 -0.5 0.0 5.0
-                 0.5 -0.5 0.0 5.0)
+     (-> (array  0.0  0.5 0.0 1.0
+                -0.5 -0.5 0.0 1.0
+                 0.5 -0.5 0.0 1.0)
+         (as-float32))
+     (-> (array 0.0 0.0 1.0 0.0
+                0.0 0.0 1.0 0.0
+                0.0 0.0 1.0 0.0)
          (as-float32))
      (-> (array 0 1 2)
          (as-uint16))))
@@ -74,6 +81,11 @@
                 0.5  0.5 0.0 1.0
                 0.5 -0.5 0.0 1.0
                -0.5 -0.5 0.0 1.0)
+        (as-float32))
+    (-> (array 0.0 0.0 1.0 0.0
+               0.0 0.0 1.0 0.0
+               0.0 0.0 1.0 0.0
+               0.0 0.0 1.0 0.0)
         (as-float32))
     (-> (array 0 1 2 0 3 2)
         (as-uint16))))

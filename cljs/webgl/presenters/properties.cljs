@@ -9,6 +9,11 @@
   model/Operator
   (field-label [op] (model/label op))
   (field-type  [op] "number")
+  (field-attrs [op]
+    (case (model/result-type op)
+      :integer [:step 1]
+      :float   [:step 0.1]
+      []))
   (field-value [op] ((model/operator op))))
 
 (defrecord Presenter [view operator])

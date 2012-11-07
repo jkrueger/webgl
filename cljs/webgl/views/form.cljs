@@ -6,6 +6,7 @@
 
 (defprotocol Field
   (field-type  [_])
+  (field-attrs [_])
   (field-label [_])
   (field-value [_]))
 
@@ -47,6 +48,14 @@
       (d3/attr :for   field-tag)
       (d3/text field-label)))
 
+(defn- add-attrs [selection]
+  (d3/each selection
+    (fn [d]
+      (this-as dom
+        (apply d3/attr*
+               (d3/select dom)
+               (field-attrs d))))))
+
 (defn- add-input [container events]
   (-> container
       (d3/append :input)
@@ -54,7 +63,7 @@
       (d3/attr :class "form")
       (d3/attr :type  field-type)
       (d3/attr :value field-value)
-      (d3/attr :step  0.1)
+      (add-attrs)
       (register-input-events events)))
 
 (defn- add-field [container view]

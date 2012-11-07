@@ -78,10 +78,10 @@
     (-> (array 0 1 2 0 3 2)
         (as-uint16))))
 
-(m/defop :disc [:scalar :scalar] :geometry
+(m/defop :disc [:float :integer] :geometry
   "Disc"
-  [(f/make :constant :scalar {:label "Radius"} 0.5)
-   (f/make :constant :scalar {:label "Detail"} 5)]
+  [(f/make :constant :float   {:label "Radius"} 0.5)
+   (f/make :constant :integer {:label "Detail"} 5)]
   []
   disc)
 

@@ -74,7 +74,12 @@
   (men/root
     (men/command
       "Render" 82
-      #(rx/named-event (:events presenter) display op))))
+      #(rx/named-event (:events presenter) display op))
+    (men/command
+     "Revolution" 83
+     (comp
+       #(ops/transform (:model presenter) op %)
+       #(ops.factory/make :revolution-solid)))))
 
 (defn- set-operator-menu [presenter]
   #(men/set! (:menu presenter)

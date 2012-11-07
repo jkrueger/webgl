@@ -1,6 +1,7 @@
 (ns webgl.models.operators.geometry
   (:require [webgl.geometry                 :as geo]
             [webgl.matrix                   :as mat]
+            [webgl.vector                   :as vec]
             [webgl.models.operators.factory :as f]
             [webgl.models.operators.scalar  :as scalar])
   (:require-macros [webgl.models.operators.macros :as m]))
@@ -38,6 +39,24 @@
   (->> (iterate inc 0)
        (take n)
        (map f)))
+
+(defn- aiterate [acoll n trans]
+  (let [length (.-length acoll)
+        n      (inc n)
+        ctor   (type acoll)
+        out    (ctor. (* n length))]
+    (.set out acoll)
+    (loop [i        1
+           original acoll]
+      (when (< i n)
+        (let [offset      (* i length)
+              end         (+ offset length)
+              destination (.subarray out offset end)]
+          (->> original
+               (trans)
+               (.set destination))
+          (recur (inc i) destination))))
+    out))
 
 (defn- ->native [as-type coll]
   (->> coll
@@ -101,48 +120,67 @@
   (let [transposed (mat/transpose m)]
     #(mat/* % transposed)))
 
-;; (f/defop :transform [] :geometry
-;;   "Transform"
-;;   [geometry (f/make :unassigned :geometry)
-;;    tx (f/make :constant :scalar 0.0 "Tx")
-;;    ty (f/make :constant :scalar 0.0 "Ty")
-;;    tz (f/make :constant :scalar 0.0 "Tz")
-;;    rx (f/make :constant :scalar 0.0 "Rx")
-;;    ry (f/make :constant :scalar 0.0 "Ry")
-;;    rz (f/make :constant :scalar 0.0 "Rz")
-;;    s  (f/make :constant :scalar 1.0 "S")]
-;;    (geo/transform
-;;      geometry
-;;      (->> mat/identity
-;;        (mat/* (mat/scaling s))
-;;        (mat/* (mat/translation (mat/make tx ty tz)))
-;;        (mat/* (mat/x-rotation rx))
-;;        (mat/* (mat/y-rotation ry))
-;;        (mat/* (mat/z-rotation rz))
-;;        (matrix-transform)))))
+(m/defop :transform
+  [:geometry :float :float :float :float :float :float :float] :geometry
+  "Transform"
+  [(f/make :unassigned :geometry)
+   (f/make :constant :float 0.0 "Tx")
+   (f/make :constant :float 0.0 "Ty")
+   (f/make :constant :float 0.0 "Tz")
+   (f/make :constant :float 0.0 "Rx")
+   (f/make :constant :float 0.0 "Ry")
+   (f/make :constant :float 0.0 "Rz")
+   (f/make :constant :float 1.0 "S")]
+  []
+  (fn [in tx ty tz rx ry rz s]
+    (geo/transform
+     in
+     (->> mat/identity
+          (mat/* (mat/scaling s))
+          (mat/* (mat/translation (mat/make tx ty tz)))
+          (mat/* (mat/x-rotation rx))
+          (mat/* (mat/y-rotation ry))
+          (mat/* (mat/z-rotation rz))
+          (matrix-transform)))))
 
-;; (defmethod f/make :revolution-solid
-;;   )
+(m/defop :revolution-solid [:geometry :integer] :geometry
+  "Revolution Solid"
+  [(f/make :unassigned :geometry)
+   (f/make :constant :scalar {:label "Detail"} 5)]
+  []
+  (fn [detail in]
+    (println "TEST")
+    in
+    ;; (let [t (-> mat/identity
+    ;;             (mat/translate (vec/make 1.0 0.0 0.0))
+    ;;             (matrix-transform))
+    ;;       d (-> mat/identity
+    ;;             (mat/y-rotatation (/ (* 2 js/Math.PI) detail))
+    ;;             (matrix-transform))
+    ;;       n (.-length (:vertices in))]
+    ;;   (geo/Geometry.
+    ;;     ;; copy vertices n times and transform
+    ;;     (aiterate (t (:vertices in))
+    ;;               detail
+    ;;               d)
+    ;;     ;; make fresh normals
+    ;;     (-> (repeat (* detail n) [0.0 0.0 1.0 0.0])
+    ;;         (->native as-float32))
+    ;;     ;; generate new face indices
+    ;;     (aiterate (array 0 1 n n 1 (inc n))
+    ;;               (/ (* n detail) 2)
+    ;;               (fn [square]
+    ;;                 (let [faces (js/Uint16Array. 6)]
+    ;;                   (aset faces 0 (inc (aget square 0)))
+    ;;                   (aset faces 1 (inc (aget square 1)))
+    ;;                   (aset faces 2 (inc (aget square 2)))
+    ;;                   (aset faces 3 (inc (aget square 3)))
+    ;;                   (aset faces 4 (inc (aget square 4)))
+    ;;                   (aset faces 5 (inc (aget square 5)))
+    ;;                   faces)))))
+    ))
 
 ;;; FIXME: write operators for these
-
-;; (defn- aiterate [acoll n trans]
-;;   (let [length (.-length acoll)
-;;         n      (inc n)
-;;         ctor   (type acoll)
-;;         out    (ctor. (* n length))]
-;;     (.set out acoll)
-;;     (loop [i        1
-;;            original acoll]
-;;       (when (< i n)
-;;         (let [offset      (* i length)
-;;               end         (+ offset length)
-;;               destination (.subarray out offset end)]
-;;           (->> original
-;;                (trans)
-;;                (.set destination))
-;;           (recur (inc i) destination))))
-;;     out))
 
 ;; (defn- cloned-indices [indices]
 ;;   (let [c   (.-length indices)

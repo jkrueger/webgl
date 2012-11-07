@@ -5,7 +5,7 @@
             [webgl.kit.d3.svg     :as d3.svg]
             [webgl.kit.rx         :as rx]))
 
-(def side-margin 18)
+(def side-margin 24)
 (def node-clicked ::node-clicked)
 
 ;;; tree node API
@@ -86,17 +86,17 @@
 (defn- has-children? [d]
   (boolean (.-children d)))
 
-(defn- anchorer [nodes]
-  (fn [d]
-    (if (= 1 (count nodes))
-      "middle"
-      (if (has-children? d)
-        "start"
-        "end"))))
+(def anchor-middle    (constantly "middle"))
+(def anchor-leafs-end #(if (has-children? %) "start" "end"))
+
+(defn pick-anchor-fn [nodes]
+  (if (= 1 (count nodes))
+    anchor-middle
+    anchor-leafs-end))
 
 (defn- enter-vertices
   "New nodes have to be created (i.e. geometry has to be attached)"
-  [view vertices]
+  [view vertices anchor-fn]
   (let [node (-> (d3/entered vertices)
                  (d3/append :g)
                  (d3/attr :class "node")
@@ -112,7 +112,7 @@
         (d3/append :text)
         (d3/attr :dx 0)
         (d3/attr :dy 24)
-        (d3/attr :text-anchor (anchorer vertices))
+        (d3/attr :text-anchor anchor-fn)
         (d3/text node-label))
     node))
 
@@ -150,7 +150,7 @@
                        (d3/data links))]
       (offset-single-root view nodes)
       ;; add new nodes and edges
-      (enter-vertices view vertices)
+      (enter-vertices view vertices (pick-anchor-fn nodes))
       (enter-edges edges)
       ;; move the existing nodes and edges to their new positions
       (position-nodes vertices)

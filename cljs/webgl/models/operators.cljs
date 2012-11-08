@@ -69,8 +69,11 @@
 
 (defn unassigned-count [type]
   (->> (:defaults type)
-       (filter #(= (op-name %) :unassinged))
+       (filter #(= (op-name %) :unassigned))
        (count)))
+
+(def generator?   #(= (unassigned-count %) 0))
+(def transformer? #(> (unassigned-count %) 0))
 
 (defn eval [op]
   (apply (operator op) (map eval (children op))))

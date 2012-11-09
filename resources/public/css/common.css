@@ -157,7 +157,7 @@ div.base#tree {
 #help div.content ul {
   list-style-type:none;
   font-family:Verdana;
-  font-size:18pt;
+  font-size:14pt;
   font-weight:bold;
   font-style:oblique;
   color:#222222;
@@ -185,7 +185,7 @@ div.base#tree {
 }
 
 #help div.content span {
-    padding-left:28%;
+    padding-left:18px;
 }
 
 .keybox rect{
@@ -272,7 +272,7 @@ label.form {
   padding-top:0.5em;
   /* text-align:right; */
   /* line-height:25px; */
-  width:80%;
+  width:60%;
 }
 
 p.form {
@@ -292,12 +292,12 @@ input.form[type=text] {
 }
 
 input.form[type=range] {
-  width:80%;
+  width:40%;
 }
 
 input.form[type=number] {
   border:1px solid #3f3f3f;
-  width:20%;
+  width:40%;
   background-color:#7f7f7f;
   padding:2px;
 }

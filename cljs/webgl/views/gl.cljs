@@ -44,6 +44,8 @@
      vec4  nL      = normalize(L);
      float diffuse = clamp(dot(nn, nL), 0.0, 1.0);
 
+     diffuse = max(diffuse, 1.0);
+
      gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);
    }")
 

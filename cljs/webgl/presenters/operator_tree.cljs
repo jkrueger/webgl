@@ -5,19 +5,27 @@
             [webgl.views.gl         :as display])
   (:require-macros [webgl.kit.rx.macros :as rxm]))
 
-(defrecord Presenter [view])
+(defrecord Presenter
+    [view
+     currently-displayed])
 
 (defn display [presenter op]
   (let [view (:view presenter)]
+    (reset! (:currently-displayed presenter) op)
     (->> op
          (model/eval)
          (display/set-geometry view))))
 
+(defn- should-update? [current op]
+  current)
+
 (defn update [presenter op]
-  (let [view (:view presenter)]
-    (->> op
-         (model/eval)
-         (display/set-geometry view))))
+  (let [view    (:view presenter)
+        current @(:currently-displayed presenter)]
+    (when (should-update? current op)
+      (->> current
+           (model/eval)
+           (display/set-geometry view)))))
 
 (defn- register-view-events [view presenter]
   (-> (rx/event-source :click (:dom view))

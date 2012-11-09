@@ -52,29 +52,53 @@
     (ops/replace (:model presenter) op new)
     (rx/named-event (:events presenter) assigned new)))
 
+(defn- transform-operator [presenter op type]
+  (let [new (ops.factory/make type)]
+    (ops/transform (:model presenter) op new)
+    ;;(rx/named-event (:events presenter) assigned new)
+    ))
+
+(defn- discover-entries [presenter op filter-fn action-fn]
+  (map-indexed
+   (fn [i type]
+     (men/command
+      (:label type)
+      (+ 68 i)
+      #(action-fn presenter op (:name type))))
+   (ops/discover-by
+    :result-type (ops/result-type op)
+    filter-fn)))
+
 (defmulti operator->menu
+  (fn [presenter op]
+    (ops/result-type op)))
+
+(defmulti operator->entries
   (fn [presenter op]
     (ops/op-name op)))
 
-(defmethod operator->menu :default [presenter op])
+(defmethod operator->entries :default
+  [presenter op]
+  (discover-entries
+    presenter
+    op
+    ops/transformer?
+    transform-operator))
 
-(defmethod operator->menu :unassigned [presenter op]
+(defmethod operator->entries :unassigned
+  [presenter op]
+  (discover-entries
+    presenter
+    op
+    ops/generator?
+    assign-operator))
+
+(defmethod operator->menu :geometry [presenter op]
   (apply men/root
-    (map-indexed
-      (fn [i type]
-        (men/command
-          (:label type)
-          (+ 68 i)
-          #(assign-operator presenter op (:name type))))
-      (ops/discover-by
-        :result-type :geometry
-        (is? ops/unassigned-count 0)))))
-
-(defmethod operator->menu :default [presenter op]
-  (men/root
     (men/command
       "Render" 82
-      #(rx/named-event (:events presenter) display op))))
+      #(rx/named-event (:events presenter) display op))
+    (operator->entries presenter op)))
 
 (defn- set-operator-menu [presenter]
   #(men/set! (:menu presenter)

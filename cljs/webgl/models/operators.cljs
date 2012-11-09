@@ -69,8 +69,11 @@
 
 (defn unassigned-count [type]
   (->> (:defaults type)
-       (filter #(= (op-name %) :unassinged))
+       (filter #(= (op-name %) :unassigned))
        (count)))
+
+(def generator?   #(= (unassigned-count %) 0))
+(def transformer? #(> (unassigned-count %) 0))
 
 (defn eval [op]
   (apply (operator op) (map eval (children op))))
@@ -78,19 +81,39 @@
 (defn fire-update [model parent]
   (rx/named-event (:events model) update parent))
 
+(defn id? [op]
+  (fn [[i other]]
+    (= (id op) (id other))))
+
+(defn unassigned? [[i op]]
+  #(= (op-name op) :unassigned))
+
 (defn set-child [model op n child]
   (set-input op n child)
   (fire-update model op))
 
-(defn- find-child-indexed [op child]
+(defn- first-child [op p]
   (->> (children op)
        (map-indexed list)
-       (filter #(= % child))
+       (filter p)
        (first)))
+
+(def find-child-indexed #(first-child %1 (id? %2)))
+(def first-unassigned   #(first-child % unassigned?))
 
 (defn replace [model old new]
   (if-let [owner (parent old)]
-    (when-let [indexed-child (find-child-indexed old new)]
+    (when-let [indexed-child (find-child-indexed owner old)]
       (apply set-input owner indexed-child)
       (fire-update model owner))
     (set-root! model new)))
+
+(defn transform [model op transformer]
+  (let [[index unassigned] (first-unassigned transformer)
+        owner              (parent op)]
+    (set-input transformer index op)
+    (if owner
+      (let [indexed-child (find-child-indexed owner op)]
+        (apply set-input owner indexed-child)
+        (fire-update model owner))
+      (set-root! model transformer))))

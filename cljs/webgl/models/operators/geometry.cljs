@@ -184,56 +184,54 @@
                n
                (partial cloned-indices (geo/num-vertices in))))))
 
-(defn log [x]
-  (.log js/console x)
-  x)
-
 (m/defop :revolution-solid [:geometry :integer] :geometry
   "Revolution Solid"
   [(f/make :unassigned :geometry)
-   (f/make :constant :scalar {:label "Detail"} 5)]
+   (f/make :constant :integer {:label "Detail"} 5)
+   (f/make :constant :float   {:label "Radius"} 0.5)]
   []
-  (fn [in detail]
+  (fn [in detail radius]
     (let [t (-> mat/identity
-                (mat/* (mat/translation (vec/make 0.5 0.0 0.0)))
+                (mat/* (mat/translation (vec/make radius 0.0 0.0)))
                 (matrix-transform))
           d (-> mat/identity
                 (mat/* (mat/y-rotation (/ (* 2 js/Math.PI) detail)))
                 (matrix-transform))
           n  (geo/num-vertices in)
           nt (geo/num-triangles in)]
-      (log
-       (geo/Geometry.
-        ;; copy vertices n times and transform
-        (aiterate (t (:vertices in))
-                  detail
-                  d)
-        ;; make fresh normals
-        (->> (repeat (* n (+ 1 detail)) [0.0 0.0 1.0 0.0])
-             (->native as-float32))
-        ;; generate new face indices
-        (let [indices (:indices in)
-              length  (.-length indices)
-              out     (js/Uint16Array. (* 6 nt detail))]
-          (loop [i 0]
-            (when (< i detail)
-              (let [off      (* i length)
-                    end      (+ off length)
-                    out-view (.subarray out off end)]
-                (.log js/console "I" i off end)
-                (loop [j 0]
-                  (when (< j nt)
-                    (let [num-indx  6
-                          off-indx  (* j num-indx)
-                          face-view (.subarray out-view off-indx (+ off-indx num-indx))
-                          n         (+ end off-indx)]
-                      (.log js/console "J" j off-indx n)
-                      (aset out-view 0 off-indx) ;; 0
-                      (aset out-view 1 (inc off-indx))  ;; 1
-                      (aset out-view 2 n)        ;; n
-                      (aset out-view 3 n)        ;; n
-                      (aset out-view 4 (inc off-indx))  ;; 1
-                      (aset out-view 5 (inc n))  ;; n++
-                      (recur (inc j)))))
-                (recur (inc i)))))
-          out))))))
+      (geo/Geometry.
+       ;; copy vertices n times and transform
+       (aiterate (t (:vertices in))
+                 (dec detail)
+                 d)
+       ;; make fresh normals
+       (->> (repeat (* n (+ 1 detail)) [0.0 0.0 1.0 0.0])
+            (->native as-float32))
+       ;; generate new face indices
+       (let [length  (* 6 nt)
+             out     (js/Uint16Array. (* 6 nt detail))]
+         (loop [i 0]
+           (when (< i detail)
+             (let [off       (* i length)
+                   end       (+ off length)
+                   out-view  (.subarray out off end)
+                   ring      (* n i)
+                   next-ring (* n (mod (inc i) detail))]
+               (loop [j 0]
+                 (when (< j nt)
+                   (let [num-indx  6
+                         off-indx  (* j num-indx)
+                         face-view (.subarray out-view off-indx (+ off-indx num-indx))
+                         vcur      (+ j ring)
+                         vnxt      (+ j next-ring)
+                         vcur*     (+ (mod (inc j) nt) ring)
+                         vnxt*     (+ (mod (inc j) nt) next-ring)]
+                     (aset face-view 0 vcur)
+                     (aset face-view 1 vcur*)
+                     (aset face-view 2 vnxt)
+                     (aset face-view 3 vnxt)
+                     (aset face-view 4 vcur*)
+                     (aset face-view 5 vnxt*)
+                     (recur (inc j)))))
+               (recur (inc i)))))
+         out)))))

@@ -12,9 +12,10 @@
 
 (def display ::display)
 
-(def selected   ::operator-selected)
-(def deselected ::operator-deselected)
-(def assigned   ::operator-assigned)
+(def selected    ::operator-selected)
+(def deselected  ::operator-deselected)
+(def assigned    ::operator-assigned)
+(def transformed ::operator-transformed)
 
 (defrecord Presenter
   [model menu selector events])
@@ -55,8 +56,7 @@
 (defn- transform-operator [presenter op type]
   (let [new (ops.factory/make type)]
     (ops/transform (:model presenter) op new)
-    ;;(rx/named-event (:events presenter) assigned new)
-    ))
+    (rx/named-event (:events presenter) transformed new)))
 
 (defn- discover-entries [presenter op filter-fn action-fn]
   (map-indexed
@@ -126,12 +126,21 @@
 
 (defn- register-operator-events [presenter selector view]
   (rxm/on (:events presenter)
-    selected   (handle-operator-selection presenter view)
-    deselected (lower-operator view)
-    assigned   selector))
+    selected    (handle-operator-selection presenter view)
+    deselected  (lower-operator view)
+    assigned    selector
+    transformed selector))
+
+(defn- make-channels []
+  (rx/named-channels
+    display
+    selected
+    deselected
+    assigned
+    transformed))
 
 (defn present [model menu-model view]
-  (let [events    (rx/named-channels display selected deselected assigned)
+  (let [events    (make-channels)
         selection (atom nil)
         selector  (node-selection view selection events)
         presenter (Presenter. model menu-model selector events)]

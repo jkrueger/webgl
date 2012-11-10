@@ -23,6 +23,11 @@
 (defn is? [f value]
   #(= (f %) value))
 
+(extend-protocol tree/Wrap
+  ops/Operator
+  (wrap [o]
+    (tree/NodeWrapper. o)))
+
 (extend-protocol tree/Node
   ops/Operator
   (id [op]

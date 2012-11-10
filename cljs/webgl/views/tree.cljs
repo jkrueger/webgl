@@ -16,9 +16,6 @@
 (defrecord NodeWrapper [wrapped])
 
 (extend-protocol Wrap
-  js/Object
-  (wrap [o]
-    (NodeWrapper. o))
   PersistentVector
   (wrap [v]
     (into-array (map wrap v)))

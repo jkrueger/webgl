@@ -29,6 +29,8 @@ else {
         page = require("webpage").create();
         page.url = address;
 
+        page.onConsoleMessage = function(msg) { console.log(msg); }
+
         // When initialized, inject the reporting functions before the page is loaded
         // (and thus before it will try to utilize the functions)
         resultsKey = "__jr" + Math.ceil(Math.random() * 1000000);

@@ -9,6 +9,7 @@
             [webgl.presenters.properties    :as props]
             [webgl.presenters.operator-tree :as viewport]
             [webgl.models.menu              :as men]
+            [webgl.models.menu.operators    :as men.ops]
             [webgl.models.operators         :as model]
             [webgl.models.operators.factory :as model.factory]
             [webgl.views.fatal              :as fatal]
@@ -21,6 +22,14 @@
             [clojure.browser.repl :as repl])
   (:require-macros [webgl.kit.rx.macros :as rxm]))
 
+(defmulti static-entries
+  (fn [op]
+    (model/result-type op)))
+
+(defmethod static-entries :default
+  [_]
+  [])
+
 (defn- add-viewport [model]
   (viewport/present
     model
@@ -32,34 +41,39 @@
     (form/make "#properties > div"
       "This operator has no configurable properties")))
 
-(defn- add-editor [model menu]
+(defn- add-editor [model]
   (editor/present
-    model menu
+    model
     (tree/make "#tree > div")))
 
-(defn- add-help [menu]
-  (help/present menu (help.view/make "#help div.content div.help")))
+(defn- add-help []
+  (help/present (help.view/make "#help div.content div.help")))
 
-(defn- add-menu [menu]
-  (menu.presenter/present menu (list.view/make "#help div.content div.menu")))
-
-(defn- display-operator [renderer]
-  #(viewport/display renderer %))
+(defn- add-menu [operators]
+  (menu.presenter/present
+    (men.ops/make (men/make) operators static-entries)
+    (list.view/make "#help div.content div.menu")))
 
 (defn- show-operator-properties [properties]
   #(props/show-operator properties %))
 
-(defn- register-editor-events [editor renderer properties]
+(defn- update-menu [menu]
+  #(menu.presenter/set! menu %))
+
+(defn- register-editor-events [editor renderer properties menu]
   ;; events on the editor itself
   (rxm/on (:events editor)
-    editor/display  (display-operator renderer)
-    editor/selected (show-operator-properties properties)))
+    editor/selected
+      (rx/do
+        (show-operator-properties properties)
+        (update-menu menu))))
 
 (defn- register-help-events [editor help]
   (rxm/on (:events editor)
-    editor/display  #(help/transition help :display)
+    ;;editor/display  #(help/transition help :display)
     editor/selected #(help/transition help :selected)
-    editor/assigned #(help/transition help :assigned)))
+    ;;editor/assigned #(help/transition help :assigned)
+    ))
 
 (defn- fade [value selection]
   (-> selection
@@ -103,21 +117,27 @@
   (-> (rx/event-source :keyup js/window)
       (rx/observe (hide-menu menu))))
 
+(defn register-static-menu-entries [renderer]
+  (defmethod static-entries :geometry [op]
+    [(men/command
+      "Render" 82
+      #(viewport/display renderer op))]))
+
 (defn load []
   (.log js/console "Loading app...")
   (try
     (let [operators  (model/make)
-          menu       (men/make)
           renderer   (add-viewport operators)
           properties (add-properties operators)
-          editor     (add-editor operators menu)
-          help       (add-help menu)
-          menu-help  (add-menu menu)]
+          editor     (add-editor operators)
+          help       (add-help)
+          menu-help  (add-menu operators)]
       (register-editor-events
-        editor renderer properties)
+        editor renderer properties menu-help)
       (register-help-events
         editor help)
       (register-menu-events menu-help)
+      (register-static-menu-entries renderer)
       ;; simulate a reload of the model
       (model/set-root! operators (model.factory/make :unassigned :geometry)))
     (catch js/Error e

@@ -8,13 +8,14 @@
 
 (def reload ::reload)
 (def update ::update)
+(def create ::create)
 
 (defrecord Model [root events])
 
 (defn make []
   (Model.
     nil
-    (rx/named-channels reload update)))
+    (rx/named-channels reload update create)))
 
 (defn set-root! [model root]
   (set! (.-root model) root)
@@ -78,8 +79,11 @@
 (defn eval [op]
   (apply (operator op) (map eval (children op))))
 
-(defn fire-update [model parent]
-  (rx/named-event (:events model) update parent))
+(defn fire [event model parent]
+  (rx/named-event (:events model) event parent))
+
+(def fire-update (partial fire update))
+(def fire-create (partial fire create))
 
 (defn id? [op]
   (fn [[i other]]
@@ -101,19 +105,33 @@
 (def find-child-indexed #(first-child %1 (id? %2)))
 (def first-unassigned   #(first-child % unassigned?))
 
+(defn- make-operator [operator]
+  (cond
+    (keyword? operator)                   (f/make operator)
+    (isa? (type operator) f/OperatorType) (f/make (:name operator))
+    (satisfies? Operators operator)       operator))
+
 (defn replace [model old new]
-  (if-let [owner (parent old)]
-    (when-let [indexed-child (find-child-indexed owner old)]
-      (apply set-input owner indexed-child)
-      (fire-update model owner))
-    (set-root! model new)))
+  (let [new (make-operator new)]
+    (if-let [owner (parent old)]
+      (when-let [indexed-child (find-child-indexed owner old)]
+        (apply set-input owner indexed-child)
+        (fire-update model owner)
+        (fire-create model new))
+      (rx/do
+        (set-root! model new)
+        (fire-create model new)))))
 
 (defn transform [model op transformer]
-  (let [[index unassigned] (first-unassigned transformer)
+  (let [transformer        (make-operator transformer)
+        [index unassigned] (first-unassigned transformer)
         owner              (parent op)]
     (set-input transformer index op)
     (if owner
       (let [indexed-child (find-child-indexed owner op)]
         (apply set-input owner indexed-child)
-        (fire-update model owner))
-      (set-root! model transformer))))
+        (fire-update model owner)
+        (fire-create model transformer))
+      (rx/do
+        (set-root! model transformer)
+        (fire-create model transformer)))))

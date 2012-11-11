@@ -1,7 +1,5 @@
 (ns webgl.presenters.editor
-  (:require [webgl.models.menu              :as men]
-            [webgl.models.operators         :as ops]
-            [webgl.models.operators.factory :as ops.factory]
+  (:require [webgl.models.operators         :as ops]
             [webgl.models.selection         :as sel.model]
             [webgl.presenters.selection     :as sel]
             [webgl.views.tree               :as tree]
@@ -10,15 +8,11 @@
             [webgl.partials.key             :as key])
   (:require-macros [webgl.kit.rx.macros     :as rxm]))
 
-(def display ::display)
-
-(def selected    ::operator-selected)
-(def deselected  ::operator-deselected)
-(def assigned    ::operator-assigned)
-(def transformed ::operator-transformed)
+(def selected   ::operator-selected)
+(def deselected ::operator-deselected)
 
 (defrecord Presenter
-  [model menu selector events])
+  [model view selector events])
 
 (defn is? [f value]
   #(= (f %) value))
@@ -53,67 +47,6 @@
 (defn- lower-operator [view]
   #(tree/lower view %))
 
-(defn- assign-operator [presenter op type]
-  (let [new (ops.factory/make type)]
-    (ops/replace (:model presenter) op new)
-    (rx/named-event (:events presenter) assigned new)))
-
-(defn- transform-operator [presenter op type]
-  (let [new (ops.factory/make type)]
-    (ops/transform (:model presenter) op new)
-    (rx/named-event (:events presenter) transformed new)))
-
-(defn- discover-entries [presenter op filter-fn action-fn]
-  (map-indexed
-   (fn [i type]
-     (men/command
-      (:label type)
-      (+ 68 i)
-      #(action-fn presenter op (:name type))))
-   (ops/discover-by
-    :result-type (ops/result-type op)
-    filter-fn)))
-
-(defmulti operator->menu
-  (fn [presenter op]
-    (ops/result-type op)))
-
-(defmulti operator->entries
-  (fn [presenter op]
-    (ops/op-name op)))
-
-(defmethod operator->entries :default
-  [presenter op]
-  (discover-entries
-    presenter
-    op
-    ops/transformer?
-    transform-operator))
-
-(defmethod operator->entries :unassigned
-  [presenter op]
-  (discover-entries
-    presenter
-    op
-    ops/generator?
-    assign-operator))
-
-(defmethod operator->menu :geometry [presenter op]
-  (apply men/root
-    (men/command
-      "Render" 82
-      #(rx/named-event (:events presenter) display op))
-    (operator->entries presenter op)))
-
-(defn- set-operator-menu [presenter]
-  #(men/set! (:menu presenter)
-     (operator->menu presenter %)))
-
-(defn- handle-operator-selection [presenter view]
-  (rx/do
-    (raise-operator view)
-    (set-operator-menu presenter)))
-
 (defn- node-selection [view selection events]
   (let [selector (sel/present selection)]
     (rxm/on (:events selector)
@@ -125,32 +58,33 @@
   (rxm/on (:events view)
     tree/node-clicked operator-selector))
 
-(defn- register-model-events [model view]
-  (rxm/on (:events model)
-    ops/reload #(tree/set-root! view %)))
+(defn- register-model-events [presenter]
+  (let [model           (:model presenter)
+        view            (:view presenter)
+        select-operator (:selector presenter)]
+    (rxm/on (:events model)
+      ops/reload #(tree/set-root! view %)
+      ops/update #(tree/layout view)
+      ops/create select-operator)))
 
-(defn- register-operator-events [presenter selector view]
-  (rxm/on (:events presenter)
-    selected    (handle-operator-selection presenter view)
-    deselected  (lower-operator view)
-    assigned    selector
-    transformed selector))
+(defn- register-operator-events [presenter]
+  (let [view (:view presenter)]
+    (rxm/on (:events presenter)
+      selected    (raise-operator view)
+      deselected  (lower-operator view))))
 
 (defn- make-channels []
   (rx/named-channels
-    display
     selected
-    deselected
-    assigned
-    transformed))
+    deselected))
 
-(defn present [model menu-model view]
+(defn present [model view]
   (let [events    (make-channels)
         selection (atom nil)
         selector  (node-selection view selection events)
-        presenter (Presenter. model menu-model selector events)]
-    (register-model-events model view)
-    (register-operator-events presenter selector view)
+        presenter (Presenter. model view selector events)]
+    (register-model-events presenter)
+    (register-operator-events presenter)
     (doto view
       (b/keep-resized)
       (register-view-events selector events))

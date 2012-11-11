@@ -3,7 +3,7 @@
             [webgl.views.help   :as h])
   (:require-macros [webgl.kit.workflow.macros :as wm]))
 
-(defrecord Presenter [menu view])
+(defrecord Presenter [view])
 
 (wm/defworkflow help-flow)
 
@@ -60,6 +60,6 @@
 (defn transition [presenter event]
   (w/trigger help-flow event (:view presenter)))
 
-(defn present [menu view]
+(defn present [view]
   (w/set help-flow :init view)
-  (Presenter. menu view))
+  (Presenter. view))

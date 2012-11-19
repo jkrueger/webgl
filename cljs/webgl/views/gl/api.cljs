@@ -91,6 +91,14 @@
     (const/get *context* data-type)
     offset))
 
+;; flags
+
+(defn enable [flag]
+  (.enable *context* (const/get *context* flag)))
+
+(defn disable [flag]
+  (.disable *context* (const/get *context* flag)))
+
 (def error->str
   {0      "No Error"
    0x0500 "Invalid Enum"

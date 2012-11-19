@@ -184,54 +184,76 @@
                n
                (partial cloned-indices (geo/num-vertices in))))))
 
+(defn- deface [arr i]
+  (.subarray arr i (+ i 4)))
+
+(defn faces->normals [vertices indices]
+  (let [normals (js/Float32Array. (.-length vertices))
+        n       (/ (.-length indices) 3)]
+    (dotimes [face n]
+      (let [off       (* 3 face)
+            end       (+ 3 off)
+            face-view (.subarray indices off end)
+            ai        (* 4 (aget face-view 0))
+            bi        (* 4 (aget face-view 1))
+            ci        (* 4 (aget face-view 2))
+            a         (deface vertices ai)
+            b         (deface vertices bi)
+            c         (deface vertices ci)
+            normal    (vec/cross (vec/- b a) (vec/- c a))]
+        (vec/+= (deface normals ai) normal)
+        (vec/+= (deface normals bi) normal)
+        (vec/+= (deface normals ci) normal)))
+    (dotimes [i (.-length normals)]
+      (let [off         (* i 4)
+            normal-view (.subarray normals off (+ off 4))]
+        (vec/normalize normal-view)))
+    normals))
+
 (m/defop :revolution-solid [:geometry :integer] :geometry
   "Revolution Solid"
   [(f/make :unassigned :geometry)
-   (f/make :constant :integer {:label "Detail"} 5)
+   (f/make :constant :integer {:label "Detail"} 20)
    (f/make :constant :float   {:label "Radius"} 0.5)]
   []
   (fn [in detail radius]
-    (let [t (-> mat/identity
-                (mat/* (mat/translation (vec/make radius 0.0 0.0)))
-                (matrix-transform))
-          d (-> mat/identity
-                (mat/* (mat/y-rotation (/ (* 2 js/Math.PI) detail)))
-                (matrix-transform))
-          n  (geo/num-vertices in)
-          nt (geo/num-triangles in)]
+    (let [t     (-> mat/identity
+                    (mat/* (mat/translation (vec/make radius 0.0 0.0)))
+                    (matrix-transform))
+          d     (-> mat/identity
+                    (mat/* (mat/y-rotation (/ (* 2 js/Math.PI) detail)))
+                    (matrix-transform))
+          n     (geo/num-vertices in)
+          nt    (geo/num-triangles in)
+          verts (aiterate (t (:vertices in)) (dec detail) d)
+          faces (let [length  (* 6 nt)
+                      out     (js/Uint16Array. (* 6 nt detail))]
+                  (loop [i 0]
+                    (when (< i detail)
+                      (let [off       (* i length)
+                            end       (+ off length)
+                            out-view  (.subarray out off end)
+                            ring      (* n i)
+                            next-ring (* n (mod (inc i) detail))]
+                        (loop [j 0]
+                          (when (< j nt)
+                            (let [num-indx  6
+                                  off-indx  (* j num-indx)
+                                  face-view (.subarray out-view off-indx (+ off-indx num-indx))
+                                  vcur      (+ j ring)
+                                  vnxt      (+ j next-ring)
+                                  vcur*     (+ (mod (inc j) nt) ring)
+                                  vnxt*     (+ (mod (inc j) nt) next-ring)]
+                              (aset face-view 0 vcur)
+                              (aset face-view 1 vcur*)
+                              (aset face-view 2 vnxt)
+                              (aset face-view 3 vnxt)
+                              (aset face-view 4 vcur*)
+                              (aset face-view 5 vnxt*)
+                              (recur (inc j)))))
+                        (recur (inc i)))))
+                  out)]
       (geo/Geometry.
-       ;; copy vertices n times and transform
-       (aiterate (t (:vertices in))
-                 (dec detail)
-                 d)
-       ;; make fresh normals
-       (->> (repeat (* n (+ 1 detail)) [0.0 0.0 1.0 0.0])
-            (->native as-float32))
-       ;; generate new face indices
-       (let [length  (* 6 nt)
-             out     (js/Uint16Array. (* 6 nt detail))]
-         (loop [i 0]
-           (when (< i detail)
-             (let [off       (* i length)
-                   end       (+ off length)
-                   out-view  (.subarray out off end)
-                   ring      (* n i)
-                   next-ring (* n (mod (inc i) detail))]
-               (loop [j 0]
-                 (when (< j nt)
-                   (let [num-indx  6
-                         off-indx  (* j num-indx)
-                         face-view (.subarray out-view off-indx (+ off-indx num-indx))
-                         vcur      (+ j ring)
-                         vnxt      (+ j next-ring)
-                         vcur*     (+ (mod (inc j) nt) ring)
-                         vnxt*     (+ (mod (inc j) nt) next-ring)]
-                     (aset face-view 0 vcur)
-                     (aset face-view 1 vcur*)
-                     (aset face-view 2 vnxt)
-                     (aset face-view 3 vnxt)
-                     (aset face-view 4 vcur*)
-                     (aset face-view 5 vnxt*)
-                     (recur (inc j)))))
-               (recur (inc i)))))
-         out)))))
+       verts
+       (faces->normals verts faces)
+       faces))))

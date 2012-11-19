@@ -27,7 +27,7 @@
      vec4 vertex = in_vertex * view;
 
      normal = in_normal;
-     L      = vec4(0.0, 5.0, 5.0, 1.0) - vertex;
+     L      = vec4(0.0, 5.0, -5.0, 0.0) - vertex;
 
      gl_Position = vertex;
    }")
@@ -43,8 +43,6 @@
      vec4  nn      = normalize(normal);
      vec4  nL      = normalize(L);
      float diffuse = clamp(dot(nn, nL), 0.0, 1.0);
-
-     diffuse = max(diffuse, 1.0);
 
      gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);
    }")
@@ -161,8 +159,11 @@
 
 (defn- renderer [program geometry]
   (fn [frame]
+    (api/enable :cull)
+    (api/enable :depth-test)
     (api/clear-color 0.0 0.0 0.0 1.0)
     (api/clear :color-buffer)
+    (api/clear :z-buffer)
     (when-let [channel-data @geometry]
       (let [native (:native program)]
         (sh/bind model-view native mat/identity)

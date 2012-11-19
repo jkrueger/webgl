@@ -15,13 +15,18 @@
 
    ;; buffer areas
    :color-buffer "COLOR_BUFFER_BIT"
+   :z-buffer     "DEPTH_BUFFER_BIT"
 
    ;; primitive types
    :triangles "TRIANGLES"
 
    ;; shader types
    :vertex   "VERTEX_SHADER"
-   :fragment "FRAGMENT_SHADER"})
+   :fragment "FRAGMENT_SHADER"
+
+   ;; flags
+   :cull       "CULL_FACE"
+   :depth-test "DEPTH_TEST"})
 
 (defn get [context flag]
   (aget context (clojure.core/get flags flag)))

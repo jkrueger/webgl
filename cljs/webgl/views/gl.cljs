@@ -25,9 +25,10 @@
    void main()
    {
      vec4 vertex = in_vertex * view;
+     normal      = in_normal * view;
 
-     normal = in_normal;
-     L      = vec4(0.0, 5.0, -5.0, 0.0) - vertex;
+     vec4 eye = vec4(0.0, 0.0, 5.0, 0.0);
+     L        = eye - vertex;
 
      gl_Position = vertex;
    }")
@@ -42,7 +43,7 @@
    {
      vec4  nn      = normalize(normal);
      vec4  nL      = normalize(L);
-     float diffuse = clamp(dot(nn, nL), 0.0, 1.0);
+     float diffuse = 0.8 * clamp(dot(nn, nL), 0.0, 1.0);
 
      gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);
    }")
@@ -169,7 +170,7 @@
   (fn [frame]
     (api/enable :cull)
     (api/enable :depth-test)
-    (api/clear-color 0.0 0.0 0.0 1.0)
+    (api/clear-color 0.2 0.2 0.2 1.0)
     (api/clear :color-buffer)
     (api/clear :z-buffer)
     (when-let [channel-data @geometry]

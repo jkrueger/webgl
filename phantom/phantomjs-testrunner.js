@@ -8,6 +8,9 @@ if (phantom.args.length === 0) {
     phantom.exit(2);
 }
 else {
+
+    phantom.onError = function(msg, trace) { phantom.exit(2); }
+
     var args = phantom.args;
     var pages = [], page, address, resultsKey, i, l;
 

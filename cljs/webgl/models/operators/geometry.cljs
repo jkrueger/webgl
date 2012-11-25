@@ -167,22 +167,23 @@
    (f/make :constant :float   {:label "S"}  1.0)]
   []
   (fn [in n tx ty tz rx ry rz s]
-    (geo/Geometry.
-     (aiterate (:vertices in)
-               n
-               (->> mat/identity
-                    (mat/* (mat/scaling s))
-                    (mat/* (mat/translation (mat/make tx ty tz)))
-                    (mat/* (mat/x-rotation rx))
-                    (mat/* (mat/y-rotation ry))
-                    (mat/* (mat/z-rotation rz))
-                    (matrix-transform)))
-     (aiterate (:normals in)
-               n
-               identity)
-     (aiterate (:indices in)
-               n
-               (partial cloned-indices (geo/num-vertices in))))))
+    (let [trans (->> mat/identity
+                     (mat/* (mat/scaling s))
+                     (mat/* (mat/translation (mat/make tx ty tz)))
+                     (mat/* (mat/x-rotation rx))
+                     (mat/* (mat/y-rotation ry))
+                     (mat/* (mat/z-rotation rz))
+                     (matrix-transform))]
+      (geo/Geometry.
+       (aiterate (:vertices in)
+                 n
+                 trans)
+       (aiterate (:normals in)
+                 n
+                 trans)
+       (aiterate (:indices in)
+                 n
+                 (partial cloned-indices (geo/num-vertices in)))))))
 
 (defn- deface [arr i]
   (.subarray arr i (+ i 4)))

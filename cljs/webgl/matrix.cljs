@@ -46,7 +46,6 @@
           0.0 0.0     0.0 1.0)))
 
 (defn from-quaternion [q]
-;;  (.log js/console q)
   (let [w2 (clojure.core/* (aget q 0) (aget q 0))
         x2 (clojure.core/* (aget q 1) (aget q 1))
         y2 (clojure.core/* (aget q 2) (aget q 2))
@@ -61,6 +60,9 @@
           (+ xy zw)           (+ (- w2 x2) (- y2 z2)) (- yz xw)           0
           (- xz yw)           (+ yz xw)               (+ (- w2 x2 y2) z2) 0
           0           0       0                                           1)))
+
+(defn ->translation [m]
+  (vec/vec3 (aget m 3) (aget m 7) (aget m 9)))
 
 (defn transpose [m]
   (let [clone (js/Float32Array. m)]

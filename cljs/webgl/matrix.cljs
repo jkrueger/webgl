@@ -19,7 +19,7 @@
   (make s   0.0 0.0 0.0
         0.0 s   0.0 0.0
         0.0 0.0 s   0.0
-        0.0 0.0 0.0 s))
+        0.0 0.0 0.0 1))
 
 (defn x-rotation [angle]
   (let [sin (js/Math.sin angle)

@@ -11,5 +11,5 @@
 (defn transform [geometry trans]
   (Geometry.
     (trans (:vertices geometry))
-    (:normals geometry)
+    (trans (:normals geometry))
     (:indices geometry)))

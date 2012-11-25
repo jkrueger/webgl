@@ -44,11 +44,3 @@
 ;;          (if (< c 1)
 ;;            (f c)
 ;;            (- 2 (f (- 2 c))))))))
-
-;; (defn cloner [geometry n t]
-;;   (fn [frame]
-;;     (geo/clone n (matrix-transform t) geometry)))
-
-;; (defn bufferer [geometry]
-;;   (fn [frame]
-;;     (-> frame (geometry) (geo/as-buffered))))

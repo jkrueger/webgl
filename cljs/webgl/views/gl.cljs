@@ -55,7 +55,7 @@
     :vertices (sh/attribute sh/vec4 "in_vertex")
     :normals  (sh/attribute sh/vec4 "in_normal")))
 
-(defrecord View [dom context paused frames program geometry])
+(defrecord View [dom context paused frames program geometry view])
 
 (c/defpartial canvas [$container]
   [:canvas {:width (.width $container) :height (.height $container)}])
@@ -74,17 +74,25 @@
         context    (setup-context dom)
         program    (make-geometry-program context)
         frames     (rx/channel)
-        geometry   (atom nil)]
+        geometry   (atom nil)
+        view       (atom mat/identity)]
     (-> $container
         (jayq/append dom)
         (resize-to-container dom))
-    (rx/observe frames (renderer program geometry))
+    (rx/observe frames (renderer program geometry view))
     (View. dom
            context
            (atom false)
            frames
            program
-           geometry)))
+           geometry
+           view)))
+
+(defn width [view]
+  (.width (jayq/$ (:dom view))))
+
+(defn height [view]
+  (.height (jayq/$ (:dom view))))
 
 (declare frame)
 
@@ -157,7 +165,7 @@
 
 ;;; geometry rendering implementation
 
-(defn- renderer [program geometry]
+(defn- renderer [program geometry view]
   (fn [frame]
     (api/enable :cull)
     (api/enable :depth-test)
@@ -166,7 +174,7 @@
     (api/clear :z-buffer)
     (when-let [channel-data @geometry]
       (let [native (:native program)]
-        (sh/bind model-view native mat/identity)
+        (sh/bind model-view native @view)
         (sh/bind vertex-channels native channel-data)
         (buffer/bind (:indices channel-data))
         (api/draw-elements :triangles
@@ -193,3 +201,7 @@
       (if @(:geometry view)
         (swap!  (:geometry view) buffer/update-buffer geometry)
         (reset! (:geometry view) (p/factory geometry))))))
+
+(defn rotation [view m]
+  ;;(.log js/console m)
+  (reset! (:view view) m))

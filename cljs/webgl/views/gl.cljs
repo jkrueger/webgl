@@ -3,6 +3,7 @@
             [jayq.core                :as jayq]
             [webgl.kit.rx             :as rx]
             [webgl.matrix             :as mat]
+            [webgl.vector             :as vec]
             [webgl.views.gl.api       :as api]
             [webgl.views.gl.buffer    :as buffer]
             [webgl.views.gl.program   :as prog]
@@ -10,27 +11,31 @@
             [webgl.views.gl.shader    :as sh])
   (:require-macros [crate.def-macros  :as c]))
 
+(def fov (* 0.5 js/Math.PI))
 (def fps 30)
 (def frame-timeout (/ 1000 fps))
+(def translation (mat/translation 0.0 0.0 3.0))
 
 (def vertex-shader
   "uniform mat4 view;
+   uniform mat4 normal_view;
+   uniform mat4 projected_view;
 
    attribute vec4 in_vertex;
    attribute vec4 in_normal;
 
    varying vec4 normal;
    varying vec4 L;
-
+   
    void main()
    {
      vec4 vertex = in_vertex * view;
-     normal      = in_normal * view;
+     normal      = in_normal * normal_view;
 
-     vec4 eye = vec4(0.0, 0.0, 5.0, 0.0);
+     vec4 eye = vec4(0.0, 0.0, -5.0, 1.0);
      L        = eye - vertex;
 
-     gl_Position = vertex;
+     gl_Position = in_vertex * projected_view;
    }")
 
 (def fragment-code
@@ -43,7 +48,7 @@
    {
      vec4  nn      = normalize(normal);
      vec4  nL      = normalize(L);
-     float diffuse = 0.8 * clamp(dot(nn, nL), 0.0, 1.0);
+     float diffuse = clamp(dot(nn, nL), 0.0, 1.0);
 
      gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);
    }")
@@ -51,12 +56,31 @@
 (def model-view
   (sh/uniform sh/mat4 "view"))
 
+(def normal-view
+  (sh/uniform sh/mat4 "normal_view"))
+
+(def model-view-projection
+  (sh/uniform sh/mat4 "projected_view"))
+
 (def vertex-channels
   (sh/channels
     :vertices (sh/attribute sh/vec4 "in_vertex")
     :normals  (sh/attribute sh/vec4 "in_normal")))
 
-(defrecord View [dom context paused frames program geometry view])
+(defrecord View
+  [dom
+   ;; render state varaibles
+   paused
+   frames
+   ;; the webgl context and program used by the view
+   context
+   program
+   ;; the currently rendered geomtry
+   geometry
+   ;; world and screen transformations
+   view
+   normal-view
+   projection])
 
 (c/defpartial canvas [$container]
   [:canvas {:width (.width $container) :height (.height $container)}])
@@ -69,6 +93,14 @@
       (throw (js/Error. "Your browser does not support webgl")))
     context))
 
+(defn setup-projection [container]
+  (mat/projection
+    fov
+    (.width  container)
+    (.height container)
+    0.001
+    100.0))
+
 (defn make [container]
   (let [$container (jayq/$ container)
         dom        (canvas $container)
@@ -76,18 +108,22 @@
         program    (make-geometry-program context)
         frames     (rx/channel)
         geometry   (atom nil)
-        view       (atom mat/identity)]
+        model-view (atom translation)
+        projection (atom (setup-projection $container))
+        view       (View. dom
+                          (atom false)
+                          frames
+                          context
+                          program
+                          geometry
+                          model-view
+                          (atom (mat/normal-transform @model-view))
+                          projection)]
     (-> $container
         (jayq/append dom)
-        (resize-to-container dom))
-    (rx/observe frames (renderer program geometry view))
-    (View. dom
-           context
-           (atom false)
-           frames
-           program
-           geometry
-           view)))
+        (resize-to-container dom context projection))
+    (rx/observe frames (renderer view))
+    view))
 
 (defn width [view]
   (.width (jayq/$ (:dom view))))
@@ -154,28 +190,37 @@
   "Creates a new observer for the window object
    that is triggered on resize events and adjusts the
    viewport accordingly."
-  [$container canvas]
+  [$container canvas context projection]
   (-> (rx/event-source :resize (jayq/$ js/window))
       (rx/observe
         (fn []
           (-> (jayq/$ canvas)
               (jayq/css
                 {:width  (.width $container)
-                 :height (.height $container)})))))
+                 :height (.height $container)}))
+           (api/with-context context api/viewport
+             0 0 (.width $container) (.height $container))
+          (reset! projection (setup-projection $container)))))
   $container)
 
 ;;; geometry rendering implementation
 
-(defn- renderer [program geometry view]
+(defn- renderer [view]
   (fn [frame]
     (api/enable :cull)
     (api/enable :depth-test)
     (api/clear-color 0.2 0.2 0.2 1.0)
     (api/clear :color-buffer)
     (api/clear :z-buffer)
-    (when-let [channel-data @geometry]
-      (let [native (:native program)]
-        (sh/bind model-view native @view)
+    (when-let [channel-data @(:geometry view)]
+      (let [program      (:program view)
+            native       (:native program)
+            current-view (:view view)
+            n-view       (:normal-view view)
+            projection   (:projection view)]
+        (sh/bind model-view  native @current-view)
+        (sh/bind normal-view native @n-view)
+        (sh/bind model-view-projection native (mat/* @projection @current-view))
         (sh/bind vertex-channels native channel-data)
         (buffer/bind (:indices channel-data))
         (api/draw-elements :triangles
@@ -204,5 +249,6 @@
         (reset! (:geometry view) (p/factory geometry))))))
 
 (defn rotation [view m]
-  ;;(.log js/console m)
-  (reset! (:view view) m))
+  (let [trans (mat/* translation m)]
+    (reset! (:view view)        trans)
+    (reset! (:normal-view view) (mat/normal-transform trans))))

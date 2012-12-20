@@ -116,9 +116,9 @@
   []
   disc)
 
-(defn- matrix-transform [m]
+(defn- matrix-transform [m geometry]
   (let [transposed (mat/transpose m)]
-    #(mat/* % transposed)))
+    (mat/* geometry transposed)))
 
 (m/defop :transform
   [:geometry :float :float :float :angle :angle :angle :float] :geometry
@@ -133,15 +133,17 @@
    (f/make :constant :float {:label "S"}  1.0)]
   []
   (fn [in tx ty tz rx ry rz s]
-    (geo/transform
-     in
-     (->> mat/identity
-          (mat/* (mat/scaling s))
-          (mat/* (mat/translation (mat/make tx ty tz)))
-          (mat/* (mat/x-rotation rx))
-          (mat/* (mat/y-rotation ry))
-          (mat/* (mat/z-rotation rz))
-          (matrix-transform)))))
+    (let [trans (->> mat/identity
+                     (mat/* (mat/scaling s))
+                     (mat/* (mat/translation (mat/make tx ty tz)))
+                     (mat/* (mat/x-rotation rx))
+                     (mat/* (mat/y-rotation ry))
+                     (mat/* (mat/z-rotation rz)))
+          tnorm (mat/normal-transform trans)]
+      (geo/Geometry.
+        (matrix-transform trans (:vertices in))
+        (matrix-transform tnorm (:normals in))
+        (:indices in)))))
 
 (defn- cloned-indices [num-vertices indices]
   (let [c   (.-length indices)
@@ -172,15 +174,15 @@
                      (mat/* (mat/translation (mat/make tx ty tz)))
                      (mat/* (mat/x-rotation rx))
                      (mat/* (mat/y-rotation ry))
-                     (mat/* (mat/z-rotation rz))
-                     (matrix-transform))]
+                     (mat/* (mat/z-rotation rz)))
+          tnorm (mat/normal-transform trans)]
       (geo/Geometry.
        (aiterate (:vertices in)
                  n
-                 trans)
+                 (partial matrix-transform trans))
        (aiterate (:normals in)
                  n
-                 trans)
+                 (partial matrix-transform tnorm))
        (aiterate (:indices in)
                  n
                  (partial cloned-indices (geo/num-vertices in)))))))
@@ -219,14 +221,12 @@
   []
   (fn [in detail radius]
     (let [t     (-> mat/identity
-                    (mat/* (mat/translation radius 0.0 0.0))
-                    (matrix-transform))
+                    (mat/* (mat/translation radius 0.0 0.0)))
           d     (-> mat/identity
-                    (mat/* (mat/y-rotation (/ (* 2 js/Math.PI) detail)))
-                    (matrix-transform))
+                    (mat/* (mat/y-rotation (/ (* 2 js/Math.PI) detail))))
           n     (geo/num-vertices in)
           nt    (geo/num-triangles in)
-          verts (aiterate (t (:vertices in)) (dec detail) d)
+          verts (aiterate (matrix-transform t (:vertices in)) (dec detail) (partial matrix-transform d))
           faces (let [length  (* 6 nt)
                       out     (js/Uint16Array. (* 6 nt detail))]
                   (loop [i 0]

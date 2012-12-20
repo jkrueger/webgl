@@ -117,7 +117,7 @@
                           program
                           geometry
                           model-view
-                          (atom (mat/normal-transform @model-view))
+                          (atom mat/identity)
                           projection)]
     (-> $container
         (jayq/append dom)
@@ -251,4 +251,4 @@
 (defn rotation [view m]
   (let [trans (mat/* translation m)]
     (reset! (:view view)        trans)
-    (reset! (:normal-view view) (mat/normal-transform trans))))
+    (reset! (:normal-view view) (mat/normal-transform (mat/->rotation trans)))))

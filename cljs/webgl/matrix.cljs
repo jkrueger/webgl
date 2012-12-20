@@ -26,7 +26,7 @@
   (make s   0.0 0.0 0.0
         0.0 s   0.0 0.0
         0.0 0.0 s   0.0
-        0.0 0.0 0.0 s))
+        0.0 0.0 0.0 1.0))
 
 (defn x-rotation [angle]
   (let [sin (js/Math.sin angle)
@@ -79,8 +79,16 @@
           (- xz yw)           (+ yz xw)               (+ (- w2 x2 y2) z2) 0
           0           0       0                                           1)))
 
+(defn ->rotation [m]
+  (let [res (js/Float32Array. m)]
+    (aset res 3 0.0)
+    (aset res 7 0.0)
+    (aset res 11 0.0)
+    (aset res 15 1.0)
+    res))
+
 (defn ->translation [m]
-  (vec/vec3 (aget m 3) (aget m 7) (aget m 9)))
+  (vec/vec3 (aget m 3) (aget m 7) (aget m 11)))
 
 (defn transpose [m]
   (let [clone (js/Float32Array. m)]

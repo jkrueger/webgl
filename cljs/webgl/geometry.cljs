@@ -7,9 +7,3 @@
 
 (defn num-vertices [geometry]
   (/ (.-length (:vertices geometry)) 4))
-
-(defn transform [geometry trans]
-  (Geometry.
-    (trans (:vertices geometry))
-    (trans (:normals geometry))
-    (:indices geometry)))

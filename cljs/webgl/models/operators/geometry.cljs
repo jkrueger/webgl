@@ -201,7 +201,7 @@
             a         (deface vertices ai)
             b         (deface vertices bi)
             c         (deface vertices ci)
-            normal    (vec/cross (vec/- b a) (vec/- c a))]
+            normal    (vec/cross (vec/- c a) (vec/- b a))]
         (vec/+= (deface normals ai) normal)
         (vec/+= (deface normals bi) normal)
         (vec/+= (deface normals ci) normal)))
@@ -219,7 +219,7 @@
   []
   (fn [in detail radius]
     (let [t     (-> mat/identity
-                    (mat/* (mat/translation (vec/make radius 0.0 0.0)))
+                    (mat/* (mat/translation radius 0.0 0.0))
                     (matrix-transform))
           d     (-> mat/identity
                     (mat/* (mat/y-rotation (/ (* 2 js/Math.PI) detail)))

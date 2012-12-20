@@ -10,7 +10,8 @@
                  [fetch "0.1.0-alpha2"]
                  [jayq  "0.1.0-alpha2"]
                  [waltz "0.1.0-alpha1"]
-                 [noir  "1.2.2" :exclusions [org.clojure/clojure]]]
+                 [noir  "1.2.2" :exclusions [org.clojure/clojure]]
+                 [midje "1.4.0"]]
   :cljsbuild
   {:crossovers     []
    :crossover-path "crossover"

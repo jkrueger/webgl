@@ -11,7 +11,8 @@
   (-> (aget row cell) (.toFixed 5)))
 
 (defn row->str [matrix i]
-  (let [row (.subarray matrix i (+ i 4))]
+  (let [begin (* i 4)
+        row   (.subarray matrix begin (+ begin 4))]
     (str/join ", "
               (map (partial cell->str row)
                    (range 4)))))
@@ -77,3 +78,18 @@
           B (m/z-rotation 0.8)]
       (j/expect
         (m/transpose (m/* A B)) => (roughly (m/* (m/transpose B) (m/transpose A)))))))
+
+(j/describe "The inverse"
+
+  (j/it "of the identity matrix is the identity matrix"
+    (j/expect (m/inverse m/identity) => (roughly m/identity)))
+
+  (j/it "of a matrix multiplied with that matrix is the identity matrix"
+
+    (let [matrices [(m/x-rotation 0.8)
+                    (m/* (m/y-rotation 0.32)
+                         (m/x-rotation 0.8))
+                    (m/* (m/z-rotation 0.95)
+                         (m/x-rotation 0.43))]]
+      (doseq [mat matrices]
+        (j/expect (m/* mat (m/inverse mat)) => (roughly m/identity))))))

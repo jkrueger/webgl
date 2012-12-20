@@ -1,5 +1,6 @@
 (ns webgl.matrix
-  (:refer-clojure :exclude (identity * =)))
+  (:refer-clojure :exclude (identity * =))
+  (:require-macros [webgl.macros.matrix :as mac]))
 
 (def make (comp #(js/Float32Array. %) array))
 
@@ -9,17 +10,23 @@
         0.0 0.0 1.0 0.0
         0.0 0.0 0.0 1.0))
 
-(defn translation [t]
-  (make 1.0 0.0 0.0 (aget t 0)
-        0.0 1.0 0.0 (aget t 1)
-        0.0 0.0 1.0 (aget t 2)
-        0.0 0.0 0.0 1.0))
+(defn translation
+  ([t]
+     (make 1.0 0.0 0.0 (aget t 0)
+           0.0 1.0 0.0 (aget t 1)
+           0.0 0.0 1.0 (aget t 2)
+           0.0 0.0 0.0 1.0))
+  ([x y z]
+     (make 1.0 0.0 0.0 x
+           0.0 1.0 0.0 y
+           0.0 0.0 1.0 z
+           0.0 0.0 0.0 1.0)))
 
 (defn scaling [s]
   (make s   0.0 0.0 0.0
         0.0 s   0.0 0.0
         0.0 0.0 s   0.0
-        0.0 0.0 0.0 1))
+        0.0 0.0 0.0 s))
 
 (defn x-rotation [angle]
   (let [sin (js/Math.sin angle)
@@ -44,6 +51,17 @@
           sin cos     0.0 0.0
           0.0 0.0     1.0 0.0
           0.0 0.0     0.0 1.0)))
+
+(defn projection [fov width height near far]
+  (let [ratio     (/ width height)
+        d         (/ 1 (js/Math.tan (clojure.core/* fov 0.5)))
+        far-near  (- far near)
+        far+near  (+ far near)
+        dfn       (clojure.core/* 2 far near)]
+    (make (/ d ratio) 0 0 0
+          0 d 0 0
+          0 0 (/ far+near far-near) (- (/ dfn far-near))
+          0 0 1 0)))
 
 (defn from-quaternion [q]
   (let [w2 (clojure.core/* (aget q 0) (aget q 0))
@@ -77,6 +95,9 @@
             (recur (inc x))))
         (recur (inc y))))
      clone))
+
+(defn det [m]
+  (mac/det 4 m))
 
 (defn *
   [l r]
@@ -112,6 +133,12 @@
                    (clojure.core/* v3 (aget r 15)))))
         (recur (+ row 4))))
     clone))
+
+(defn inverse [m]
+  (* (mac/cofactors 4 m) (scaling (/ 1.0 (det m)))))
+
+(defn normal-transform [m]
+  (transpose (inverse m)))
 
 ;; A simple performance test
 ;;

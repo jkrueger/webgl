@@ -19,6 +19,9 @@
 (defn flag [flag]
   (const/get *context* flag))
 
+(defn viewport [x y w h]
+  (.viewport *context* x y w h))
+
 (defn make-program []
   (.createProgram *context*))
 
@@ -90,6 +93,17 @@
     n
     (const/get *context* data-type)
     offset))
+
+;; property setter
+
+(defn front-face [value]
+  (.frontFace *context* (const/get *context* value)))
+
+(defn depth-func [value]
+  (.depthFunc *context* (const/get *context* value)))
+
+(defn property [k]
+  (.getParameter *context* (const/get *context* k)))
 
 ;; flags
 

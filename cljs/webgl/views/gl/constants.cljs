@@ -24,6 +24,15 @@
    :vertex   "VERTEX_SHADER"
    :fragment "FRAGMENT_SHADER"
 
+   ;; winding order
+   :cw
+   :ccw
+
+   ;; depth parameters
+   :depth-func "DEPTH_FUNC"
+   :less       "LESS"
+   :greater    "GREATER"
+   
    ;; flags
    :cull       "CULL_FACE"
    :depth-test "DEPTH_TEST"})

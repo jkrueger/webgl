@@ -23,6 +23,12 @@
            0.0 0.0 0.0 1.0)))
 
 (defn scaling [s]
+  (make (aget s 0) 0.0        0.0        0.0
+        0.0        (aget s 1) 0.0        0.0
+        0.0        0.0        (aget s 2) 0.0
+        0.0        0.0        0.0        1.0))
+
+(defn uniform-scaling [s]
   (make s   0.0 0.0 0.0
         0.0 s   0.0 0.0
         0.0 0.0 s   0.0
@@ -143,7 +149,7 @@
     clone))
 
 (defn inverse [m]
-  (* (mac/cofactors 4 m) (scaling (/ 1.0 (det m)))))
+  (* (mac/cofactors 4 m) (uniform-scaling (/ 1.0 (det m)))))
 
 (defn normal-transform [m]
   (transpose (inverse m)))

@@ -121,24 +121,20 @@
     (mat/* geometry transposed)))
 
 (m/defop :transform
-  [:geometry :float :float :float :angle :angle :angle :float] :geometry
+  [:geometry :vector :vector :vector] :geometry
   "Transform"
   [(f/make :unassigned :geometry)
-   (f/make :constant :float {:label "Tx"} 0.0)
-   (f/make :constant :float {:label "Ty"} 0.0)
-   (f/make :constant :float {:label "Tz"} 0.0)
-   (f/make :constant :angle {:label "Rx"} 0.0)
-   (f/make :constant :angle {:label "Ry"} 0.0)
-   (f/make :constant :angle {:label "Rz"} 0.0)
-   (f/make :constant :float {:label "S"}  1.0)]
+   (f/make :constant :vector {:label "Translation"} (vec/make 0.0 0.0 0.0))
+   (f/make :constant :vector {:label "Rotation"}    (vec/make 0.0 0.0 0.0))
+   (f/make :constant :vector {:label "Scale"}       (vec/make 1.0 1.0 1.0))]
   []
-  (fn [in tx ty tz rx ry rz s]
+  (fn [in t r s]
     (let [trans (->> mat/identity
                      (mat/* (mat/scaling s))
-                     (mat/* (mat/translation (mat/make tx ty tz)))
-                     (mat/* (mat/x-rotation rx))
-                     (mat/* (mat/y-rotation ry))
-                     (mat/* (mat/z-rotation rz)))
+                     (mat/* (mat/translation t))
+                     (mat/* (mat/x-rotation (aget r 0)))
+                     (mat/* (mat/y-rotation (aget r 1)))
+                     (mat/* (mat/z-rotation (aget r 2))))
           tnorm (mat/normal-transform trans)]
       (geo/Geometry.
         (matrix-transform trans (:vertices in))
@@ -156,25 +152,21 @@
     out))
 
 (m/defop :clone
-  [:geometry :integer :float :float :float :angle :angle :angle :float] :geometry
+  [:geometry :integer :vector :vector :vector] :geometry
   "Clone"
   [(f/make :unassigned :geometry)
-   (f/make :constant :integer {:label "Copies"} 2)
-   (f/make :constant :float   {:label "Tx"} 0.0)
-   (f/make :constant :float   {:label "Ty"} 0.0)
-   (f/make :constant :float   {:label "Tz"} 0.0)
-   (f/make :constant :angle   {:label "Rx"} 0.0)
-   (f/make :constant :angle   {:label "Ry"} 0.0)
-   (f/make :constant :angle   {:label "Rz"} 0.0)
-   (f/make :constant :float   {:label "S"}  1.0)]
+   (f/make :constant :integer {:label "Copies"}      2)
+   (f/make :constant :vector  {:label "Translation"} (vec/make 0.0 0.0 0.0))
+   (f/make :constant :vector  {:label "Rotation"}    (vec/make 0.0 0.0 0.0))
+   (f/make :constant :vector  {:label "Scale"}       (vec/make 1.0 1.0 1.0))]
   []
-  (fn [in n tx ty tz rx ry rz s]
+  (fn [in n t r s]
     (let [trans (->> mat/identity
                      (mat/* (mat/scaling s))
-                     (mat/* (mat/translation (mat/make tx ty tz)))
-                     (mat/* (mat/x-rotation rx))
-                     (mat/* (mat/y-rotation ry))
-                     (mat/* (mat/z-rotation rz)))
+                     (mat/* (mat/translation t))
+                     (mat/* (mat/x-rotation (aget r 0)))
+                     (mat/* (mat/y-rotation (aget r 1)))
+                     (mat/* (mat/z-rotation (aget r 2))))
           tnorm (mat/normal-transform trans)]
       (geo/Geometry.
        (aiterate (:vertices in)

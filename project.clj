@@ -8,7 +8,7 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [crate "0.2.0-alpha4"]
                  [fetch "0.1.0-alpha2"]
-                 [jayq  "0.1.0-alpha2"]
+                 [jayq  "1.0.0"]
                  [waltz "0.1.0-alpha1"]
                  [noir  "1.2.2" :exclusions [org.clojure/clojure]]
                  [midje "1.4.0"]]

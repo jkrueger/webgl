@@ -2,6 +2,7 @@
   (:require [jayq.core                      :as jayq]
             [webgl.geometry                 :as geo]
             [webgl.kit.d3                   :as d3]
+            [webgl.kit.d3.fx                :as fx]
             [webgl.kit.rx                   :as rx]
             [webgl.presenters.editor        :as editor]
             [webgl.presenters.help          :as help]
@@ -38,7 +39,7 @@
 (defn- add-properties [model]
   (props/present
     model
-    (form/make "#properties > div"
+    (form/make "#properties > div.content"
       "This operator has no configurable properties")))
 
 (defn- add-editor [model]
@@ -75,41 +76,26 @@
     ;;editor/assigned #(help/transition help :assigned)
     ))
 
-(defn- fade [value selection]
-  (-> selection
-      (d3/transition)
-      (d3/css :opacity value)))
-
-(def fade-in  (partial fade 1.0))
-(def fade-out (partial fade 0.0))
-
-(defn- scale [value transition]
-  (-> transition
-      (d3/css :-webkit-transform (str "scale(" value ")"))))
-
-(def scale-in  (partial scale 1.0))
-(def scale-out (partial scale 0.6))
-
 (defn- handle-menu-key [menu]
   (fn [evt]
-    (when (= (.-which evt) 18)
+    (when (= (.-which evt) 17)
       (-> (d3/select "#help div.help")
-          (fade-out))
+          (fx/fade-out))
       (-> (d3/select "#help div.menu")
-          (fade-in)
-          (scale-in)))
-    (if (.-altKey evt)
+          (fx/fade-in)
+          (fx/scale-in)))
+    (if (.-ctrlKey evt)
       (men/select (:model menu) (.-which evt))
       (men/leave  (:model menu)))))
 
 (defn hide-menu [menu]
   (fn [evt]
-    (when (= (.-which evt) 18)
+    (when (= (.-which evt) 17)
       (-> (d3/select "#help div.help")
-          (fade-in))
+          (fx/fade-in))
       (-> (d3/select "#help div.menu")
-          (fade-out)
-          (scale-out)))))
+          (fx/fade-out)
+          (fx/scale-out)))))
 
 (defn- register-menu-events [menu]
   (-> (rx/event-source :keydown js/window)

@@ -23,7 +23,8 @@
      [:div#right
       [:div#editor
        [:div#properties {:class "base"}
-        [:div]]
+        [:div {:class "content"}
+         [:div {:class "head"} "Properties"]]]
        [:div#help {:class "base"}
         [:div.content [:p.backdrop "?"]
           [:div.help]

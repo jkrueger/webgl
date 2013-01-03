@@ -8,16 +8,13 @@
 (extend-protocol form/Field
   model/Operator
   (field-label [op] (model/label op))
-  (field-type  [op]
-    (case (model/result-type op)
-      :angle "range"
-      "number"))
+  (field-type  [op] (model/result-type op))
   (field-attrs [op]
     (case (model/result-type op)
-      :integer [:step 1]
-      :float   [:step 0.1]
-      :angle   [:step 0.1 :min (- js/Math.PI) :max js/Math.PI]
-      []))
+      :integer {:step 1}
+      :float   {:step 0.05}
+      :angle   {:step 0.05 :min (- js/Math.PI) :max js/Math.PI}
+      :vector  {:step 0.05}))
   (field-value [op] ((model/operator op))))
 
 (defrecord Presenter [view operator])

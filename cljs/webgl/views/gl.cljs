@@ -32,8 +32,7 @@
      vec4 vertex = in_vertex * view;
      normal      = in_normal * normal_view;
 
-     vec4 eye = vec4(0.0, 0.0, -5.0, 1.0);
-     L        = eye - vertex;
+     L = -vertex;
 
      gl_Position = in_vertex * projected_view;
    }")
@@ -46,11 +45,15 @@
 
    void main()
    {
-     vec4  nn      = normalize(normal);
-     vec4  nL      = normalize(L);
-     float diffuse = clamp(dot(nn, nL), 0.0, 1.0);
+     vec4  nn     = normalize(normal);
+     vec4  nL     = normalize(L);
+     float factor = clamp(dot(nn, nL), 0.0, 1.0);
 
-     gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);
+     float r = (23.0  / 255.0) * factor + (1.0 - factor) * (92.0  / 255.0);
+     float g = (55.0  / 255.0) * factor + (1.0 - factor) * (134.0 / 255.0);
+     float b = (84.0 / 255.0) * factor + (1.0 - factor) * (171.0 / 255.0);
+
+     gl_FragColor = vec4(r, g, b, 1.0);
    }")
 
 (def model-view
@@ -212,7 +215,7 @@
     (api/clear-color 0.2 0.2 0.2 1.0)
     (api/clear :color-buffer)
     (api/clear :z-buffer)
-    (when-let [channel-data @(:geometry view)]
+    (when-let [channel-data (force @(:geometry view))]
       (let [program      (:program view)
             native       (:native program)
             current-view (:view view)
@@ -242,11 +245,13 @@
         {:native program}))))
 
 (defn set-geometry [view geometry]
-  (api/with-context (:context view)
-    (fn []
-      (if @(:geometry view)
-        (swap!  (:geometry view) buffer/update-buffer geometry)
-        (reset! (:geometry view) (p/factory geometry))))))
+  (swap! (:geometry view)
+         (fn [current]
+           (let [buffer (force current)]
+             (delay
+               (if buffer
+                 (buffer/update-buffer buffer @geometry)
+                 (p/factory @geometry)))))))
 
 (defn rotation [view m]
   (let [trans (mat/* translation m)]

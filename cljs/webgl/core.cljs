@@ -2,9 +2,9 @@
   (:require [jayq.core                      :as jayq]
             [webgl.geometry                 :as geo]
             [webgl.kit.d3                   :as d3]
+            [webgl.kit.d3.fx                :as fx]
             [webgl.kit.rx                   :as rx]
             [webgl.presenters.editor        :as editor]
-            [webgl.presenters.help          :as help]
             [webgl.presenters.menu          :as menu.presenter]
             [webgl.presenters.properties    :as props]
             [webgl.presenters.operator-tree :as viewport]
@@ -38,7 +38,7 @@
 (defn- add-properties [model]
   (props/present
     model
-    (form/make "#properties > div"
+    (form/make "#properties > div.content"
       "This operator has no configurable properties")))
 
 (defn- add-editor [model]
@@ -46,13 +46,10 @@
     model
     (tree/make "#tree > div")))
 
-(defn- add-help []
-  (help/present (help.view/make "#help div.content div.help")))
-
 (defn- add-menu [operators]
   (menu.presenter/present
     (men.ops/make (men/make) operators static-entries)
-    (list.view/make "#help div.content div.menu")))
+    (list.view/make "#assets div.content div.menu")))
 
 (defn- show-operator-properties [properties]
   #(props/show-operator properties %))
@@ -68,48 +65,26 @@
         (show-operator-properties properties)
         (update-menu menu))))
 
-(defn- register-help-events [editor help]
-  (rxm/on (:events editor)
-    ;;editor/display  #(help/transition help :display)
-    editor/selected #(help/transition help :selected)
-    ;;editor/assigned #(help/transition help :assigned)
-    ))
-
-(defn- fade [value selection]
-  (-> selection
-      (d3/transition)
-      (d3/css :opacity value)))
-
-(def fade-in  (partial fade 1.0))
-(def fade-out (partial fade 0.0))
-
-(defn- scale [value transition]
-  (-> transition
-      (d3/css :-webkit-transform (str "scale(" value ")"))))
-
-(def scale-in  (partial scale 1.0))
-(def scale-out (partial scale 0.6))
-
 (defn- handle-menu-key [menu]
   (fn [evt]
-    (when (= (.-which evt) 18)
-      (-> (d3/select "#help div.help")
-          (fade-out))
-      (-> (d3/select "#help div.menu")
-          (fade-in)
-          (scale-in)))
-    (if (.-altKey evt)
+    (when (= (.-which evt) 17)
+      ;; (-> (d3/select "#assets div.help")
+      ;;     (fx/fade-out))
+      (-> (d3/select "#assets div.menu")
+          (fx/fade-in)
+          (fx/scale-in)))
+    (if (.-ctrlKey evt)
       (men/select (:model menu) (.-which evt))
       (men/leave  (:model menu)))))
 
 (defn hide-menu [menu]
   (fn [evt]
-    (when (= (.-which evt) 18)
-      (-> (d3/select "#help div.help")
-          (fade-in))
-      (-> (d3/select "#help div.menu")
-          (fade-out)
-          (scale-out)))))
+    (when (= (.-which evt) 17)
+      ;; (-> (d3/select "#assets div.help")
+      ;;     (fx/fade-in))
+      (-> (d3/select "#assets div.menu")
+          (fx/fade-out)
+          (fx/scale-out)))))
 
 (defn- register-menu-events [menu]
   (-> (rx/event-source :keydown js/window)
@@ -130,12 +105,9 @@
           renderer   (add-viewport operators)
           properties (add-properties operators)
           editor     (add-editor operators)
-          help       (add-help)
           menu-help  (add-menu operators)]
       (register-editor-events
         editor renderer properties menu-help)
-      (register-help-events
-        editor help)
       (register-menu-events menu-help)
       (register-static-menu-entries renderer)
       ;; simulate a reload of the model

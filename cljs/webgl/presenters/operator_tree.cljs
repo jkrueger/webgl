@@ -15,9 +15,7 @@
 (defn display [presenter op]
   (let [view (:view presenter)]
     (reset! (:currently-displayed presenter) op)
-    (->> op
-         (model/eval)
-         (display/set-geometry view))))
+    (display/set-geometry view op)))
 
 (defn- should-update? [current op]
   current)
@@ -26,9 +24,7 @@
   (let [view    (:view presenter)
         current @(:currently-displayed presenter)]
     (when (should-update? current op)
-      (->> current
-           (model/eval)
-           (display/set-geometry view)))))
+      (display/set-geometry view current))))
 
 (defn- z [x y]
   (let [t (+ (* x x) (* y y))]

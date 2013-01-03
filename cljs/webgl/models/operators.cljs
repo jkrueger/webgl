@@ -79,6 +79,11 @@
 (defn eval [op]
   (apply (operator op) (map eval (children op))))
 
+(extend-protocol IDeref
+  f/Operator
+  (-deref [this]
+    (eval this)))
+
 (defn fire [event model parent]
   (rx/named-event (:events model) event parent))
 

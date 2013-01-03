@@ -73,11 +73,12 @@
   PersistentVector
   (append-impl [v selection]
     (let [res (-> (first v) (selector->name) (append-impl selection))
-          ns   (handle-attrs res v)]
+          ns  (handle-attrs res v)]
       (doseq [n ns]
         (if (vector? n)
           (append-impl n res)
-          (text res n))))))
+          (text res n)))
+      res)))
 
 (defn append [selection element]
   (append-impl (selector->name element) selection))

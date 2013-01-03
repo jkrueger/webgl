@@ -212,7 +212,7 @@
     (api/clear-color 0.2 0.2 0.2 1.0)
     (api/clear :color-buffer)
     (api/clear :z-buffer)
-    (when-let [channel-data @(:geometry view)]
+    (when-let [channel-data (force @(:geometry view))]
       (let [program      (:program view)
             native       (:native program)
             current-view (:view view)
@@ -242,11 +242,13 @@
         {:native program}))))
 
 (defn set-geometry [view geometry]
-  (api/with-context (:context view)
-    (fn []
-      (if @(:geometry view)
-        (swap!  (:geometry view) buffer/update-buffer geometry)
-        (reset! (:geometry view) (p/factory geometry))))))
+  (swap! (:geometry view)
+         (fn [current]
+           (let [buffer (force current)]
+             (delay
+               (if buffer
+                 (buffer/update-buffer buffer @geometry)
+                 (p/factory @geometry)))))))
 
 (defn rotation [view m]
   (let [trans (mat/* translation m)]

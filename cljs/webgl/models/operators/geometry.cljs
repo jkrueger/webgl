@@ -280,8 +280,8 @@
         (vec/normalize normal-view)))
     normals))
 
-(m/defop :revolution-solid [:geometry :integer] :geometry
-  "Revolution Solid"
+(m/defop :lathe [:geometry :integer] :geometry
+  "Lathe"
   [(f/make :unassigned :geometry)
    (f/make :constant :integer {:label "Detail"} 20)
    (f/make :constant :float   {:label "Radius"} 0.5)]

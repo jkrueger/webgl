@@ -5,7 +5,6 @@
             [webgl.kit.d3.fx                :as fx]
             [webgl.kit.rx                   :as rx]
             [webgl.presenters.editor        :as editor]
-            [webgl.presenters.help          :as help]
             [webgl.presenters.menu          :as menu.presenter]
             [webgl.presenters.properties    :as props]
             [webgl.presenters.operator-tree :as viewport]
@@ -47,13 +46,10 @@
     model
     (tree/make "#tree > div")))
 
-(defn- add-help []
-  (help/present (help.view/make "#help div.content div.help")))
-
 (defn- add-menu [operators]
   (menu.presenter/present
     (men.ops/make (men/make) operators static-entries)
-    (list.view/make "#help div.content div.menu")))
+    (list.view/make "#assets div.content div.menu")))
 
 (defn- show-operator-properties [properties]
   #(props/show-operator properties %))
@@ -69,19 +65,12 @@
         (show-operator-properties properties)
         (update-menu menu))))
 
-(defn- register-help-events [editor help]
-  (rxm/on (:events editor)
-    ;;editor/display  #(help/transition help :display)
-    editor/selected #(help/transition help :selected)
-    ;;editor/assigned #(help/transition help :assigned)
-    ))
-
 (defn- handle-menu-key [menu]
   (fn [evt]
     (when (= (.-which evt) 17)
-      (-> (d3/select "#help div.help")
-          (fx/fade-out))
-      (-> (d3/select "#help div.menu")
+      ;; (-> (d3/select "#assets div.help")
+      ;;     (fx/fade-out))
+      (-> (d3/select "#assets div.menu")
           (fx/fade-in)
           (fx/scale-in)))
     (if (.-ctrlKey evt)
@@ -91,9 +80,9 @@
 (defn hide-menu [menu]
   (fn [evt]
     (when (= (.-which evt) 17)
-      (-> (d3/select "#help div.help")
-          (fx/fade-in))
-      (-> (d3/select "#help div.menu")
+      ;; (-> (d3/select "#assets div.help")
+      ;;     (fx/fade-in))
+      (-> (d3/select "#assets div.menu")
           (fx/fade-out)
           (fx/scale-out)))))
 
@@ -116,12 +105,9 @@
           renderer   (add-viewport operators)
           properties (add-properties operators)
           editor     (add-editor operators)
-          help       (add-help)
           menu-help  (add-menu operators)]
       (register-editor-events
         editor renderer properties menu-help)
-      (register-help-events
-        editor help)
       (register-menu-events menu-help)
       (register-static-menu-entries renderer)
       ;; simulate a reload of the model

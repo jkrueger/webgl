@@ -83,7 +83,7 @@ div.base#properties {
     width:60%;
 }
 
-div.base#help {
+div.base#assets {
     top:0px;
     right:0px;
     height:40%;
@@ -120,7 +120,7 @@ div.head {
     margin:4px 2px 4px 4px;
 }
 
-#help > div.content {
+#assets > div.content {
     position:absolute;
     top:0px;
     left:0px;
@@ -134,7 +134,7 @@ div.head {
     z-index:-3;
 }
 
-#help p.backdrop {
+#assets p.backdrop {
     position:absolute;
     bottom:-350px;
     right:-20px;
@@ -146,7 +146,7 @@ div.head {
     z-index:-2;
 }
 
-#help div.text {
+#assets div.text {
     background: rgba(0,0,0,0);
     margin:12px;
     margin-top:20px;
@@ -157,12 +157,12 @@ div.head {
     z-index:-1;
 }
 
-#help div.menu {
+#assets div.menu {
     opacity:0;
     -webkit-transform:scale(0.6);
 }
 
-#help div.help > div.keybox {
+#assets div.help > div.keybox {
     position:absolute;
     bottom:10px;
     left:10px;
@@ -171,7 +171,7 @@ div.head {
     display:none;
 }
 
-#help div.content ul {
+#assets div.content ul {
   list-style-type:none;
   font-family:Verdana;
   font-size:14pt;
@@ -183,7 +183,7 @@ div.head {
   margin-top:28%;
 }
 
-#help div.content li {
+#assets div.content li {
     border-top:1px solid #3f3f3f;
     border-bottom:1px solid #3f3f3f;
     padding-top:10px;
@@ -192,7 +192,7 @@ div.head {
     margin-bottom:6px;
 }
 
-#help div.content ul div.keybox {
+#assets div.content ul div.keybox {
     float:left;
     width:28px;
     height:28px;
@@ -201,7 +201,7 @@ div.head {
     padding-left:25px;
 }
 
-#help div.content span {
+#assets div.content span {
     padding-left:18px;
 }
 

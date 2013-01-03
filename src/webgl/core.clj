@@ -23,12 +23,12 @@
      [:div#right
       [:div#editor
        [:div#properties {:class "base"}
-        [:div {:class "content"}
-         [:div {:class "head"} "Properties"]]]
-       [:div#help {:class "base"}
-        [:div.content [:p.backdrop "?"]
-          [:div.help]
-          [:div.menu]]]
+        [:div.content
+         [:div.head "Properties"]]]
+       [:div#assets {:class "base"}
+        [:div.content
+         [:div.head "Assets"]
+         [:div.menu]]]
        [:div#tree {:class "base"}
         [:div]]]]]
     (util/javascript-tag "webgl.core.init()")]))

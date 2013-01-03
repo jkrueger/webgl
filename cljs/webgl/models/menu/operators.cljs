@@ -32,15 +32,18 @@
     (:events wrapped-model)))
 
 (defn- discover-entries [model op filter-fn action-fn]
-  (map-indexed
-   (fn [i type]
-     (men/command
-       (:label type)
-       (+ 68 i)
-       #(action-fn (:operator-model model) op type)))
-   (ops/discover-by
-     :result-type (ops/result-type op)
-     filter-fn)))
+  (map
+    (fn [type key]
+      (men/command
+        (:label type)
+        key
+        #(action-fn (:operator-model model) op type)))
+    (ops/discover-by
+      :result-type (ops/result-type op)
+      filter-fn)
+    [81 87 69
+     65 83 68
+     89 88 67]))
 
 (defmethod operator->entries :default
   [model op]

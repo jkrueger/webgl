@@ -31,7 +31,6 @@
     (let [parent   @(:operator presenter)
           operator (:data evt)
           index    (:index operator)]
-      (.log js/console "VALUE" (:value evt))
       (model/set-child model
         parent
         index

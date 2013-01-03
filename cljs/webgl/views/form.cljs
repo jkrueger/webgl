@@ -22,33 +22,45 @@
 
 (defmethod value-partial :default [d]
   [:td {:class "form scalar"}
-   [:div {:class "value"} (field-value d)]])
+   [:input (merge {:class "value"
+                   :type "number"
+                   :value (field-value d)}
+                  (field-attrs d))]])
 
 (defmethod value-partial :vector [d]
-  (let [v (field-value d)]
+  (let [v     (field-value d)
+        attrs (merge {:class "value" :type "number"}
+                     (field-attrs d))]
     [:td {:class "form"}
      [:table {:class "vector" :style "width:100%;table-layout:fixed;border-spacing:0px"}
       [:tr
-       [:td {:class "vector"} [:div {:class "value"} (aget v 0)]]
-       [:td {:class "vector"} [:div {:class "value"} (aget v 1)]]
-       [:td {:class "vector"} [:div {:class "value"} (aget v 2)]]]]]))
+       [:td {:class "vector"} [:input (assoc attrs :value (aget v 0))]]
+       [:td {:class "vector"} [:input (assoc attrs :value (aget v 1))]]
+       [:td {:class "vector"} [:input (assoc attrs :value (aget v 2))]]]]]))
 
 ;; TODO: should really be a multi method like abstraction
 
 (defn- fire-scalar-change [dom events data index]
-  (rx/named-event events field-changed
-    {:data data :index index :value (js/parseFloat (jayq/text dom))}))
+  (let [value (.-valueAsNumber (.get dom 0))]
+    (rx/named-event events field-changed
+      {:data  data
+       :index index
+       :value value})))
 
 (defn- fire-vector-change [dom events data index]
   (let [siblings (-> dom
                      (jayq/parent)
                      (jayq/parent)
                      (jayq/children)
-                     (jayq/children :div))
-        ->value  #(this-as value (-> (jayq/$ value) (jayq/text) (js/parseFloat)))
-        vector   (-> siblings (.map ->value) (.get))]
+                     (jayq/children :input))
+        vector   (-> siblings
+                     (.map #(this-as input
+                              (.-valueAsNumber input)))
+                     (.get))]
     (rx/named-event events field-changed
-      {:data data :index index :value vector})))
+      {:data  data
+       :index index
+       :value vector})))
 
 (defn- fire-change [dom events data index]
   (let [parent (jayq/parent dom)]
@@ -57,42 +69,20 @@
       "vector" (fire-vector-change dom events data index)
       nil)))
 
-(defn- make-input [value d]
-  (crate/html
-   [:input (merge
-            {:type   "number"
-             :value  (jayq/text value)
-             :step   0.05
-             :ondrag false}
-            (field-attrs d))]))
-
 (defn- register-input-events [form events]
   (d3/on (d3/select* form "table *.value") :click
     (fn [d i]
-      (let [value   (jayq/$ js/d3.event.target)
-            input   (make-input value d)
+      (let [input   js/d3.event.target
             $input  (jayq/$ input)
-            display (jayq/css value :display)
-            $window (jayq/$ js/window)]
+            $body   (jayq/$ "body")]
         ;; show input widget
         (-> $input
-            (jayq/width  (jayq/width value))
-            (jayq/height (jayq/height value))
-            (jayq/insert-after value)
-            (jayq/trigger :focus)
-            (jayq/on :blur
-              (fn []
-                (jayq/css value :display display)
-                (jayq/remove $input)))
-            (jayq/on :change
-              (fn []
-                (jayq/text value (.-value input))
-                (fire-change value events d i)))
+            (jayq/on :change #(fire-change $input events d i))
             (jayq/on :mousedown
               (fn [evt]
                 (jayq/css $input :-webkit-user-select "none")
-                (let [last (atom (aget evt "offsetX"))]
-                  (jayq/on $window :mousemove
+                (let [last     (atom (aget evt "offsetX"))]
+                  (jayq/on $input :mousemove
                     (fn [evt]
                       (let [x    (aget evt "offsetX")
                             relx (- x @last)]
@@ -101,22 +91,12 @@
                           (.stepUp input))
                         (jayq/trigger $input :change)
                         (reset! last x)))))
-                (jayq/on $window :mouseup
+                (jayq/on $body :mouseup
                   (fn []
-                    (jayq/off $window :mousemove)
-                    (jayq/off $window :mouseup)
+                    (jayq/off $input :mousemove)
+                    (jayq/off $body  :mouseup)
                     (jayq/css $input :-webkit-user-select "text")
-                    (jayq/val $input (jayq/val $input)))))))
-        ;; hide display widget for now
-        (jayq/css value :display "none")))))
-
-;; (defn- add-attrs [selection]
-;;   (d3/each selection
-;;     (fn [d]
-;;       (this-as dom
-;;         (apply d3/attr*
-;;                (d3/select dom)
-;;                (field-attrs d))))))
+                    (jayq/val $input (jayq/val $input)))))))))))
 
 (defn- add-value [d]
   (this-as this
@@ -129,9 +109,6 @@
       (d3/append :tr)
       (d3/attr :class "form")
       (d3/each add-value)))
-
-  ;; [:td {:class "form"} [:p field-label]]
-  ;; [:td {:class "form"} (value)]
 
 (defn- add [view inputs]
   (let [container (:container view)

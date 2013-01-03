@@ -37,14 +37,14 @@
         [last-x last-y] (:mouse @(:drag presenter))
         a               (vec/normal (vec/vec3 last-x last-y (z last-x last-y)))
         b               (vec/normal (vec/vec3 x y (z x y)))
-        n               (vec/normal (vec/cross a b))
+        n               (vec/normal (vec/cross b a))
         angle           (* 0.5 (js/Math.acos (vec/dot a b)))
         q               (vec/vec3->quat
                           (js/Math.cos angle)
                           (vec/scale n (js/Math.sin angle)))
         Q               (if (nil? (:q @(:drag presenter)))
                           q
-                          (-> (vec/quat* (:q @(:drag presenter)) q)
+                          (-> (vec/quat* q (:q @(:drag presenter)))
                               (vec/normal)))]
     (display/rotation view (mat/from-quaternion Q))
   (reset! (:drag presenter) {:mouse evt :q Q})))
@@ -55,8 +55,8 @@
     (rx/map x
       #(vector (/ (- (aget % "offsetX") (* 0.5 width))
                   width)
-               (/ (- (aget % "offsetY") (* 0.5 height))
-                  height)))))
+               (- (/ (- (aget % "offsetY") (* 0.5 height))
+                     height))))))
 
 (defn stop-drag [view evt]
   (-> (rx/event-source :mousemove (:dom view))

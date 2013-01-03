@@ -272,7 +272,6 @@ table.form {
 td.form {
   border:none;
   border-bottom:1px dashed #3f3f3f;
-  padding:0px;
 }
 
 td.form:nth-child(1) {
@@ -307,12 +306,6 @@ td.form td::last-child {
   border-right:none;
 }
 
-td > div.value {
-  padding:5px;
-  padding-left:10px;
-  width:auto;
-}
-
 p.form {
   position:absolute;
   top:45%;
@@ -334,7 +327,9 @@ table.form input[type=number] {
   margin:0px;
   padding:5px;
   padding-left:10px;
+  -webkit-box-sizing: border-box;
   background-color:transparent;
+  width:100%;
 }
 
 table.form input[type=number]:focus {

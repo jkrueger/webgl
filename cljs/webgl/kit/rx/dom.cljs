@@ -5,8 +5,11 @@
 (deftype EventSource [selector event]
   rx/Source
   (observe [this sink]
-    (-> (jayq/$ selector)
-        (jayq/on event #(rx/event sink %)))
+    (if sink
+      (jayq/on (jayq/$ selector)
+               event
+               #(rx/event sink %))
+      (jayq/off (jayq/$ selector) event))
     this))
 
 (defn event-source [name selector]

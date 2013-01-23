@@ -9,6 +9,11 @@ body {
     padding:0px;
 }
 
+li.inline {
+  display:inline;
+  list-style-type:none;
+}
+
 div.error {
     position: absolute;
     display:table;
@@ -78,7 +83,7 @@ div.base#properties {
     width:60%;
 }
 
-div.base#help {
+div.base#assets {
     top:0px;
     right:0px;
     height:40%;
@@ -91,25 +96,37 @@ div.base#tree {
     width:100%;
 }
 
-#properties > div {
+div.head {
+  height:20px;
+  border-bottom:1px solid #3f3f3f;
+  border-top-left-radius:8px;
+  border-top-right-radius:8px;
+  padding:4px 10px 2px 10px;
+  background-image:-webkit-linear-gradient(top,#6f6f6f,#4f4f4f);
+  font-family: Arial;
+  font-size:9pt;
+  font-weight:bold;
+}
+
+#properties > div.content {
     position:absolute;
     top:0px;
     bottom:0px;
     left:0px;
     right:0px;
-    border: 2px solid #dfaf8f;
+    border: 2px solid #67427c;
     background-color: #5f5f5f;
     border-radius:8px;
     margin:4px 2px 4px 4px;
 }
 
-#help > div.content {
+#assets > div.content {
     position:absolute;
     top:0px;
     left:0px;
     bottom:0px;
     right:0px;
-    border: 2px solid #dfaf8f;
+    border: 2px solid #67427c;
     background-color: #5f5f5f;
     border-radius:8px;
     margin:4px 4px 4px 2px;
@@ -117,7 +134,7 @@ div.base#tree {
     z-index:-3;
 }
 
-#help p.backdrop {
+#assets p.backdrop {
     position:absolute;
     bottom:-350px;
     right:-20px;
@@ -129,7 +146,7 @@ div.base#tree {
     z-index:-2;
 }
 
-#help div.text {
+#assets div.text {
     background: rgba(0,0,0,0);
     margin:12px;
     margin-top:20px;
@@ -140,12 +157,12 @@ div.base#tree {
     z-index:-1;
 }
 
-#help div.menu {
+#assets div.menu {
     opacity:0;
     -webkit-transform:scale(0.6);
 }
 
-#help div.help > div.keybox {
+#assets div.help > div.keybox {
     position:absolute;
     bottom:10px;
     left:10px;
@@ -154,10 +171,10 @@ div.base#tree {
     display:none;
 }
 
-#help div.content ul {
+#assets div.content ul {
   list-style-type:none;
   font-family:Verdana;
-  font-size:18pt;
+  font-size:14pt;
   font-weight:bold;
   font-style:oblique;
   color:#222222;
@@ -166,7 +183,7 @@ div.base#tree {
   margin-top:28%;
 }
 
-#help div.content li {
+#assets div.content li {
     border-top:1px solid #3f3f3f;
     border-bottom:1px solid #3f3f3f;
     padding-top:10px;
@@ -175,7 +192,7 @@ div.base#tree {
     margin-bottom:6px;
 }
 
-#help div.content ul div.keybox {
+#assets div.content ul div.keybox {
     float:left;
     width:28px;
     height:28px;
@@ -184,8 +201,8 @@ div.base#tree {
     padding-left:25px;
 }
 
-#help div.content span {
-    padding-left:28%;
+#assets div.content span {
+    padding-left:18px;
 }
 
 .keybox rect{
@@ -214,7 +231,7 @@ div.base#tree {
     bottom:0px;
     left:0px;
     right:0px;
-    border: 2px solid #dfaf8f;
+    border: 2px solid #67427c;
     /* background: url('../images/grid.gif'); */
     border-radius:8px;
     margin:4px;
@@ -246,33 +263,47 @@ div.base#tree {
   stroke-width: 1.5px;
 }
 
-ul.form {
+table.form {
   overflow:auto;
-  list-style-type:none;
+  padding:0px;
+  border-spacing:0px;
+}
+
+td.form {
+  border:none;
+  border-bottom:1px dashed #3f3f3f;
+}
+
+td.form:nth-child(1) {
+  padding-left:10px;
+  padding-right:15px;
+  min-width:80px;
+}
+
+td.form:nth-child(2) {
+  border-left:1px dashed #3f3f3f;
+  width:100%;
+}
+
+tr.form:nth-child(even) {
+  background:#6f6f6f;
+}
+
+td.form > p {
+  font-weight:bold;
+  text-align:left;
   padding:0px;
   margin:0px;
-  height:100%;
 }
 
-li.form {
-  padding:5px 15px 5px 10px;
-  border-bottom:1px solid #3f3f3f;
-  border-left:1px solid #3f3f3f;
-  border-radius:8px;
-  left:0px;
-  right:0px;
-  background-image:-webkit-linear-gradient(top,#6f6f6f,#5f5f5f);
-  /* float:left; */
+td.form td {
+  padding:0px;
+  margin:0px;
+  border-right:1px dashed #3f3f3f;
 }
 
-label.form {
-  display:block;
-  float:left;
-  font-weight:bold;
-  padding-top:0.5em;
-  /* text-align:right; */
-  /* line-height:25px; */
-  width:80%;
+td.form td::last-child {
+  border-right:none;
 }
 
 p.form {
@@ -285,25 +316,22 @@ p.form {
   text-align:center;
 }
 
-input.form[type=text] {
-  border:1px solid darkgray;
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+table.form input[type=number] {
+  border:none;
+  margin:0px;
   padding:5px;
-  width:80%;
+  padding-left:10px;
+  -webkit-box-sizing: border-box;
+  background-color:transparent;
+  width:100%;
 }
 
-input.form[type=range] {
-  width:80%;
-}
-
-input.form[type=number] {
-  border:1px solid #3f3f3f;
-  width:20%;
-  background-color:#7f7f7f;
-  padding:2px;
-}
-
-input.form[type=number]:focus {
-  outline:1px solid #7cb8bb;
-  border:1px solid #4c7073;
+table.form input[type=number]:focus {
   background-color:#8f8f8f;
 }

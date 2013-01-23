@@ -1,5 +1,6 @@
 (ns webgl.matrix
-  (:refer-clojure :exclude (identity * =)))
+  (:refer-clojure :exclude (identity * =))
+  (:require-macros [webgl.macros.matrix :as mac]))
 
 (def make (comp #(js/Float32Array. %) array))
 
@@ -9,17 +10,29 @@
         0.0 0.0 1.0 0.0
         0.0 0.0 0.0 1.0))
 
-(defn translation [t]
-  (make 1.0 0.0 0.0 (aget t 0)
-        0.0 1.0 0.0 (aget t 1)
-        0.0 0.0 1.0 (aget t 2)
-        0.0 0.0 0.0 1.0))
+(defn translation
+  ([t]
+     (make 1.0 0.0 0.0 (aget t 0)
+           0.0 1.0 0.0 (aget t 1)
+           0.0 0.0 1.0 (aget t 2)
+           0.0 0.0 0.0 1.0))
+  ([x y z]
+     (make 1.0 0.0 0.0 x
+           0.0 1.0 0.0 y
+           0.0 0.0 1.0 z
+           0.0 0.0 0.0 1.0)))
 
 (defn scaling [s]
+  (make (aget s 0) 0.0        0.0        0.0
+        0.0        (aget s 1) 0.0        0.0
+        0.0        0.0        (aget s 2) 0.0
+        0.0        0.0        0.0        1.0))
+
+(defn uniform-scaling [s]
   (make s   0.0 0.0 0.0
         0.0 s   0.0 0.0
         0.0 0.0 s   0.0
-        0.0 0.0 0.0 s))
+        0.0 0.0 0.0 1.0))
 
 (defn x-rotation [angle]
   (let [sin (js/Math.sin angle)
@@ -45,6 +58,44 @@
           0.0 0.0     1.0 0.0
           0.0 0.0     0.0 1.0)))
 
+(defn projection [fov width height near far]
+  (let [ratio     (/ width height)
+        d         (/ 1 (js/Math.tan (clojure.core/* fov 0.5)))
+        far-near  (- far near)
+        far+near  (+ far near)
+        dfn       (clojure.core/* 2 far near)]
+    (make (/ d ratio) 0 0 0
+          0 d 0 0
+          0 0 (/ far+near far-near) (- (/ dfn far-near))
+          0 0 1 0)))
+
+(defn from-quaternion [q]
+  (let [w2 (clojure.core/* (aget q 0) (aget q 0))
+        x2 (clojure.core/* (aget q 1) (aget q 1))
+        y2 (clojure.core/* (aget q 2) (aget q 2))
+        z2 (clojure.core/* (aget q 3) (aget q 3))
+        xy (clojure.core/* 2 (aget q 1) (aget q 2))
+        zw (clojure.core/* 2 (aget q 3) (aget q 0))
+        xz (clojure.core/* 2 (aget q 1) (aget q 3))
+        yw (clojure.core/* 2 (aget q 2) (aget q 0))
+        xw (clojure.core/* 2 (aget q 1) (aget q 0))
+        yz (clojure.core/* 2 (aget q 2) (aget q 3))]
+    (make (- (+ w2 x2) y2 z2) (- xy zw)               (+ xz yw)           0
+          (+ xy zw)           (+ (- w2 x2) (- y2 z2)) (- yz xw)           0
+          (- xz yw)           (+ yz xw)               (+ (- w2 x2 y2) z2) 0
+          0           0       0                                           1)))
+
+(defn ->rotation [m]
+  (let [res (js/Float32Array. m)]
+    (aset res 3 0.0)
+    (aset res 7 0.0)
+    (aset res 11 0.0)
+    (aset res 15 1.0)
+    res))
+
+(defn ->translation [m]
+  (vec/vec3 (aget m 3) (aget m 7) (aget m 11)))
+
 (defn transpose [m]
   (let [clone (js/Float32Array. m)]
     (loop [y 0]
@@ -58,6 +109,9 @@
             (recur (inc x))))
         (recur (inc y))))
      clone))
+
+(defn det [m]
+  (mac/det 4 m))
 
 (defn *
   [l r]
@@ -93,6 +147,12 @@
                    (clojure.core/* v3 (aget r 15)))))
         (recur (+ row 4))))
     clone))
+
+(defn inverse [m]
+  (* (mac/cofactors 4 m) (uniform-scaling (/ 1.0 (det m)))))
+
+(defn normal-transform [m]
+  (transpose (inverse m)))
 
 ;; A simple performance test
 ;;

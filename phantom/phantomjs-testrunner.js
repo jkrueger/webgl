@@ -8,6 +8,9 @@ if (phantom.args.length === 0) {
     phantom.exit(2);
 }
 else {
+
+    phantom.onError = function(msg, trace) { phantom.exit(2); }
+
     var args = phantom.args;
     var pages = [], page, address, resultsKey, i, l;
 
@@ -28,6 +31,8 @@ else {
         // create a WebPage object to work with
         page = require("webpage").create();
         page.url = address;
+
+        page.onConsoleMessage = function(msg) { console.log(msg); }
 
         // When initialized, inject the reporting functions before the page is loaded
         // (and thus before it will try to utilize the functions)

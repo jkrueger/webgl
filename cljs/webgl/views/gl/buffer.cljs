@@ -22,7 +22,7 @@
        (api/buffer-data buffer-type content)
        buffer)))
 
-(defrecord BufferedGeometry [vertices indices])
+(defrecord BufferedGeometry [vertices normals indices])
 
 (def num-triangles :num-triangles)
 (def num-vertices  :num-vertices)
@@ -30,6 +30,8 @@
 (defn update-buffer [buffered geometry]
   (bind (:vertices buffered))
   (set-data (:vertices buffered) (:vertices geometry))
+  (bind (:normals buffered))
+  (set-data (:normals buffered) (:normals geometry))
   (bind (:indices buffered))
   (set-data (:indices  buffered) (:indices geometry))
   (assoc buffered
@@ -39,5 +41,6 @@
 (extend-protocol p/Factory
   webgl.geometry.Geometry
   (factory [this]
-    (-> (BufferedGeometry. (make :array) (make :index))
+    (-> (BufferedGeometry.
+          (make :array) (make :array) (make :index))
         (update-buffer this))))
